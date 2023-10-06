@@ -141,7 +141,7 @@ void SetHUDEnabled(BOOL isEnabled)
 #define INLINE_SEPARATOR "\t"
 
 static double FONT_SIZE = 10.0;
-static double WIDGET_WIDTH = 110.0;
+static double WIDGET_WIDTH = 107.0;
 
 #pragma mark - Widget-specific Variables
 // MARK: 0 - Date Widget
