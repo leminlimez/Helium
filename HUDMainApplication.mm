@@ -148,6 +148,20 @@ static double WIDGET_WIDTH = 105.0;
 static NSString  *dateFormat = @"E MMM dd";
 static NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 
+// MARK: Net Speed Widget
+static uint8_t DATAUNIT = 0;
+static const char *UPLOAD_PREFIX = "▲";
+static const char *DOWNLOAD_PREFIX = "▼";
+
+typedef struct {
+    uint64_t inputBytes;
+    uint64_t outputBytes;
+} UpDownBytes;
+
+static uint64_t prevOutputBytes = 0, prevInputBytes = 0;
+static NSAttributedString *attributedUploadPrefix = nil;
+static NSAttributedString *attributedDownloadPrefix = nil;
+
 #pragma mark - Widget-specific Functions
 // MARK: Date Formatting
 static NSString* formattedDate()
@@ -155,6 +169,98 @@ static NSString* formattedDate()
     NSDate *currentDate = [NSDate date];
     [formatter setDateFormat:dateFormat];
     return [formatter stringFromDate:currentDate];
+}
+
+// MARK: Net Speed Formatting
+static UpDownBytes getUpDownBytes()
+{
+    struct ifaddrs *ifa_list = 0, *ifa;
+    UpDownBytes upDownBytes;
+    upDownBytes.inputBytes = 0;
+    upDownBytes.outputBytes = 0;
+    
+    if (getifaddrs(&ifa_list) == -1) return upDownBytes;
+
+    for (ifa = ifa_list; ifa; ifa = ifa->ifa_next)
+    {
+        /* Skip invalid interfaces */
+        if (ifa->ifa_name == NULL || ifa->ifa_addr == NULL || ifa->ifa_data == NULL)
+            continue;
+        
+        /* Skip interfaces that are not link level interfaces */
+        if (AF_LINK != ifa->ifa_addr->sa_family)
+            continue;
+
+        /* Skip interfaces that are not up or running */
+        if (!(ifa->ifa_flags & IFF_UP) && !(ifa->ifa_flags & IFF_RUNNING))
+            continue;
+        
+        /* Skip interfaces that are not ethernet or cellular */
+        if (strncmp(ifa->ifa_name, "en", 2) && strncmp(ifa->ifa_name, "pdp_ip", 6))
+            continue;
+        
+        struct if_data *if_data = (struct if_data *)ifa->ifa_data;
+        
+        upDownBytes.inputBytes += if_data->ifi_ibytes;
+        upDownBytes.outputBytes += if_data->ifi_obytes;
+    }
+    
+    freeifaddrs(ifa_list);
+    return upDownBytes;
+}
+
+static NSString* formattedSpeed(uint64_t bytes)
+{
+    if (0 == DATAUNIT) {
+        if (bytes < KILOBYTES) return @"0 KB/s";
+        else if (bytes < MEGABYTES) return [NSString stringWithFormat:@"%.0f KB", (double)bytes / KILOBYTES];
+        else if (bytes < GIGABYTES) return [NSString stringWithFormat:@"%.2f MB", (double)bytes / MEGABYTES];
+        else return [NSString stringWithFormat:@"%.2f GB", (double)bytes / GIGABYTES];
+    } else {
+        if (bytes < KILOBITS) return @"0 Kb";
+        else if (bytes < MEGABITS) return [NSString stringWithFormat:@"%.0f Kb", (double)bytes / KILOBITS];
+        else if (bytes < GIGABITS) return [NSString stringWithFormat:@"%.2f Mb", (double)bytes / MEGABITS];
+        else return [NSString stringWithFormat:@"%.2f Gb", (double)bytes / GIGABITS];
+    }
+}
+
+static NSAttributedString* formattedAttributedSpeedString(BOOL isUp)
+{
+    @autoreleasepool {
+        if (!attributedUploadPrefix)
+            attributedUploadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:FONT_SIZE]}];
+        if (!attributedDownloadPrefix)
+            attributedDownloadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:FONT_SIZE]}];
+        
+        NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
+        
+        UpDownBytes upDownBytes = getUpDownBytes();
+        
+        uint64_t diff;
+        
+        if (isUp) {
+            if (upDownBytes.outputBytes > prevOutputBytes)
+                diff = upDownBytes.outputBytes - prevOutputBytes;
+            else
+                diff = 0;
+            prevOutputBytes = upDownBytes.outputBytes;
+            [mutableString appendAttributedString:attributedUploadPrefix];
+        } else {
+            if (upDownBytes.inputBytes > prevInputBytes)
+                diff = upDownBytes.inputBytes - prevInputBytes;
+            else
+                diff = 0;
+            prevInputBytes = upDownBytes.inputBytes;
+            [mutableString appendAttributedString:attributedDownloadPrefix];
+        }
+        
+        if (DATAUNIT == 1)
+            diff *= 8;
+        
+        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+        
+        return [mutableString copy];
+    }
 }
 
 
@@ -169,6 +275,10 @@ static NSString* formattedDate()
  */
 static NSAttributedString* formattedAttributedString(NSInteger identifier)
 {
+    if (identifier == 1)
+        return formattedAttributedSpeedString(YES);
+    else if (identifier == 2)
+        return formattedAttributedSpeedString(NO);
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
         
@@ -732,8 +842,8 @@ static void DumpThreads(void)
 - (void) updateAllLabels
 {
     [self updateLabel: _leftLabel identifier: [self leftWidgetID]];
-    [self updateLabel: _centerLabel identifier: [self widgetID: @"center"]];
-    [self updateLabel: _rightLabel identifier: [self widgetID: @"right"]];
+    [self updateLabel: _centerLabel identifier: 1];//[self widgetID: @"center"]];
+    [self updateLabel: _rightLabel identifier: 2];//[self widgetID: @"right"]];
 }
 
 - (void) updateLabel:(UILabel *) label identifier:(NSInteger) identifier
