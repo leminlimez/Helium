@@ -119,6 +119,7 @@ OBJC_EXTERN void SetHUDEnabled(BOOL isEnabled);
     [_authorLabel setTextColor:[UIColor whiteColor]];
     [_authorLabel setFont:[UIFont systemFontOfSize:14.0]];
     [_authorLabel sizeToFit];
+    [_authorLabel setAlpha:0.0];
     [self.view addSubview:_authorLabel];
     
     [_authorLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
