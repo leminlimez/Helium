@@ -1,3 +1,10 @@
+//
+//  HUDMainApplication.m
+//  
+//
+//  Created by lemin on 10/5/23.
+//
+
 #import <cstddef>
 #import <cstdlib>
 #import <dlfcn.h>
@@ -132,163 +139,37 @@ void SetHUDEnabled(BOOL isEnabled)
 #define UPDATE_INTERVAL 1.0
 #define SHOW_ALWAYS 1
 #define INLINE_SEPARATOR "\t"
-#define IDLE_INTERVAL 3.0
 
-static double FONT_SIZE = 8.0;
-static uint8_t DATAUNIT = 0;
-static uint8_t SHOW_UPLOAD_SPEED = 1;
-//static uint8_t SHOW_DOWNLOAD_SPEED = 1;
-static uint8_t SHOW_DOWNLOAD_SPEED_FIRST = 1;
-static uint8_t SHOW_SECOND_SPEED_IN_NEW_LINE = 0;
-static const char *UPLOAD_PREFIX = "▲";
-static const char *DOWNLOAD_PREFIX = "▼";
+static double FONT_SIZE = 10.0;
+static NSString  *dateFormat = @"E MMM dd";
+static NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 
-typedef struct {
-    uint64_t inputBytes;
-    uint64_t outputBytes;
-} UpDownBytes;
-
+// MARK: Widget Formatting Functions
 static NSString* formattedDate()
 {
-    return [NSString stringWithFormat: @"Oct 4 2023"];
+    NSDate *currentDate = [NSDate date];
+    [formatter setDateFormat:dateFormat];
+    return [formatter stringFromDate:currentDate];
 }
 
-//static NSString* formattedSpeed(uint64_t bytes, BOOL isFocused)
-//{
-//    if (isFocused)
-//    {
-//        if (0 == DATAUNIT)
-//        {
-//            if (bytes < KILOBYTES) return @"0 KB";
-//            else if (bytes < MEGABYTES) return [NSString stringWithFormat:@"%.0f KB", (double)bytes / KILOBYTES];
-//            else if (bytes < GIGABYTES) return [NSString stringWithFormat:@"%.2f MB", (double)bytes / MEGABYTES];
-//            else return [NSString stringWithFormat:@"%.2f GB", (double)bytes / GIGABYTES];
-//        }
-//        else
-//        {
-//            if (bytes < KILOBITS) return @"0 Kb";
-//            else if (bytes < MEGABITS) return [NSString stringWithFormat:@"%.0f Kb", (double)bytes / KILOBITS];
-//            else if (bytes < GIGABITS) return [NSString stringWithFormat:@"%.2f Mb", (double)bytes / MEGABITS];
-//            else return [NSString stringWithFormat:@"%.2f Gb", (double)bytes / GIGABITS];
-//        }
-//    }
-//    else {
-//        if (0 == DATAUNIT)
-//        {
-//            if (bytes < KILOBYTES) return @"0 KB/s";
-//            else if (bytes < MEGABYTES) return [NSString stringWithFormat:@"%.0f KB/s", (double)bytes / KILOBYTES];
-//            else if (bytes < GIGABYTES) return [NSString stringWithFormat:@"%.2f MB/s", (double)bytes / MEGABYTES];
-//            else return [NSString stringWithFormat:@"%.2f GB/s", (double)bytes / GIGABYTES];
-//        }
-//        else
-//        {
-//            if (bytes < KILOBITS) return @"0 Kb/s";
-//            else if (bytes < MEGABITS) return [NSString stringWithFormat:@"%.0f Kb/s", (double)bytes / KILOBITS];
-//            else if (bytes < GIGABITS) return [NSString stringWithFormat:@"%.2f Mb/s", (double)bytes / MEGABITS];
-//            else return [NSString stringWithFormat:@"%.2f Gb/s", (double)bytes / GIGABITS];
-//        }
-//    }
-//}
-
-static UpDownBytes getUpDownBytes()
+/*
+ Widget Identifiers:
+ 0 = Date
+ 1 = Network Up
+ 2 = Network Down
+ 3 = Device Temp
+ 4 = Weather
+ */
+static NSAttributedString* formattedAttributedString(NSInteger identifier)
 {
-    struct ifaddrs *ifa_list = 0, *ifa;
-    UpDownBytes upDownBytes;
-    upDownBytes.inputBytes = 0;
-    upDownBytes.outputBytes = 0;
-    
-    if (getifaddrs(&ifa_list) == -1) return upDownBytes;
-
-    for (ifa = ifa_list; ifa; ifa = ifa->ifa_next)
-    {
-        /* Skip invalid interfaces */
-        if (ifa->ifa_name == NULL || ifa->ifa_addr == NULL || ifa->ifa_data == NULL)
-            continue;
-        
-        /* Skip interfaces that are not link level interfaces */
-        if (AF_LINK != ifa->ifa_addr->sa_family)
-            continue;
-
-        /* Skip interfaces that are not up or running */
-        if (!(ifa->ifa_flags & IFF_UP) && !(ifa->ifa_flags & IFF_RUNNING))
-            continue;
-        
-        /* Skip interfaces that are not ethernet or cellular */
-        if (strncmp(ifa->ifa_name, "en", 2) && strncmp(ifa->ifa_name, "pdp_ip", 6))
-            continue;
-        
-        struct if_data *if_data = (struct if_data *)ifa->ifa_data;
-        
-        upDownBytes.inputBytes += if_data->ifi_ibytes;
-        upDownBytes.outputBytes += if_data->ifi_obytes;
-    }
-    
-    freeifaddrs(ifa_list);
-    return upDownBytes;
-}
-
-static BOOL shouldUpdateSpeedLabel;
-static uint64_t prevOutputBytes = 0, prevInputBytes = 0;
-static NSAttributedString *attributedUploadPrefix = nil;
-static NSAttributedString *attributedDownloadPrefix = nil;
-static NSAttributedString *attributedInlineSeparator = nil;
-static NSAttributedString *attributedLineSeparator = nil;
-
-static NSAttributedString* formattedAttributedString(BOOL isFocused)
-{
-    @autoreleasepool
-    {
-        if (!attributedUploadPrefix)
-            attributedUploadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:FONT_SIZE]}];
-        if (!attributedDownloadPrefix)
-            attributedDownloadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:FONT_SIZE]}];
-        if (!attributedInlineSeparator)
-            attributedInlineSeparator = [[NSAttributedString alloc] initWithString:[NSString stringWithUTF8String:INLINE_SEPARATOR] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}];
-        if (!attributedLineSeparator)
-            attributedLineSeparator = [[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}];
-
+    @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
         
-        UpDownBytes upDownBytes = getUpDownBytes();
-
-        uint64_t upDiff;
-        uint64_t downDiff;
-
-        if (isFocused)
-        {
-            upDiff = upDownBytes.outputBytes;
-            downDiff = upDownBytes.inputBytes;
+        if (identifier == 0) {
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedDate() attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+        } else {
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"???" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
         }
-        else
-        {
-            if (upDownBytes.outputBytes > prevOutputBytes)
-                upDiff = upDownBytes.outputBytes - prevOutputBytes;
-            else
-                upDiff = 0;
-            
-            if (upDownBytes.inputBytes > prevInputBytes)
-                downDiff = upDownBytes.inputBytes - prevInputBytes;
-            else
-                downDiff = 0;
-        }
-        
-        prevOutputBytes = upDownBytes.outputBytes;
-        prevInputBytes = upDownBytes.inputBytes;
-
-        if (!SHOW_ALWAYS && (upDiff < 2 * KILOBYTES && downDiff < 2 * KILOBYTES))
-        {
-            shouldUpdateSpeedLabel = NO;
-            return nil;
-        }
-        else shouldUpdateSpeedLabel = YES;
-
-        if (DATAUNIT == 1)
-        {
-            upDiff *= 8;
-            downDiff *= 8;
-        }
-        
-        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedDate() attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
         
         return [mutableString copy];
     }
@@ -748,12 +629,19 @@ static void DumpThreads(void)
     NSMutableDictionary *_userDefaults;
     NSMutableArray <NSLayoutConstraint *> *_constraints;
     FBSOrientationObserver *_orientationObserver;
-//    UIVisualEffectView *_blurView;
+    
     UIView *_contentView;
-    UILabel *_dateLabel;
+    
+//    UIView *_leftView;
+    UILabel *_leftLabel;
+    
+//    UIView *_centerView;
+//    UILabel *_centerLabel;
+//    
+//    UIView *_rightView;
+//    UILabel *_rightLabel;
+    
     NSTimer *_timer;
-//    UITapGestureRecognizer *_tapGestureRecognizer;
-    BOOL _isFocused;
     UIInterfaceOrientation _orientation;
 }
 
@@ -794,6 +682,8 @@ static void DumpThreads(void)
     );
 }
 
+#pragma mark - User Default Stuff
+
 #define USER_DEFAULTS_PATH @"/var/mobile/Library/Preferences/com.leemin.helium.plist"
 
 - (void)loadUserDefaults:(BOOL)forceReload
@@ -802,37 +692,11 @@ static void DumpThreads(void)
         _userDefaults = [[NSDictionary dictionaryWithContentsOfFile:USER_DEFAULTS_PATH] mutableCopy] ?: [NSMutableDictionary dictionary];
 }
 
-- (void)reloadUserDefaults
+- (void) reloadUserDefaults
 {
-    [self loadUserDefaults:YES];
-
-    NSInteger selectedMode = [self selectedMode];
-    BOOL singleLineMode = [self singleLineMode];
-    BOOL usesBitrate = [self usesBitrate];
-    BOOL usesArrowPrefixes = [self usesArrowPrefixes];
-//    BOOL usesLargeFont = [self usesLargeFont];
-
-    _dateLabel.textAlignment = (selectedMode == 1 ? NSTextAlignmentCenter : NSTextAlignmentLeft);
+    [self loadUserDefaults: YES];
     
-    DATAUNIT = usesBitrate;
-    SHOW_UPLOAD_SPEED = !singleLineMode;
-    SHOW_DOWNLOAD_SPEED_FIRST = (selectedMode == 1);
-    SHOW_SECOND_SPEED_IN_NEW_LINE = (selectedMode == 0 || selectedMode == 2);
-    FONT_SIZE = 13.0;
-//    FONT_SIZE = (usesLargeFont ? 9.0 : 8.0);
-    
-    UPLOAD_PREFIX = (usesArrowPrefixes ? "↑" : "▲");
-    DOWNLOAD_PREFIX = (usesArrowPrefixes ? "↓" : "▼");
-    
-    prevInputBytes = 0;
-    prevOutputBytes = 0;
-    
-    attributedUploadPrefix = nil;
-    attributedDownloadPrefix = nil;
-
     [self updateViewConstraints];
-    [self onFocus:_contentView];
-    [self performSelector:@selector(onBlur:) withObject:_contentView afterDelay:IDLE_INTERVAL];
 }
 
 + (BOOL)passthroughMode
@@ -840,47 +704,40 @@ static void DumpThreads(void)
     return [[[NSDictionary dictionaryWithContentsOfFile:USER_DEFAULTS_PATH] objectForKey:@"passthroughMode"] boolValue];
 }
 
-- (NSInteger)selectedMode
-{
-    [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey:@"selectedMode"];
-    return mode ? [mode integerValue] : 1;
-}
-
-- (BOOL)singleLineMode
-{
-    [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey:@"singleLineMode"];
-    return mode ? [mode boolValue] : NO;
-}
-
-- (BOOL)usesBitrate
-{
-    [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey:@"usesBitrate"];
-    return mode ? [mode boolValue] : NO;
-}
-
-- (BOOL)usesArrowPrefixes
-{
-    [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey:@"usesArrowPrefixes"];
-    return mode ? [mode boolValue] : NO;
-}
-
-//- (BOOL)usesLargeFont
-//{
-//    [self loadUserDefaults:NO];
-//    NSNumber *mode = [_userDefaults objectForKey:@"usesLargeFont"];
-//    return mode ? [mode boolValue] : NO;
-//}
-
 - (BOOL)usesRotation
 {
     [self loadUserDefaults:NO];
     NSNumber *mode = [_userDefaults objectForKey:@"usesRotation"];
     return mode ? [mode boolValue] : NO;
 }
+
+- (NSInteger) leftWidgetID
+{
+    [self loadUserDefaults:NO];
+    NSNumber *identifier = [_userDefaults objectForKey:@"leftWidgetID"];
+    return identifier ? [identifier integerValue] : 0;
+}
+
+#pragma mark - Label Updating
+
+- (void) updateAllLabels
+{
+    [self updateLeftLabel];
+}
+
+- (void) updateLeftLabel
+{
+#if DEBUG
+    os_log_debug(OS_LOG_DEFAULT, "updateLeftLabel");
+#endif
+    NSInteger identifier = [self leftWidgetID];
+    NSAttributedString *attributedText = formattedAttributedString(identifier);
+    if (attributedText)
+        [_leftLabel setAttributedText: attributedText];
+//    [_leftLabel sizeToFit];
+}
+
+#pragma mark - Initialization and Deallocation
 
 - (instancetype)init
 {
@@ -905,16 +762,7 @@ static void DumpThreads(void)
     [_orientationObserver invalidate];
 }
 
-- (void)updateSpeedLabel
-{
-#if DEBUG
-    os_log_debug(OS_LOG_DEFAULT, "updateSpeedLabel");
-#endif
-    NSAttributedString *attributedText = formattedAttributedString(_isFocused);
-    if (attributedText)
-        [_dateLabel setAttributedText:attributedText];
-    [_dateLabel sizeToFit];
-}
+#pragma mark - HUD UI Main Functions
 
 static inline CGFloat orientationAngle(UIInterfaceOrientation orientation)
 {
@@ -950,14 +798,13 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         if (orientation == UIInterfaceOrientationPortrait)
         {
             [UIView animateWithDuration:duration animations:^{
-                self->_contentView.alpha = self->_isFocused ? 1.0 : 1.0;
-//                self->_contentView.alpha = self->_isFocused ? 1.0 : 0.667;
+                self->_contentView.alpha =1.0;
             }];
         }
         else
         {
             [UIView animateWithDuration:duration animations:^{
-                self->_contentView.alpha = 0.0;
+                self->_contentView.alpha = 0.5;
             }];
         }
         return;
@@ -972,8 +819,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     [self.view setHidden:YES];
     [self.view setBounds:bounds];
     
-    [self onBlur:self->_contentView duration:duration];
-    
     [UIView animateWithDuration:duration animations:^{
         [self.view setTransform:CGAffineTransformMakeRotation(orientationAngle(orientation))];
     } completion:^(BOOL finished) {
@@ -981,51 +826,47 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     }];
 }
 
-- (void)viewDidLoad
+- (void) viewDidLoad
 {
     [super viewDidLoad];
     /* Just put your HUD view here */
-
+    
+    // MARK: Main Content View
     _contentView = [[UIView alloc] init];
     _contentView.backgroundColor = [UIColor clearColor];
     _contentView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_contentView];
-
-//    _blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
-//    _blurView.layer.cornerRadius = 4;
-//    _blurView.layer.masksToBounds = YES;
-//    _blurView.translatesAutoresizingMaskIntoConstraints = NO;
-//    [_contentView addSubview:_blurView];
-
-//    _speedLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-//    _speedLabel.numberOfLines = 0;
-//    _speedLabel.textAlignment = NSTextAlignmentCenter;
-//    _speedLabel.textColor = [UIColor whiteColor];
-//    _speedLabel.font = [UIFont systemFontOfSize:FONT_SIZE];
-//    _speedLabel.translatesAutoresizingMaskIntoConstraints = NO;
-//    [_blurView.contentView addSubview:_speedLabel];
-    _dateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _dateLabel.numberOfLines = 0;
-    _dateLabel.textAlignment = NSTextAlignmentCenter;
-    _dateLabel.textColor = [UIColor whiteColor];
-    _dateLabel.font = [UIFont systemFontOfSize:FONT_SIZE];
-    _dateLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [_contentView addSubview:_dateLabel];
-
-//    _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognized:)];
-//    _tapGestureRecognizer.numberOfTapsRequired = 1;
-//    _tapGestureRecognizer.numberOfTouchesRequired = 1;
-//    [_contentView addGestureRecognizer:_tapGestureRecognizer];
-//    [_contentView setUserInteractionEnabled:YES];
-    [_contentView setUserInteractionEnabled:NO];
-
+    
+    // MARK: Left Widget
+    CGRect leftWidgetRect = CGRectMake(10, 0, 105, 20);
+//    _leftView = [[UIView alloc] initWithFrame: leftWidgetRect];
+////    _leftView = [[UIView alloc] init];
+//    _leftView.backgroundColor = [UIColor whiteColor];
+//    _leftView.alpha = 0;
+//    _leftView.layer.masksToBounds = YES;
+////    _leftView.translatesAutoresizingMaskIntoConstraints = NO;
+//    [_contentView addSubview:_leftView];
+    
+    _leftLabel = [[UILabel alloc] initWithFrame: leftWidgetRect];
+    _leftLabel.numberOfLines = 0;
+    _leftLabel.textAlignment = NSTextAlignmentCenter;
+    _leftLabel.textColor = [UIColor whiteColor];
+    _leftLabel.backgroundColor = [UIColor blackColor];
+    _leftLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
+    _leftLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [_contentView addSubview:_leftLabel];
+    
     [self reloadUserDefaults];
+    
+    [self updateAllLabels];
 }
+
+#pragma mark - Timer and View Updating
 
 - (void)resetLoopTimer
 {
     [_timer invalidate];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:UPDATE_INTERVAL target:self selector:@selector(updateSpeedLabel) userInfo:nil repeats:YES];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:UPDATE_INTERVAL target:self selector:@selector(updateAllLabels) userInfo:nil repeats:YES];
 }
 
 - (void)stopLoopTimer
@@ -1070,99 +911,21 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:(isPad ? 30 : 20)]];
     }
     
-//    [_constraints addObjectsFromArray:@[
-//        [_speedLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
-//        [_speedLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-//    ]];
-    
+    // MARK: Left Widget
     [_constraints addObjectsFromArray:@[
-        [_dateLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
-        [_dateLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
+        [_leftLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
+        [_leftLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
+        [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:10]
     ]];
-    [_constraints addObject:[_dateLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:25]];
-    
-//    NSInteger mode = [self selectedMode];
-//    if (mode == 1)
-//        [_constraints addObject:[_speedLabel.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor]];
-//    else if (mode == 0)
-//        [_constraints addObject:[_speedLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:10]];
-//    else
-//        [_constraints addObject:[_speedLabel.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-10]];
-//
 //    [_constraints addObjectsFromArray:@[
-//        [_blurView.topAnchor constraintEqualToAnchor:_speedLabel.topAnchor constant:-2],
-//        [_blurView.leadingAnchor constraintEqualToAnchor:_speedLabel.leadingAnchor constant:-4],
-//        [_blurView.trailingAnchor constraintEqualToAnchor:_speedLabel.trailingAnchor constant:4],
-//        [_blurView.bottomAnchor constraintEqualToAnchor:_speedLabel.bottomAnchor constant:2],
+//        [_leftView.topAnchor constraintEqualToAnchor:_leftLabel.topAnchor constant:-2],
+//        [_leftView.leadingAnchor constraintEqualToAnchor:_leftLabel.leadingAnchor constant:-4],
+//        [_leftView.trailingAnchor constraintEqualToAnchor:_leftLabel.trailingAnchor constant:4],
+//        [_leftView.bottomAnchor constraintEqualToAnchor:_leftLabel.bottomAnchor constant:2],
 //    ]];
-
+    
     [NSLayoutConstraint activateConstraints:_constraints];
     [super updateViewConstraints];
-}
-
-- (void)onFocus:(UIView *)view
-{
-    [self onFocus:view duration:0.2];
-}
-
-- (void)onFocus:(UIView *)view duration:(NSTimeInterval)duration
-{
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(onBlur:) object:view];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(onFocus:) object:view];
-    
-    _isFocused = YES;
-    [self updateSpeedLabel];
-    [self resetLoopTimer];
-
-    NSInteger mode = [self selectedMode];
-    
-    CGFloat scaleFactor = 0.05;
-    CGFloat topTrans = CGRectGetHeight(view.bounds) * (scaleFactor / 2);
-    CGFloat leadingTrans = (mode == 1 ? 0 : (mode == 0 ? CGRectGetWidth(view.bounds) * (scaleFactor / 2) : -CGRectGetWidth(view.bounds) * (scaleFactor / 2)));
-
-    // [view setUserInteractionEnabled:NO];
-    [view setTransform:CGAffineTransformIdentity];
-    [UIView animateWithDuration:duration animations:^{
-        if (ABS(leadingTrans) > 1e-6 || ABS(topTrans) > 1e-6)
-        {
-            CGAffineTransform transform = CGAffineTransformMakeTranslation(leadingTrans, topTrans);
-            view.transform = CGAffineTransformScale(transform, 1.0 + scaleFactor, 1.0 + scaleFactor);
-        }
-        
-        view.alpha = 1.0;
-    } completion:^(BOOL finished) {
-        [self performSelector:@selector(onBlur:) withObject:view afterDelay:IDLE_INTERVAL];
-    }];
-}
-
-- (void)onBlur:(UIView *)view
-{
-    [self onBlur:view duration:0.6];
-}
-
-- (void)onBlur:(UIView *)view duration:(NSTimeInterval)duration
-{
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(onBlur:) object:view];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(onFocus:) object:view];
-    
-    _isFocused = NO;
-    [self updateSpeedLabel];
-    [self resetLoopTimer];
-
-    [UIView animateWithDuration:duration animations:^{
-        view.transform = CGAffineTransformIdentity;
-        view.alpha = 1.0;
-    } completion:^(BOOL finished) {
-        // [view setUserInteractionEnabled:YES];
-    }];
-}
-
-- (void)tapGestureRecognized:(UITapGestureRecognizer *)sender
-{
-#if DEBUG
-    os_log_info(OS_LOG_DEFAULT, "TAPPED");
-#endif
-    [self onFocus:sender.view];
 }
 
 @end
