@@ -3,8 +3,6 @@ APP_BUILD_FILES="$WORKING_LOCATION/layout/Applications/XXTAssistiveTouch.app"
 DEBUG_LOCATION="$WORKING_LOCATION/.theos/obj/debug"
 BUILD_LOCATION="$DEBUG_LOCATION/XXTAssistiveTouch.app"
 
-make clean
-
 if [ ! -d "build" ]; then
     mkdir build
 fi
