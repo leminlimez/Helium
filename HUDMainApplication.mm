@@ -1053,7 +1053,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     [_constraints addObjectsFromArray:@[
         [_centerLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_centerLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-        [_centerLabel.leadingAnchor constraintEqualToAnchor:_contentView.centerXAnchor],
+        [_centerLabel.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor],
         [_centerLabel.widthAnchor constraintEqualToConstant:WIDGET_WIDTH],
     ]];
     
@@ -1061,7 +1061,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     [_constraints addObjectsFromArray:@[
         [_rightLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_rightLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-        [_rightLabel.leadingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-10],
+        [_rightLabel.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-10],
         [_rightLabel.widthAnchor constraintEqualToConstant:WIDGET_WIDTH],
     ]];
     
