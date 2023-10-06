@@ -75,11 +75,7 @@ OBJC_EXTERN void SetHUDEnabled(BOOL isEnabled);
 @implementation RootViewController {
     NSMutableDictionary *_userDefaults;
     MainButton *_mainButton;
-    //    UIButton *_settingsButton;
-    //    UIButton *_topLeftButton;
-    //    UIButton *_topRightButton;
-    //    UIButton *_topCenterButton;
-    //    UILabel *_authorLabel;
+    UILabel *_authorLabel;
 }
 
 - (void) loadView
@@ -88,16 +84,13 @@ OBJC_EXTERN void SetHUDEnabled(BOOL isEnabled);
     self.view = [[UIView alloc] initWithFrame:bounds];
     
     // rgba(0, 4, 128, 1.0)
+    // MARK: Background
     self.view.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:4.0f/255.0f blue:128.0f/255.0f alpha:1.0f];
     
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapView:)];
-    tap.numberOfTapsRequired = 1;
-    tap.numberOfTouchesRequired = 1;
-    [self.view addGestureRecognizer:tap];
-    [self.view setUserInteractionEnabled:YES];
-
-//    BOOL isPad = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad);
+    // MARK: Init Safe Area
+    UILayoutGuide *safeArea = self.view.safeAreaLayoutGuide;
     
+    // MARK: Main Button
     _mainButton = [MainButton buttonWithType:UIButtonTypeSystem];
     [_mainButton setTintColor:[UIColor whiteColor]];
     [_mainButton addTarget:self action:@selector(tapMainButton:) forControlEvents:UIControlEventTouchUpInside];
@@ -117,6 +110,21 @@ OBJC_EXTERN void SetHUDEnabled(BOOL isEnabled);
     [NSLayoutConstraint activateConstraints:@[
         [_mainButton.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
         [_mainButton.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor],
+    ]];
+    
+    // MARK: Author Label
+    _authorLabel = [[UILabel alloc] init];
+    [_authorLabel setNumberOfLines:0];
+    [_authorLabel setTextAlignment:NSTextAlignmentCenter];
+    [_authorLabel setTextColor:[UIColor whiteColor]];
+    [_authorLabel setFont:[UIFont systemFontOfSize:14.0]];
+    [_authorLabel sizeToFit];
+    [self.view addSubview:_authorLabel];
+    
+    [_authorLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [NSLayoutConstraint activateConstraints:@[
+        [_authorLabel.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
+        [_authorLabel.bottomAnchor constraintEqualToAnchor:safeArea.bottomAnchor constant:-40.0f],
     ]];
     
     [self reloadMainButtonState];
@@ -182,7 +190,7 @@ OBJC_EXTERN void SetHUDEnabled(BOOL isEnabled);
 {
     [UIView transitionWithView:self.view duration:0.25 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
         [_mainButton setTitle:(IsHUDEnabled() ? NSLocalizedString(@"Exit HUD", nil) : NSLocalizedString(@"Open HUD", nil)) forState:UIControlStateNormal];
-//        [_authorLabel setText:(IsHUDEnabled() ? NSLocalizedString(@"You can quit this app now.\nThe HUD will persist on your screen.", nil) : NSLocalizedString(@"Made with ♥ by @i_82 and @jmpews", nil))];
+        [_authorLabel setText:(IsHUDEnabled() ? NSLocalizedString(@"You can quit this app now.\nThe HUD will persist on your screen.", nil) : NSLocalizedString(@"Made with ♥ by lemin\nBig thanks to @i_82 and @jmpews", nil))];
     } completion:nil];
 }
 
