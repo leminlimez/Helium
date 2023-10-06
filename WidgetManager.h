@@ -6,4 +6,4 @@
 //
 
 NSAttributedString* formattedAttributedString(NSInteger identifier);
-
+NSAttributedString* formattedAttributedString(NSArray *identifiers);
