@@ -142,10 +142,14 @@ void SetHUDEnabled(BOOL isEnabled)
 
 static double FONT_SIZE = 10.0;
 static double WIDGET_WIDTH = 105.0;
+
+#pragma mark - Widget-specific Variables
+// MARK: 0 - Date Widget
 static NSString  *dateFormat = @"E MMM dd";
 static NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 
-// MARK: Widget Formatting Functions
+#pragma mark - Widget-specific Functions
+// MARK: Date Formatting
 static NSString* formattedDate()
 {
     NSDate *currentDate = [NSDate date];
@@ -153,6 +157,8 @@ static NSString* formattedDate()
     return [formatter stringFromDate:currentDate];
 }
 
+
+#pragma mark - Main Widget Functions
 /*
  Widget Identifiers:
  0 = Date
@@ -697,20 +703,27 @@ static void DumpThreads(void)
 
 + (BOOL)passthroughMode
 {
-    return [[[NSDictionary dictionaryWithContentsOfFile:USER_DEFAULTS_PATH] objectForKey:@"passthroughMode"] boolValue];
+    return [[[NSDictionary dictionaryWithContentsOfFile:USER_DEFAULTS_PATH] objectForKey: @"passthroughMode"] boolValue];
 }
 
 - (BOOL)usesRotation
 {
     [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey:@"usesRotation"];
+    NSNumber *mode = [_userDefaults objectForKey: @"usesRotation"];
     return mode ? [mode boolValue] : NO;
 }
 
 - (NSInteger) leftWidgetID
 {
     [self loadUserDefaults:NO];
-    NSNumber *identifier = [_userDefaults objectForKey:@"leftWidgetID"];
+    NSNumber *identifier = [_userDefaults objectForKey: @"leftWidgetID"];
+    return identifier ? [identifier integerValue] : 0;
+}
+
+- (NSInteger) widgetID:(NSString*) widgetName
+{
+    [self loadUserDefaults:NO];
+    NSNumber *identifier = [_userDefaults objectForKey: [NSString stringWithFormat: @"%@WidgetID", widgetName]];
     return identifier ? [identifier integerValue] : 0;
 }
 
@@ -719,6 +732,8 @@ static void DumpThreads(void)
 - (void) updateAllLabels
 {
     [self updateLabel: _leftLabel identifier: [self leftWidgetID]];
+    [self updateLabel: _centerLabel identifier: [self widgetID: @"center"]];
+    [self updateLabel: _rightLabel identifier: [self widgetID: @"right"]];
 }
 
 - (void) updateLabel:(UILabel *) label identifier:(NSInteger) identifier
@@ -841,6 +856,26 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     _leftLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [_contentView addSubview:_leftLabel];
     
+    // MARK: Center Widget
+    _centerLabel = [[UILabel alloc] initWithFrame: CGRectZero];
+    _centerLabel.numberOfLines = 0;
+    _centerLabel.textAlignment = NSTextAlignmentCenter;
+    _centerLabel.textColor = [UIColor whiteColor];
+    _centerLabel.backgroundColor = [UIColor blackColor];
+    _centerLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
+    _centerLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [_contentView addSubview:_centerLabel];
+    
+    // MARK: Right Widget
+    _rightLabel = [[UILabel alloc] initWithFrame: CGRectZero];
+    _rightLabel.numberOfLines = 0;
+    _rightLabel.textAlignment = NSTextAlignmentCenter;
+    _rightLabel.textColor = [UIColor whiteColor];
+    _rightLabel.backgroundColor = [UIColor blackColor];
+    _rightLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
+    _rightLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [_contentView addSubview:_rightLabel];
+    
     [self reloadUserDefaults];
     
     [self updateAllLabels];
@@ -902,6 +937,22 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         [_leftLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
         [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:10],
         [_leftLabel.widthAnchor constraintEqualToConstant:WIDGET_WIDTH],
+    ]];
+    
+    // MARK: Center Widget
+    [_constraints addObjectsFromArray:@[
+        [_centerLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
+        [_centerLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
+        [_centerLabel.leadingAnchor constraintEqualToAnchor:_contentView.centerXAnchor],
+        [_centerLabel.widthAnchor constraintEqualToConstant:WIDGET_WIDTH],
+    ]];
+    
+    // MARK: Right Widget
+    [_constraints addObjectsFromArray:@[
+        [_rightLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
+        [_rightLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
+        [_rightLabel.leadingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-10],
+        [_rightLabel.widthAnchor constraintEqualToConstant:WIDGET_WIDTH],
     ]];
     
     [NSLayoutConstraint activateConstraints:_constraints];
