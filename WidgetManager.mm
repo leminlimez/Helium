@@ -29,7 +29,6 @@ static double FONT_SIZE = 10.0;
 
 #pragma mark - Widget-specific Variables
 // MARK: 0 - Date Widget
-static NSString  *dateFormat = @"E MMM dd";
 static NSDateFormatter *formatter = nil;
 
 // MARK: Net Speed Widget
@@ -47,7 +46,7 @@ static NSAttributedString *attributedUploadPrefix = nil;
 static NSAttributedString *attributedDownloadPrefix = nil;
 
 #pragma mark - Date Widget
-static NSString* formattedDate()
+static NSString* formattedDate(NSString *dateFormat)
 {
     if (!formatter) {
         formatter = [[NSDateFormatter alloc] init];
@@ -169,9 +168,49 @@ NSAttributedString* formattedAttributedString(NSInteger identifier)
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
         
         if (identifier == 0) {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedDate() attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedDate(@"E MMM dd") attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
         } else {
             [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"???" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+        }
+        
+        return [mutableString copy];
+    }
+}
+
+/*
+ Widget Identifiers:
+ 0 = None
+ 1 = Date
+ 2 = Network Up/Down
+ 3 = Device Temp
+ 4 = Weather
+ */
+NSAttributedString* formattedAttributedString(NSArray *identifiers)
+{
+    @autoreleasepool {
+        NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
+        
+        if (identifiers) {
+            for (id idInfo in identifiers) {
+                NSDictionary *parsedInfo = idInfo;
+                NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
+                switch (parsedID) {
+                    case 1:
+                        // Date
+                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedDate([parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : @"E MMM dd") attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+                        break;
+                    case 2:
+                        // Network Speed
+                        [mutableString appendAttributedString:formattedAttributedSpeedString([parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO)];
+                        break;
+                    default:
+                        // do not add anything
+                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+                        break;
+                }
+            }
+        } else {
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
         }
         
         return [mutableString copy];

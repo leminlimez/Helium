@@ -588,6 +588,8 @@ static void DumpThreads(void)
     NSMutableArray <NSLayoutConstraint *> *_constraints;
     FBSOrientationObserver *_orientationObserver;
     
+    NSArray *testArr;
+    
     UIView *_contentView;
     
     UILabel *_leftLabel;
@@ -678,13 +680,32 @@ static void DumpThreads(void)
     return identifier ? [identifier integerValue] : 0;
 }
 
+- (NSArray*) widgetIDs:(NSString*) widgetName
+{
+    [self loadUserDefaults:NO];
+    NSArray *identifiers = [_userDefaults objectForKey: [NSString stringWithFormat: @"%@WidgetIDs", widgetName]];
+    return identifiers;
+}
+
 #pragma mark - Label Updating
 
 - (void) updateAllLabels
 {
+    if (!testArr) {
+        testArr = @[
+            @{
+                @"widgetID" : @(2),
+                @"isUp" : @(YES)
+            },
+            @{
+                @"widgetID" : @(1),
+                @"dateFormat" : @"MMM dd yy"
+            }
+        ];
+    }
     [self updateLabel: _leftLabel identifier: [self leftWidgetID]];
     [self updateLabel: _centerLabel identifier: 1];//[self widgetID: @"center"]];
-    [self updateLabel: _rightLabel identifier: 2];//[self widgetID: @"right"]];
+    [self updateLabel: _rightLabel identifiers: testArr];//[self widgetID: @"right"]];
 }
 
 - (void) updateLabel:(UILabel *) label identifier:(NSInteger) identifier
@@ -693,6 +714,16 @@ static void DumpThreads(void)
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
     NSAttributedString *attributedText = formattedAttributedString(identifier);
+    if (attributedText)
+        [label setAttributedText: attributedText];
+}
+
+- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers
+{
+#if DEBUG
+    os_log_debug(OS_LOG_DEFAULT, "updateLabel");
+#endif
+    NSAttributedString *attributedText = formattedAttributedString(identifiers);
     if (attributedText)
         [label setAttributedText: attributedText];
 }
