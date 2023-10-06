@@ -988,7 +988,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     
     [self reloadUserDefaults];
     
-    [self updateAllLabels];
+    [self resetLoopTimer];
 }
 
 #pragma mark - Timer and View Updating
