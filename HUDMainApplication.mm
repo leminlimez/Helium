@@ -632,14 +632,9 @@ static void DumpThreads(void)
     
     UIView *_contentView;
     
-//    UIView *_leftView;
     UILabel *_leftLabel;
-    
-//    UIView *_centerView;
-//    UILabel *_centerLabel;
-//    
-//    UIView *_rightView;
-//    UILabel *_rightLabel;
+    UILabel *_centerLabel;
+    UILabel *_rightLabel;
     
     NSTimer *_timer;
     UIInterfaceOrientation _orientation;
@@ -722,19 +717,17 @@ static void DumpThreads(void)
 
 - (void) updateAllLabels
 {
-    [self updateLeftLabel];
+    [self updateLabel: _leftLabel identifier: [self leftWidgetID]];
 }
 
-- (void) updateLeftLabel
+- (void) updateLabel:(UILabel *) label identifier:(NSInteger) identifier
 {
 #if DEBUG
-    os_log_debug(OS_LOG_DEFAULT, "updateLeftLabel");
+    os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
-    NSInteger identifier = [self leftWidgetID];
     NSAttributedString *attributedText = formattedAttributedString(identifier);
     if (attributedText)
-        [_leftLabel setAttributedText: attributedText];
-//    [_leftLabel sizeToFit];
+        [label setAttributedText: attributedText];
 }
 
 #pragma mark - Initialization and Deallocation
@@ -839,14 +832,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     
     // MARK: Left Widget
     CGRect leftWidgetRect = CGRectMake(10, 0, 105, 20);
-//    _leftView = [[UIView alloc] initWithFrame: leftWidgetRect];
-////    _leftView = [[UIView alloc] init];
-//    _leftView.backgroundColor = [UIColor whiteColor];
-//    _leftView.alpha = 0;
-//    _leftView.layer.masksToBounds = YES;
-////    _leftView.translatesAutoresizingMaskIntoConstraints = NO;
-//    [_contentView addSubview:_leftView];
-    
     _leftLabel = [[UILabel alloc] initWithFrame: leftWidgetRect];
     _leftLabel.numberOfLines = 0;
     _leftLabel.textAlignment = NSTextAlignmentCenter;
@@ -917,12 +902,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         [_leftLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
         [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:10]
     ]];
-//    [_constraints addObjectsFromArray:@[
-//        [_leftView.topAnchor constraintEqualToAnchor:_leftLabel.topAnchor constant:-2],
-//        [_leftView.leadingAnchor constraintEqualToAnchor:_leftLabel.leadingAnchor constant:-4],
-//        [_leftView.trailingAnchor constraintEqualToAnchor:_leftLabel.trailingAnchor constant:4],
-//        [_leftView.bottomAnchor constraintEqualToAnchor:_leftLabel.bottomAnchor constant:2],
-//    ]];
     
     [NSLayoutConstraint activateConstraints:_constraints];
     [super updateViewConstraints];
