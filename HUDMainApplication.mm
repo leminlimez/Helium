@@ -141,6 +141,7 @@ void SetHUDEnabled(BOOL isEnabled)
 #define INLINE_SEPARATOR "\t"
 
 static double FONT_SIZE = 10.0;
+static double WIDGET_WIDTH = 105.0;
 static NSString  *dateFormat = @"E MMM dd";
 static NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 
@@ -831,8 +832,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     [self.view addSubview:_contentView];
     
     // MARK: Left Widget
-    CGRect leftWidgetRect = CGRectMake(10, 0, 105, 20);
-    _leftLabel = [[UILabel alloc] initWithFrame: leftWidgetRect];
+    _leftLabel = [[UILabel alloc] initWithFrame: CGRectZero];
     _leftLabel.numberOfLines = 0;
     _leftLabel.textAlignment = NSTextAlignmentCenter;
     _leftLabel.textColor = [UIColor whiteColor];
@@ -900,7 +900,8 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     [_constraints addObjectsFromArray:@[
         [_leftLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_leftLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-        [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:10]
+        [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:10],
+        [_leftLabel.widthAnchor constraintEqualToConstant:WIDGET_WIDTH],
     ]];
     
     [NSLayoutConstraint activateConstraints:_constraints];
