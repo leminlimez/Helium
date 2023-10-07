@@ -699,8 +699,7 @@ static void DumpThreads(void)
                 @"isUp" : @(YES)
             },
             @{
-                @"widgetID" : @(1),
-                @"dateFormat" : @"MMM dd yy"
+                @"widgetID" : @(3)
             }
         ];
     }
