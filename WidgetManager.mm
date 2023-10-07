@@ -180,6 +180,42 @@ static NSString* formattedTemp()
     return @"??ºC";
 }
 
+#pragma mark - Battery Widget
+static NSString* formattedBattery(NSInteger valueType)
+{
+    NSDictionary *batteryInfo = getBatteryInfo();
+    if (batteryInfo) {
+        if (valueType == 0) {
+            // Watts
+            int watts = [batteryInfo[@"AdapterDetails"][@"Watts"] longLongValue];
+            if (watts) {
+                return [NSString stringWithFormat: @"%d W", watts];
+            } else {
+                return @"0 W";
+            }
+        } else if (valueType == 1) {
+            // Charging Current
+            double current = [batteryInfo[@"AdapterDetails"][@"Current"] doubleValue];
+            if (current) {
+                return [NSString stringWithFormat: @"%.0f mAh", current];
+            } else {
+                return @"0 mAh";
+            }
+        } else if (valueType == 2) {
+            // Regular Amperage
+            double amps = [batteryInfo[@"Amperage"] doubleValue];
+            if (amps) {
+                return [NSString stringWithFormat: @"%.0f mAh", amps];
+            } else {
+                return @"0 mAh";
+            }
+        } else {
+            return @"???";
+        }
+    }
+    return @"??";
+}
+
 
 #pragma mark - Main Widget Functions
 /*
@@ -215,8 +251,9 @@ NSAttributedString* formattedAttributedString(NSInteger identifier)
  1 = Date
  2 = Network Up/Down
  3 = Device Temp
- 4 = Weather
- 5 = Music Visualizer
+ 4 = Battery Detail
+ 5 = Weather
+ 6 = Music Visualizer
  */
 NSAttributedString* formattedAttributedString(NSArray *identifiers)
 {
@@ -240,6 +277,10 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers)
                     case 3:
                         // Device Temp
                         [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedTemp()] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+                        break;
+                    case 4:
+                        // Battery Stats
+                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedBattery([parsedInfo valueForKey:@"batteryValueType"] ? [[parsedInfo valueForKey:@"batteryValueType"] integerValue] : 0)] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
                         break;
                     default:
                         // do not add anything
