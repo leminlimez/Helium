@@ -13,6 +13,7 @@
 #import <sys/sysctl.h>
 #import <objc/runtime.h>
 #import "WidgetManager.h"
+#import <IOKit/IOKitLib.h>
 
 // Thanks to: https://github.com/lwlsw/NetworkSpeed13
 
@@ -154,6 +155,31 @@ static NSAttributedString* formattedAttributedSpeedString(BOOL isUp)
     }
 }
 
+#pragma mark - Battery Temp Widget
+NSDictionary* getBatteryInfo()
+{
+    CFDictionaryRef matching = IOServiceMatching("IOPMPowerSource");
+    io_service_t service = IOServiceGetMatchingService(kIOMasterPortDefault, matching);
+    CFMutableDictionaryRef prop = NULL;
+    IORegistryEntryCreateCFProperties(service, &prop, NULL, 0);
+    NSDictionary* dict = (__bridge_transfer NSDictionary*)prop;
+    IOObjectRelease(service);
+    return dict;
+}
+
+static NSString* formattedTemp()
+{
+    NSDictionary *batteryInfo = getBatteryInfo();
+    if (batteryInfo) {
+        // AdapterDetails.Watts.Description.Temperature
+        double temp = [batteryInfo[@"Temperature"] doubleValue] / 100.0;
+        if (temp) {
+            return [NSString stringWithFormat: @"%.2fºC", temp];
+        }
+    }
+    return @"??ºC";
+}
+
 
 #pragma mark - Main Widget Functions
 /*
@@ -190,6 +216,7 @@ NSAttributedString* formattedAttributedString(NSInteger identifier)
  2 = Network Up/Down
  3 = Device Temp
  4 = Weather
+ 5 = Music Visualizer
  */
 NSAttributedString* formattedAttributedString(NSArray *identifiers)
 {
@@ -209,6 +236,10 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers)
                         // Network Speed
                         [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [NSString stringWithFormat: @"%c", getSeparator(mutableString)] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
                         [mutableString appendAttributedString: formattedAttributedSpeedString([parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO)];
+                        break;
+                    case 3:
+                        // Device Temp
+                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedTemp()] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
                         break;
                     default:
                         // do not add anything
