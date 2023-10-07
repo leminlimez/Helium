@@ -207,7 +207,8 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers)
                         break;
                     case 2:
                         // Network Speed
-                        [mutableString appendAttributedString:[NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedAttributedSpeedString([parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO)]];
+                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [NSString stringWithFormat: @"%c", getSeparator(mutableString)] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+                        [mutableString appendAttributedString: formattedAttributedSpeedString([parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO)];
                         break;
                     default:
                         // do not add anything
