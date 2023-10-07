@@ -132,7 +132,7 @@ void SetHUDEnabled(BOOL isEnabled)
 
 static double FONT_SIZE = 10.0;
 static double SIDE_WIDGET_WIDTH = 107.0;
-static double CENTER_WIDGET_WIDTH = 125.0;
+static double CENTER_WIDGET_WIDTH = 135.0;
 
 
 #pragma mark -
