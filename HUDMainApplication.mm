@@ -695,11 +695,11 @@ static void DumpThreads(void)
     if (!testArr) {
         testArr = @[
             @{
-                @"widgetID" : @(2),
-                @"isUp" : @(YES)
+                @"widgetID" : @(4)
             },
             @{
-                @"widgetID" : @(3)
+                @"widgetID" : @(4),
+                @"batteryValueType" : @(2)
             }
         ];
     }
