@@ -131,7 +131,8 @@ void SetHUDEnabled(BOOL isEnabled)
 #define UPDATE_INTERVAL 1.0
 
 static double FONT_SIZE = 10.0;
-static double WIDGET_WIDTH = 107.0;
+static double SIDE_WIDGET_WIDTH = 107.0;
+static double CENTER_WIDGET_WIDTH = 125.0;
 
 
 #pragma mark -
@@ -918,7 +919,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         [_leftLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_leftLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
         [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:10],
-        [_leftLabel.widthAnchor constraintEqualToConstant:WIDGET_WIDTH],
+        [_leftLabel.widthAnchor constraintEqualToConstant:SIDE_WIDGET_WIDTH],
     ]];
     
     // MARK: Center Widget
@@ -926,7 +927,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         [_centerLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_centerLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
         [_centerLabel.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor],
-        [_centerLabel.widthAnchor constraintEqualToConstant:WIDGET_WIDTH],
+        [_centerLabel.widthAnchor constraintEqualToConstant:CENTER_WIDGET_WIDTH],
     ]];
     
     // MARK: Right Widget
@@ -934,7 +935,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         [_rightLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_rightLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
         [_rightLabel.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-10],
-        [_rightLabel.widthAnchor constraintEqualToConstant:WIDGET_WIDTH],
+        [_rightLabel.widthAnchor constraintEqualToConstant:SIDE_WIDGET_WIDTH],
     ]];
     
     [NSLayoutConstraint activateConstraints:_constraints];
