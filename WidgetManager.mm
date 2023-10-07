@@ -27,6 +27,12 @@
 
 static double FONT_SIZE = 10.0;
 
+#pragma mark - Formatting Methods
+static unsigned char getSeparator(NSMutableAttributedString *currentAttributed)
+{
+    return [[currentAttributed string] isEqualToString:@""] ? *"" : *"\t";
+}
+
 #pragma mark - Widget-specific Variables
 // MARK: 0 - Date Widget
 static NSDateFormatter *formatter = nil;
@@ -197,11 +203,11 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers)
                 switch (parsedID) {
                     case 1:
                         // Date
-                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedDate([parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : @"E MMM dd") attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedDate([parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : @"E MMM dd")] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
                         break;
                     case 2:
                         // Network Speed
-                        [mutableString appendAttributedString:formattedAttributedSpeedString([parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO)];
+                        [mutableString appendAttributedString:[NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedAttributedSpeedString([parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO)]];
                         break;
                     default:
                         // do not add anything
