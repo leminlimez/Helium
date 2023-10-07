@@ -590,6 +590,7 @@ static void DumpThreads(void)
     FBSOrientationObserver *_orientationObserver;
     
     NSArray *testArr;
+    NSArray *testArr2;
     
     UIView *_contentView;
     
@@ -695,7 +696,7 @@ static void DumpThreads(void)
     if (!testArr) {
         testArr = @[
             @{
-                @"widgetID" : @(4)
+                @"widgetID" : @(3)
             },
             @{
                 @"widgetID" : @(4),
@@ -703,8 +704,19 @@ static void DumpThreads(void)
             }
         ];
     }
+    if (!testArr2) {
+        testArr2 = @[
+            @{
+                @"widgetID" : @(2)
+            },
+            @{
+                @"widgetID" : @(2),
+                @"isUp": @(NO)
+            }
+        ];
+    }
     [self updateLabel: _leftLabel identifier: [self leftWidgetID]];
-    [self updateLabel: _centerLabel identifier: 1];//[self widgetID: @"center"]];
+    [self updateLabel: _centerLabel identifiers: testArr2];//[self widgetID: @"center"]];
     [self updateLabel: _rightLabel identifiers: testArr];//[self widgetID: @"right"]];
 }
 
@@ -833,7 +845,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     _leftLabel.numberOfLines = 0;
     _leftLabel.textAlignment = NSTextAlignmentCenter;
     _leftLabel.textColor = [UIColor whiteColor];
-    _leftLabel.backgroundColor = [UIColor blackColor];
+//    _leftLabel.backgroundColor = [UIColor blackColor];
     _leftLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
     _leftLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [_contentView addSubview:_leftLabel];
@@ -843,7 +855,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     _centerLabel.numberOfLines = 0;
     _centerLabel.textAlignment = NSTextAlignmentCenter;
     _centerLabel.textColor = [UIColor whiteColor];
-    _centerLabel.backgroundColor = [UIColor blackColor];
+//    _centerLabel.backgroundColor = [UIColor blackColor];
     _centerLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
     _centerLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [_contentView addSubview:_centerLabel];
@@ -853,7 +865,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     _rightLabel.numberOfLines = 0;
     _rightLabel.textAlignment = NSTextAlignmentCenter;
     _rightLabel.textColor = [UIColor whiteColor];
-    _rightLabel.backgroundColor = [UIColor blackColor];
+//    _rightLabel.backgroundColor = [UIColor blackColor];
     _rightLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
     _rightLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [_contentView addSubview:_rightLabel];
