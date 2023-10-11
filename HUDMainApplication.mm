@@ -19,6 +19,7 @@
 #import <mach-o/dyld.h>
 #import <objc/runtime.h>
 #include "WidgetManager.h"
+#include "DeviceScaleManager.h"
 
 
 extern "C" char **environ;
@@ -131,8 +132,8 @@ void SetHUDEnabled(BOOL isEnabled)
 #define UPDATE_INTERVAL 1.0
 
 static double FONT_SIZE = 10.0;
-static double SIDE_WIDGET_WIDTH = 107.0;
-static double CENTER_WIDGET_WIDTH = 135.0;
+//static double SIDE_WIDGET_WIDTH = 107.0;
+//static double CENTER_WIDGET_WIDTH = 135.0;
 
 
 #pragma mark -
@@ -700,7 +701,7 @@ static void DumpThreads(void)
             },
             @{
                 @"widgetID" : @(4),
-                @"batteryValueType" : @(2)
+                @"batteryValueType" : @(3)
             }
         ];
     }
@@ -925,12 +926,16 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:(isPad ? 30 : 20)]];
     }
     
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+    double sideWidgetWidth = getSideWidgetSize() * width;
+    double centerWidgetWidth = getCenterWidgetSize() * width;
+    
     // MARK: Left Widget
     [_constraints addObjectsFromArray:@[
         [_leftLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_leftLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
         [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:10],
-        [_leftLabel.widthAnchor constraintEqualToConstant:SIDE_WIDGET_WIDTH],
+        [_leftLabel.widthAnchor constraintEqualToConstant:sideWidgetWidth],
     ]];
     
     // MARK: Center Widget
@@ -938,15 +943,16 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         [_centerLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_centerLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
         [_centerLabel.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor],
-        [_centerLabel.widthAnchor constraintEqualToConstant:CENTER_WIDGET_WIDTH],
+        [_centerLabel.widthAnchor constraintEqualToConstant:centerWidgetWidth],
     ]];
     
     // MARK: Right Widget
+    // -35 offset to put above
     [_constraints addObjectsFromArray:@[
         [_rightLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_rightLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
         [_rightLabel.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-10],
-        [_rightLabel.widthAnchor constraintEqualToConstant:SIDE_WIDGET_WIDTH],
+        [_rightLabel.widthAnchor constraintEqualToConstant:sideWidgetWidth],
     ]];
     
     [NSLayoutConstraint activateConstraints:_constraints];
