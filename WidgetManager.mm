@@ -181,6 +181,13 @@ static NSString* formattedTemp()
 }
 
 #pragma mark - Battery Widget
+/*
+ Battery Widget Identifiers:
+ 0 = Watts
+ 1 = Charging Current
+ 2 = Regular Amperage
+ 3 = Charge Cycles
+ */
 static NSString* formattedBattery(NSInteger valueType)
 {
     NSDictionary *batteryInfo = getBatteryInfo();
@@ -209,6 +216,9 @@ static NSString* formattedBattery(NSInteger valueType)
             } else {
                 return @"0 mAh";
             }
+        } else if (valueType == 3) {
+            // Charge Cycles
+            return [batteryInfo[@"CycleCount"] stringValue];
         } else {
             return @"???";
         }
