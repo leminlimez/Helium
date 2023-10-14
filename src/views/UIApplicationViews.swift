@@ -12,8 +12,8 @@ let buildNumber: Int = 1
 
 // MARK: Home Page View
 struct HomePageView: View {
-//    var buttonHandler: () -> Void
-    @State var isNowEnabled: Bool = false
+    @State private var isNowEnabled: Bool = false
+    @State private var buttonDisabled: Bool = false
     
     var body: some View {
         NavigationView {
@@ -24,18 +24,25 @@ struct HomePageView: View {
                 Text(isNowEnabled ? "You can quit the app now.\nThe HUD will persist on your screen." : "Stopped.")
                     .foregroundColor(isNowEnabled ? .blue : .red)
                     .padding(5)
+                    .multilineTextAlignment(.center)
                 
                 // Activate HUD Button
                 Button(isNowEnabled ? "Disable HUD" : "Enable HUD") {
                    print(isNowEnabled ? "Closing HUD" : "Opening HUD")
                    SetHUDEnabledBridger(!isNowEnabled);
-                   isNowEnabled = !isNowEnabled;
+
+                    buttonDisabled = true
+                   waitForNotificationBridger({
+                    isNowEnabled = !isNowEnabled;
+                    buttonDisabled = false
+                   }, !isNowEnabled)
                 }
                 .buttonStyle(TintedButton(color: .blue))
                 .padding(5)
                 
                 Spacer()
             }
+            .disabled(buttonDisabled)
             .onAppear {
                 isNowEnabled = IsHUDEnabledBridger()
             }

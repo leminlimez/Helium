@@ -9,4 +9,5 @@
 
 BOOL IsHUDEnabledBridger();
 void SetHUDEnabledBridger(BOOL isEnabled);
+void waitForNotificationBridger(void (^onFinish)(), BOOL isEnabled);
 
