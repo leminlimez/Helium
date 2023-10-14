@@ -18,8 +18,8 @@
 #import <sys/sysctl.h>
 #import <mach-o/dyld.h>
 #import <objc/runtime.h>
-#include "WidgetManager.h"
-#include "DeviceScaleManager.h"
+#include "../widgets/WidgetManager.h"
+#include "../widgets/DeviceScaleManager.h"
 
 
 extern "C" char **environ;
@@ -183,8 +183,8 @@ static double FONT_SIZE = 10.0;
 
 #pragma mark -
 
-#import "UIAutoRotatingWindow.h"
-#import "UIApplicationRotationFollowingControllerNoTouches.h"
+#import "../helpers/private_headers/UIAutoRotatingWindow.h"
+#import "../helpers/private_headers/UIApplicationRotationFollowingControllerNoTouches.h"
 
 @interface HUDMainApplicationDelegate : UIResponder <UIApplicationDelegate>
 @property (nonatomic, strong) UIWindow *window;
@@ -206,8 +206,8 @@ static double FONT_SIZE = 10.0;
 #define NOTIFY_UI_LOCKSTATE    "com.apple.springboard.lockstate"
 #define NOTIFY_LS_APP_CHANGED  "com.apple.LaunchServices.ApplicationsChanged"
 
-#import "LSApplicationProxy.h"
-#import "LSApplicationWorkspace.h"
+#import "../helpers/private_headers/LSApplicationProxy.h"
+#import "../helpers/private_headers/LSApplicationWorkspace.h"
 
 static void LaunchServicesApplicationStateChanged
 (CFNotificationCenterRef center,
@@ -236,7 +236,7 @@ static void LaunchServicesApplicationStateChanged
     }
 }
 
-#import "SpringBoardServices.h"
+#import "../helpers/private_headers/SpringBoardServices.h"
 
 static void SpringBoardLockStatusChanged
 (CFNotificationCenterRef center,
@@ -282,7 +282,7 @@ static void SpringBoardLockStatusChanged
 #import <pthread.h>
 #import <mach/mach.h>
 
-#import "pac_helper.h"
+#import "../helpers/ts/pac_helper.h"
 
 static void DumpThreads(void)
 {

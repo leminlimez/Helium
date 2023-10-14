@@ -71,7 +71,7 @@ void GSEventRegisterEventCallBack(void (*)(GSEventRef));
 
 #pragma mark -
 
-#import "TSEventFetcher.h"
+#import "../helpers/ts/TSEventFetcher.h"
 
 static __used void _HUDEventCallback(void *target, void *refcon, IOHIDServiceRef service, IOHIDEventRef event)
 {

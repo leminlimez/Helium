@@ -2,9 +2,9 @@
 #import <string.h>
 #import "TSEventFetcher.h"
 #import "CoreFoundation/CFRunLoop.h"
-#import "UIApplication+Private.h"
-#import "UIEvent+Private.h"
-#import "UITouch-KIFAdditions.h"
+#import "../private_headers/UIApplication+Private.h"
+#import "../private_headers/UIEvent+Private.h"
+#import "../private_headers/UITouch-KIFAdditions.h"
 
 
 static NSArray *_safeTouchAry = nil;
