@@ -71,11 +71,11 @@ struct SettingsView: View {
         NavigationView {
             List {
                 // App Version/Build Number
-                // Section {
+                Section {
                     
-                // } header: {
-                //     Label("Version \(Bundle.main.releaseVersionNumber ?? "UNKNOWN") (\(buildNumber != 0 ? "\(buildNumber)" : "Release"))", systemImage: "info")
-                // }
+                } header: {
+                    Label("Version \(Bundle.main.releaseVersionNumber ?? "UNKNOWN") (\(buildNumber != 0 ? "\(buildNumber)" : "Release"))", systemImage: "info")
+                }
                 
                 // Preferences List
                 Section {
