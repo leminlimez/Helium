@@ -12,7 +12,9 @@ APPLICATION_NAME = XXTAssistiveTouch
 $(APPLICATION_NAME)_USE_MODULES := 0
 $(APPLICATION_NAME)_FILES += $(wildcard *.mm *.m) $(wildcard *.swift)
 $(APPLICATION_NAME)_CFLAGS += -fobjc-arc -Iinclude
-$(APPLICATION_NAME)_CFLAGS += -include hud-prefix.pch -Wno-deprecated-declarations 
+$(APPLICATION_NAME)_CFLAGS += -include hud-prefix.pch -Wno-deprecated-declarations
+$(APPLICATION_NAME)_SWIFTFLAGS += -import-objc-header XXTAssistiveTouch-Bridging-Header.h
+$(APPLICATION_NAME)_SWIFT_BRIDGING_HEADER = "XXTAssistiveTouch-Bridging-Header.h"
 
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_LAUNCHED_HUD=\"com.leemin.notification.hud.launched\"
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_DISMISSAL_HUD=\"com.leemin.notification.hud.dismissal\"
