@@ -7,8 +7,8 @@
 
 import Foundation
 
-// extension Bundle {
-//     var releaseVersionNumber: String? {
-//         return infoDictionary?["CFBundleShortVersionString"] as? String
-//     }
-// }
+extension Bundle {
+    var releaseVersionNumber: String? {
+        return infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+}
