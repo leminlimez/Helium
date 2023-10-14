@@ -51,19 +51,6 @@ struct HomePageView: View {
     }
 }
 
-// MARK: Widget Customization View
-// TODO: This
-struct WidgetCustomizationView: View {
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("TODO")
-            }
-            .navigationTitle("Customize")
-        }
-    }
-}
-
 // MARK: Settings View
 // TODO: This
 struct SettingsView: View {
