@@ -30,7 +30,7 @@ extern "C" int posix_spawnattr_set_persona_uid_np(const posix_spawnattr_t* __res
 extern "C" int posix_spawnattr_set_persona_gid_np(const posix_spawnattr_t* __restrict, uid_t);
 
 
-OBJC_EXTERN BOOL IsHUDEnabled(void);
+extern "C" BOOL IsHUDEnabled(void);
 BOOL IsHUDEnabled(void)
 {
     static char *executablePath = NULL;
@@ -68,7 +68,7 @@ BOOL IsHUDEnabled(void)
     return WEXITSTATUS(status) != 0;
 }
 
-OBJC_EXTERN void SetHUDEnabled(BOOL isEnabled);
+extern "C" void SetHUDEnabled(BOOL isEnabled);
 void SetHUDEnabled(BOOL isEnabled)
 {
 #ifdef NOTIFY_DISMISSAL_HUD
