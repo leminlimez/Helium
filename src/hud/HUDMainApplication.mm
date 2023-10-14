@@ -127,6 +127,36 @@ void SetHUDEnabled(BOOL isEnabled)
     }
 }
 
+extern "C" void waitForNotification(void (^onFinish)(), BOOL isEnabled);
+void waitForNotification(void (^onFinish)(), BOOL isEnabled) {
+    if (isEnabled)
+   {
+       dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+
+       int token;
+       notify_register_dispatch(NOTIFY_LAUNCHED_HUD, &token, dispatch_get_main_queue(), ^(int token) {
+           notify_cancel(token);
+           dispatch_semaphore_signal(semaphore);
+       });
+
+       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+           int timedOut = dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)));
+           dispatch_async(dispatch_get_main_queue(), ^{
+               if (timedOut)
+                   os_log_error(OS_LOG_DEFAULT, "Timed out waiting for HUD to launch");
+               
+               onFinish();
+           });
+       });
+   }
+   else
+   {
+       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+           onFinish();
+       });
+   }
+}
+
 
 #pragma mark -
 #define UPDATE_INTERVAL 1.0
