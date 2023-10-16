@@ -621,7 +621,6 @@ static void DumpThreads(void)
     FBSOrientationObserver *_orientationObserver;
     
     NSArray *testArr;
-    NSArray *testArr2;
     
     UIView *_contentView;
     
@@ -735,19 +734,8 @@ static void DumpThreads(void)
             }
         ];
     }
-    if (!testArr2) {
-        testArr2 = @[
-            @{
-                @"widgetID" : @(2)
-            },
-            @{
-                @"widgetID" : @(2),
-                @"isUp": @(NO)
-            }
-        ];
-    }
     [self updateLabel: _leftLabel identifier: [self leftWidgetID]];
-    [self updateLabel: _centerLabel identifiers: testArr2];//[self widgetID: @"center"]];
+    [self updateLabel: _centerLabel identifiers: [self widgetIDs: @"center"]];//[self widgetID: @"center"]];
     [self updateLabel: _rightLabel identifiers: testArr];//[self widgetID: @"right"]];
 }
 

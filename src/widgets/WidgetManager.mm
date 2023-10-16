@@ -294,7 +294,6 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers)
                         break;
                     default:
                         // do not add anything
-                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
                         break;
                 }
             }
