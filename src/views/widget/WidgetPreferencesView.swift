@@ -78,6 +78,7 @@ struct WidgetPreferencesView: View {
             default:
                 return
             }
+            widgetStruct.modified = true
         }
         .onChange(of: intSelection) { newInt in
             // MARK: Changing Integer
@@ -91,6 +92,7 @@ struct WidgetPreferencesView: View {
             default:
                 return
             }
+            widgetStruct.modified = true
         }
     }
 }
