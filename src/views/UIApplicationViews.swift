@@ -170,3 +170,9 @@ open class ContentInterface: NSObject {
         return UIHostingController(rootView: contents)
     }
 }
+
+struct RootView_Previews: PreviewProvider {
+    static var previews: some View {
+        RootView()
+    }
+}

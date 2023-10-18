@@ -13,6 +13,7 @@ SRC_DIR := src
 # Directories
 APP_DIR := $(SRC_DIR)/app
 BRIDGING_DIR := $(SRC_DIR)/bridging
+CONTROLLERS_DIR := $(SRC_DIR)/controllers
 EXTENSIONS_DIR := $(SRC_DIR)/extensions
 HELPERS_DIR := $(SRC_DIR)/helpers
 PRIV_DIR := $(HELPERS_DIR)/private_headers
@@ -20,18 +21,21 @@ TS_DIR := $(HELPERS_DIR)/ts
 HUD_DIR := $(SRC_DIR)/hud
 SPLARK_DIR := $(SRC_DIR)/splark
 VIEWS_DIR := $(SRC_DIR)/views
+WIDGETVIEWS_DIR := $(VIEWS_DIR)/widget
 WIDGETS_DIR := $(SRC_DIR)/widgets
 
 $(APPLICATION_NAME)_USE_MODULES := 0
 # Add Files From Directories
 $(APPLICATION_NAME)_FILES += $(wildcard $(APP_DIR)/*.mm)
 $(APPLICATION_NAME)_FILES += $(wildcard $(BRIDGING_DIR)/*.m)
+$(APPLICATION_NAME)_FILES += $(wildcard $(CONTROLLERS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(EXTENSIONS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(PRIV_DIR)/*.m)
 $(APPLICATION_NAME)_FILES += $(wildcard $(TS_DIR)/*.mm) $(wildcard $(TS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(HUD_DIR)/*.mm)
 $(APPLICATION_NAME)_FILES += $(wildcard $(SPLARK_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(VIEWS_DIR)/*.swift)
+$(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETS_DIR)/*.mm)
 
 $(APPLICATION_NAME)_CFLAGS += -fobjc-arc -Iinclude
