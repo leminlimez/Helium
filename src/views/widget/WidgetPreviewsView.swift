@@ -20,6 +20,11 @@ struct WidgetPreviewsView: View {
         .onAppear {
             updatePreview()
         }
+        .onChange(of: widget.modified) { nv in
+            if nv {
+                updatePreview()
+            }
+        }
     }
     
     func updatePreview() {
@@ -49,5 +54,6 @@ struct WidgetPreviewsView: View {
                 text = "???"
             }
         }
+        widget.modified = false
     }
 }

@@ -25,6 +25,7 @@ struct WidgetStruct: Identifiable {
     var id = UUID()
     var module: WidgetModule
     var config: [String: Any]
+    var modified: Bool = false
 }
 
 // MARK: Widget Manager Class
