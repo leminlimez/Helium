@@ -20,7 +20,8 @@ struct WidgetPreferencesView: View {
                 // MARK: Date Format Textbox
                 HStack {
                     Text("Date Format")
-                        .padding(.trailing, 10)
+                        .bold()
+                    Spacer()
                     TextField("E MMM dd", text: $text)
                         .frame(maxWidth: 120)
                         .multilineTextAlignment(.trailing)
@@ -36,7 +37,8 @@ struct WidgetPreferencesView: View {
                 // MARK: Network Choice
                 HStack {
                     Text("Network Type")
-                        .padding(.trailing, 10)
+                        .bold()
+                    Spacer()
                     Picker(selection: $intSelection, label: Text("Network Type")) {
                         Text("Down").tag(0)
                         Text("Up").tag(1)
@@ -53,7 +55,8 @@ struct WidgetPreferencesView: View {
                 // MARK: Battery Value Type
                 HStack {
                     Text("Battery Option")
-                        .padding(.trailing, 10)
+                        .bold()
+                    Spacer()
                     Picker(selection: $intSelection, label: Text("Battery Option")) {
                         Text("Watts").tag(0)
                         Text("Charging Current").tag(1)
