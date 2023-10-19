@@ -23,7 +23,6 @@ struct WidgetCustomizationView: View {
 
 // MARK: Widget Place View
 struct WidgetPlaceView: View {
-    @State var canAdd: Bool = true
     @StateObject var widgetManager: WidgetManager
     @State var viewIndex: Int = -1
     @State var showingAddView: Bool = false
@@ -41,7 +40,7 @@ struct WidgetPlaceView: View {
                     }
                 }
                 .padding(.horizontal, 1)
-                if canAdd {
+                if widgetManager.widgetStructs.count < widgetManager.maxNumWidgets {
                     // add a plus button
                     Button(action: {
                         showingAddView.toggle()
@@ -52,15 +51,15 @@ struct WidgetPlaceView: View {
                     }
                     .background(.ultraThinMaterial, in:
                                     RoundedRectangle(cornerRadius: 100.0))
-                    .sheet(isPresented: $showingAddView, content: {
-                        WidgetAddView(widgetManager: widgetManager)
-                    })
-                    .sheet(isPresented: $showingModView, content: {
-                        WidgetModifyView(widgetManager: widgetManager, widgetIndex: $viewIndex)
-                    })
                 }
             }
             .padding(.horizontal, 5)
+            .sheet(isPresented: $showingAddView, content: {
+                WidgetAddView(widgetManager: widgetManager)
+            })
+            .sheet(isPresented: $showingModView, content: {
+                WidgetModifyView(widgetManager: widgetManager, widgetIndex: $viewIndex)
+            })
         }
         .background(.ultraThinMaterial, in:
             RoundedRectangle(cornerRadius: 8))

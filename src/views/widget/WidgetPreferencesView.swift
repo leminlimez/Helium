@@ -34,30 +34,38 @@ struct WidgetPreferencesView: View {
                 }
             case .network:
                 // MARK: Network Choice
-                Picker(selection: $intSelection, label: Text("Network Type")) {
-                    Text("Down").tag(0)
-                    Text("Up").tag(1)
-                }
-                .onAppear {
-                    if let netUp = widgetStruct.config["isUp"] as? Bool {
-                        intSelection = netUp ? 1 : 0
-                    } else {
-                        intSelection = 0
+                HStack {
+                    Text("Network Type")
+                        .padding(.trailing, 10)
+                    Picker(selection: $intSelection, label: Text("Network Type")) {
+                        Text("Down").tag(0)
+                        Text("Up").tag(1)
+                    }
+                    .onAppear {
+                        if let netUp = widgetStruct.config["isUp"] as? Bool {
+                            intSelection = netUp ? 1 : 0
+                        } else {
+                            intSelection = 0
+                        }
                     }
                 }
             case .battery:
                 // MARK: Battery Value Type
-                Picker(selection: $intSelection, label: Text("Battery Option")) {
-                    Text("Watts").tag(0)
-                    Text("Charging Current").tag(1)
-                    Text("Amperage").tag(2)
-                    Text("Charge Cycles").tag(3)
-                }
-                .onAppear {
-                    if let batteryType = widgetStruct.config["batteryValueType"] as? Int {
-                        intSelection = batteryType
-                    } else {
-                        intSelection = 0
+                HStack {
+                    Text("Battery Option")
+                        .padding(.trailing, 10)
+                    Picker(selection: $intSelection, label: Text("Battery Option")) {
+                        Text("Watts").tag(0)
+                        Text("Charging Current").tag(1)
+                        Text("Amperage").tag(2)
+                        Text("Charge Cycles").tag(3)
+                    }
+                    .onAppear {
+                        if let batteryType = widgetStruct.config["batteryValueType"] as? Int {
+                            intSelection = batteryType
+                        } else {
+                            intSelection = 0
+                        }
                     }
                 }
             default:

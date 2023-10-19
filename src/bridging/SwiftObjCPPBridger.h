@@ -7,7 +7,14 @@
 
 #include <Foundation/Foundation.h>
 
+
+#pragma mark - HUD Functions
+
 BOOL IsHUDEnabledBridger();
 void SetHUDEnabledBridger(BOOL isEnabled);
 void waitForNotificationBridger(void (^onFinish)(), BOOL isEnabled);
 
+
+#pragma mark - Device Scale Manager
+
+NSDictionary<NSString*, NSNumber*>* getMaxNumWidgetsBridger();
