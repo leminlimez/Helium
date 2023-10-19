@@ -75,23 +75,26 @@ struct WidgetModifyView: View {
     var body: some View {
         VStack {
             if widgetIndex >= 0 && widgetIndex < widgetManager.widgetStructs.count {
-                Text("Modify Widget")
-                    .bold()
-                    .font(.title3)
-                // Widget Preferences
-                WidgetPreferencesView(widgetStruct: $widgetManager.widgetStructs[widgetIndex])
-                // Save Button
-                Button("Save") {
-                    widgetManager.saveWidgetStructs()
-                    dismiss()
+                List {
+                    // Widget Preferences
+                    WidgetPreferencesView(widgetStruct: $widgetManager.widgetStructs[widgetIndex])
+                    VStack {
+                        // Save Button
+                        Button("Save") {
+                            widgetManager.saveWidgetStructs()
+                            dismiss()
+                        }
+                        .buttonStyle(TintedButton(color: .blue, fullWidth: true))
+                        .padding(.horizontal, 7)
+                        // Delete Button
+                        Button("Delete") {
+                            widgetManager.removeWidget(id: widgetIndex)
+                            dismiss()
+                        }
+                        .buttonStyle(TintedButton(color: .red, fullWidth: true))
+                        .padding(.horizontal, 7)
+                    }
                 }
-                .buttonStyle(TintedButton(color: .blue))
-                // Delete Button
-                Button("Delete") {
-                    widgetManager.removeWidget(id: widgetIndex)
-                    dismiss()
-                }
-                .buttonStyle(TintedButton(color: .red))
             }
         }
     }
