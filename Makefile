@@ -19,8 +19,8 @@ HELPERS_DIR := $(SRC_DIR)/helpers
 PRIV_DIR := $(HELPERS_DIR)/private_headers
 TS_DIR := $(HELPERS_DIR)/ts
 HUD_DIR := $(SRC_DIR)/hud
-SPLARK_DIR := $(SRC_DIR)/splark
 VIEWS_DIR := $(SRC_DIR)/views
+NAVVIEWS_DIR := $(VIEWS_DIR)/navigation
 WIDGETVIEWS_DIR := $(VIEWS_DIR)/widget
 WIDGETS_DIR := $(SRC_DIR)/widgets
 
@@ -31,10 +31,10 @@ $(APPLICATION_NAME)_FILES += $(wildcard $(BRIDGING_DIR)/*.m)
 $(APPLICATION_NAME)_FILES += $(wildcard $(CONTROLLERS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(EXTENSIONS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(PRIV_DIR)/*.m)
-$(APPLICATION_NAME)_FILES += $(wildcard $(TS_DIR)/*.mm) $(wildcard $(TS_DIR)/*.swift)
+$(APPLICATION_NAME)_FILES += $(wildcard $(TS_DIR)/*.mm)
 $(APPLICATION_NAME)_FILES += $(wildcard $(HUD_DIR)/*.mm)
-$(APPLICATION_NAME)_FILES += $(wildcard $(SPLARK_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(VIEWS_DIR)/*.swift)
+$(APPLICATION_NAME)_FILES += $(wildcard $(NAVVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETS_DIR)/*.mm)
 
