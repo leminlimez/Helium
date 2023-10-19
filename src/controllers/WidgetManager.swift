@@ -31,15 +31,19 @@ struct WidgetStruct: Identifiable {
 // MARK: Widget Manager Class
 class WidgetManager: ObservableObject {
     let widgetSide: WidgetSide
+    let maxNumWidgets: Int
     @Published var widgetStructs: [WidgetStruct]
 
-    init(widgetSide: WidgetSide, widgetStructs: [WidgetStruct]) {
+    init(widgetSide: WidgetSide, maxNumWidgets: Int, widgetStructs: [WidgetStruct]) {
         self.widgetSide = widgetSide
+        self.maxNumWidgets = maxNumWidgets
         self.widgetStructs = widgetStructs
     }
     
     convenience init(widgetSide: WidgetSide) {
-        self.init(widgetSide: widgetSide, widgetStructs: [])
+        let maxNumDict: [String: NSNumber] = getMaxNumWidgetsBridger()
+        let maxNum: Int = maxNumDict[widgetSide == .left || widgetSide == .right ? "sideNum" : "centerNum"] as? Int ?? 1
+        self.init(widgetSide: widgetSide, maxNumWidgets: maxNum, widgetStructs: [])
         self.widgetStructs = getWidgetStructs()
     }
     

@@ -5,8 +5,10 @@
 //  Created by lemin on 10/13/23.
 //
 
-// #import <Foundation/Foundation.h>
 #import "SwiftObjCPPBridger.h"
+
+
+#pragma mark - HUD Functions
 
 extern BOOL IsHUDEnabled(void);
 extern void SetHUDEnabled(BOOL isEnabled);
@@ -25,4 +27,14 @@ void SetHUDEnabledBridger(BOOL isEnabled)
 void waitForNotificationBridger(void (^onFinish)(), BOOL isEnabled)
 {
     waitForNotification(onFinish, isEnabled);
+}
+
+
+#pragma mark - Device Scale Functions
+
+extern NSDictionary<NSString*, NSNumber*>* getMaxNumWidgets(void);
+
+NSDictionary<NSString*, NSNumber*>* getMaxNumWidgetsBridger()
+{
+    return getMaxNumWidgets();
 }

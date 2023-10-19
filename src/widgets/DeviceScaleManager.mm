@@ -65,3 +65,24 @@ double getCenterWidgetSize()
     
     return 0.0;
 }
+
+// get the max number of (sideNum, centerNum) widgets
+extern "C" NSDictionary<NSString*, NSNumber*>* getMaxNumWidgets(void);
+NSDictionary<NSString*, NSNumber*>* getMaxNumWidgets()
+{
+    NSInteger deviceSize = getDeviceSize();
+
+    if (deviceSize == 1) {
+        // Small Notch
+        return @{
+            @"sideNum": @(2),
+            @"centerNum": @(3)
+        };
+    }
+    
+    // Unknown
+    return @{
+        @"sideNum": @(1),
+        @"centerNum": @(1)
+    };
+}
