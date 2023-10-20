@@ -698,20 +698,6 @@ static void DumpThreads(void)
     return mode ? [mode boolValue] : NO;
 }
 
-- (NSInteger) leftWidgetID
-{
-    [self loadUserDefaults:NO];
-    NSNumber *identifier = [_userDefaults objectForKey: @"leftWidgetID"];
-    return identifier ? [identifier integerValue] : 0;
-}
-
-- (NSInteger) widgetID:(NSString*) widgetName
-{
-    [self loadUserDefaults:NO];
-    NSNumber *identifier = [_userDefaults objectForKey: [NSString stringWithFormat: @"%@WidgetID", widgetName]];
-    return identifier ? [identifier integerValue] : 0;
-}
-
 - (NSArray*) widgetIDs:(NSString*) widgetName
 {
     [self loadUserDefaults:NO];
@@ -723,30 +709,9 @@ static void DumpThreads(void)
 
 - (void) updateAllLabels
 {
-    if (!testArr) {
-        testArr = @[
-            @{
-                @"widgetID" : @(3)
-            },
-            @{
-                @"widgetID" : @(4),
-                @"batteryValueType" : @(3)
-            }
-        ];
-    }
-    [self updateLabel: _leftLabel identifier: [self leftWidgetID]];
-    [self updateLabel: _centerLabel identifiers: [self widgetIDs: @"center"]];//[self widgetID: @"center"]];
-    [self updateLabel: _rightLabel identifiers: testArr];//[self widgetID: @"right"]];
-}
-
-- (void) updateLabel:(UILabel *) label identifier:(NSInteger) identifier
-{
-#if DEBUG
-    os_log_debug(OS_LOG_DEFAULT, "updateLabel");
-#endif
-    NSAttributedString *attributedText = formattedAttributedString(identifier);
-    if (attributedText)
-        [label setAttributedText: attributedText];
+    [self updateLabel: _leftLabel identifiers: [self widgetIDs: @"left"]];
+    [self updateLabel: _centerLabel identifiers: [self widgetIDs: @"center"]];
+    [self updateLabel: _rightLabel identifiers: [self widgetIDs: @"right"]];
 }
 
 - (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers
