@@ -230,33 +230,6 @@ static NSString* formattedBattery(NSInteger valueType)
 #pragma mark - Main Widget Functions
 /*
  Widget Identifiers:
- 0 = Date
- 1 = Network Up
- 2 = Network Down
- 3 = Device Temp
- 4 = Weather
- */
-NSAttributedString* formattedAttributedString(NSInteger identifier)
-{
-    if (identifier == 1)
-        return formattedAttributedSpeedString(YES);
-    else if (identifier == 2)
-        return formattedAttributedSpeedString(NO);
-    @autoreleasepool {
-        NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
-        
-        if (identifier == 0) {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedDate(@"E MMM dd") attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
-        } else {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"???" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
-        }
-        
-        return [mutableString copy];
-    }
-}
-
-/*
- Widget Identifiers:
  0 = None
  1 = Date
  2 = Network Up/Down
