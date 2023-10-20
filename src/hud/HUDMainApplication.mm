@@ -159,11 +159,9 @@ void waitForNotification(void (^onFinish)(), BOOL isEnabled) {
 
 
 #pragma mark -
-#define UPDATE_INTERVAL 1.0
 
 static double FONT_SIZE = 10.0;
-//static double SIDE_WIDGET_WIDTH = 107.0;
-//static double CENTER_WIDGET_WIDTH = 135.0;
+static double UPDATE_INTERVAL = 1.0;
 
 
 #pragma mark -
@@ -673,7 +671,7 @@ static void DumpThreads(void)
 
 #define USER_DEFAULTS_PATH @"/var/mobile/Library/Preferences/com.leemin.helium.plist"
 
-- (void)loadUserDefaults:(BOOL)forceReload
+- (void) loadUserDefaults:(BOOL)forceReload
 {
     if (forceReload || !_userDefaults)
         _userDefaults = [[NSDictionary dictionaryWithContentsOfFile:USER_DEFAULTS_PATH] mutableCopy] ?: [NSMutableDictionary dictionary];
@@ -682,20 +680,31 @@ static void DumpThreads(void)
 - (void) reloadUserDefaults
 {
     [self loadUserDefaults: YES];
+
+    double updateInterval = [self updateInterval];
+
+    UPDATE_INTERVAL = updateInterval;
     
     [self updateViewConstraints];
 }
 
-+ (BOOL)passthroughMode
++ (BOOL) passthroughMode
 {
     return [[[NSDictionary dictionaryWithContentsOfFile:USER_DEFAULTS_PATH] objectForKey: @"passthroughMode"] boolValue];
 }
 
-- (BOOL)usesRotation
+- (BOOL) usesRotation
 {
     [self loadUserDefaults:NO];
     NSNumber *mode = [_userDefaults objectForKey: @"usesRotation"];
     return mode ? [mode boolValue] : NO;
+}
+
+- (double) updateInterval
+{
+    [self loadUserDefaults: NO];
+    NSNumber *interval = [_userDefaults objectForKey: @"updateInterval"];
+    return interval ? [interval doubleValue] : 1.0;
 }
 
 - (NSArray*) widgetIDs:(NSString*) widgetName
