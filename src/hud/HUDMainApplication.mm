@@ -21,6 +21,8 @@
 #include "../widgets/WidgetManager.h"
 #include "../widgets/DeviceScaleManager.h"
 
+#define DEBUG_MODE_ENABLED 1
+
 
 extern "C" char **environ;
 
@@ -838,7 +840,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     _leftLabel.numberOfLines = 0;
     _leftLabel.textAlignment = NSTextAlignmentCenter;
     _leftLabel.textColor = [UIColor whiteColor];
-//    _leftLabel.backgroundColor = [UIColor blackColor];
     _leftLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
     _leftLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [_contentView addSubview:_leftLabel];
@@ -848,7 +849,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     _centerLabel.numberOfLines = 0;
     _centerLabel.textAlignment = NSTextAlignmentCenter;
     _centerLabel.textColor = [UIColor whiteColor];
-//    _centerLabel.backgroundColor = [UIColor blackColor];
     _centerLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
     _centerLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [_contentView addSubview:_centerLabel];
@@ -858,10 +858,16 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     _rightLabel.numberOfLines = 0;
     _rightLabel.textAlignment = NSTextAlignmentCenter;
     _rightLabel.textColor = [UIColor whiteColor];
-//    _rightLabel.backgroundColor = [UIColor blackColor];
     _rightLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
     _rightLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [_contentView addSubview:_rightLabel];
+
+    if (DEBUG_MODE_ENABLED == 1) {
+        // enable the background color to see the sizes
+        _leftLabel.backgroundColor = [UIColor blackColor];
+        _centerLabel.backgroundColor = [UIColor blackColor];
+        _rightLabel.backgroundColor = [UIColor blackColor];
+    }
     
     [self reloadUserDefaults];
     
