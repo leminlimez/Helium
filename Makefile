@@ -15,13 +15,17 @@ APP_DIR := $(SRC_DIR)/app
 BRIDGING_DIR := $(SRC_DIR)/bridging
 CONTROLLERS_DIR := $(SRC_DIR)/controllers
 EXTENSIONS_DIR := $(SRC_DIR)/extensions
+
 HELPERS_DIR := $(SRC_DIR)/helpers
 PRIV_DIR := $(HELPERS_DIR)/private_headers
 TS_DIR := $(HELPERS_DIR)/ts
+
 HUD_DIR := $(SRC_DIR)/hud
+
 VIEWS_DIR := $(SRC_DIR)/views
 NAVVIEWS_DIR := $(VIEWS_DIR)/navigation
 WIDGETVIEWS_DIR := $(VIEWS_DIR)/widget
+
 WIDGETS_DIR := $(SRC_DIR)/widgets
 
 $(APPLICATION_NAME)_USE_MODULES := 0
