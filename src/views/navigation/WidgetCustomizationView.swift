@@ -14,6 +14,7 @@ struct WidgetCustomizationView: View {
     var body: some View {
         NavigationView {
             VStack {
+                WidgetPlaceView(widgetManager: .init(widgetSide: .left))
                 WidgetPlaceView(widgetManager: .init(widgetSide: .center))
             }
             .navigationTitle("Customize")

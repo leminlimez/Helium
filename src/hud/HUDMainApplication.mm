@@ -716,6 +716,21 @@ static void DumpThreads(void)
     return identifiers;
 }
 
+#pragma mark - Debug Preference Defaults
+- (double) debugSideWidgetSize
+{
+    [self loadUserDefaults: NO];
+    NSNumber *sizeValue = [_userDefaults objectForKey: @"DEBUG_sideWidgetSize"];
+    return sizeValue ? [sizeValue doubleValue] : 100.0;
+}
+
+- (double) debugCenterWidgetSize
+{
+    [self loadUserDefaults: NO];
+    NSNumber *sizeValue = [_userDefaults objectForKey: @"DEBUG_centerWidgetSize"];
+    return sizeValue ? [sizeValue doubleValue] : 100.0;
+}
+
 #pragma mark - Label Updating
 
 - (void) updateAllLabels
@@ -927,6 +942,11 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
     double sideWidgetWidth = getSideWidgetSize() * width;
     double centerWidgetWidth = getCenterWidgetSize() * width;
+
+    if (DEBUG_MODE_ENABLED == 1) {
+        sideWidgetWidth = [self debugSideWidgetSize];
+        centerWidgetWidth = [self debugCenterWidgetSize];
+    }
     
     // MARK: Left Widget
     [_constraints addObjectsFromArray:@[
