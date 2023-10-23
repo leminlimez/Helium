@@ -50,7 +50,7 @@ double getSideWidgetSize()
         return SMALL_SIDE_WIDGET_SIZE;
     }
     
-    return 0.0;
+    return SMALL_SIDE_WIDGET_SIZE;
 }
 
 double getCenterWidgetSize()
@@ -63,7 +63,7 @@ double getCenterWidgetSize()
         return SMALL_CENTER_WIDGET_SIZE;
     }
     
-    return 0.0;
+    return SMALL_CENTER_WIDGET_SIZE;
 }
 
 // get the max number of (sideNum, centerNum) widgets
