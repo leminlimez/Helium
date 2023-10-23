@@ -9,10 +9,15 @@ import Foundation
 import SwiftUI
 
 let buildNumber: Int = 1
+let DEBUG_MODE_ENABLED = true
 
 // MARK: Settings View
 // TODO: This
 struct SettingsView: View {
+    // Debug Variables
+    @State var sideWidgetSize: Int = 100
+    @State var centerWidgetSize: Int = 100
+    
     var body: some View {
         NavigationView {
             List {
@@ -28,6 +33,45 @@ struct SettingsView: View {
                     Text("TODO")
                 } header: {
                     Label("Preferences", systemImage: "gear")
+                }
+                
+                // Debug Settings
+                if DEBUG_MODE_ENABLED {
+                    Section {
+                        HStack {
+                            Text("Side Widget Size")
+                                .bold()
+                            Spacer()
+                            TextField("Side Size", value: $sideWidgetSize, format: .number)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .keyboardType(.decimalPad)
+                                .submitLabel(.done)
+                                .onSubmit {
+                                    UserDefaults.standard.setValue(sideWidgetSize, forKey: "DEBUG_sideWidgetSize")
+                                }
+                                .onAppear {
+                                    sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize")
+                                }
+                        }
+                        
+                        HStack {
+                            Text("Center Widget Size")
+                                .bold()
+                            Spacer()
+                            TextField("Center Size", value: $centerWidgetSize, format: .number)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .keyboardType(.decimalPad)
+                                .submitLabel(.done)
+                                .onSubmit {
+                                    UserDefaults.standard.setValue(centerWidgetSize, forKey: "DEBUG_centerWidgetSize")
+                                }
+                                .onAppear {
+                                    centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize")
+                                }
+                        }
+                    } header: {
+                        Label("Debug Preferences", systemImage: "ladybug")
+                    }
                 }
                 
                 // Credits List
