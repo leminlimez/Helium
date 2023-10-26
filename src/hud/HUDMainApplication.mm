@@ -942,6 +942,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
     double sideWidgetWidth = getSideWidgetSize() * width;
     double centerWidgetWidth = getCenterWidgetSize() * width;
+    double centerWidgetOffset = getCenterWidgetVerticalOffset();
 
     if (DEBUG_MODE_ENABLED == 1) {
         sideWidgetWidth = [self debugSideWidgetSize];
@@ -952,14 +953,14 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     [_constraints addObjectsFromArray:@[
         [_leftLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_leftLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-        [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:10],
+        [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant: 10],
         [_leftLabel.widthAnchor constraintEqualToConstant:sideWidgetWidth],
     ]];
     
     // MARK: Center Widget
     [_constraints addObjectsFromArray:@[
-        [_centerLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
-        [_centerLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
+        [_centerLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: centerWidgetOffset],
+        [_centerLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: centerWidgetOffset],
         [_centerLabel.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor],
         [_centerLabel.widthAnchor constraintEqualToConstant:centerWidgetWidth],
     ]];
@@ -969,7 +970,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     [_constraints addObjectsFromArray:@[
         [_rightLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
         [_rightLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-        [_rightLabel.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-10],
+        [_rightLabel.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant: -10],
         [_rightLabel.widthAnchor constraintEqualToConstant:sideWidgetWidth],
     ]];
     

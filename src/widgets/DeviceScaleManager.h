@@ -7,3 +7,4 @@
 
 double getSideWidgetSize();
 double getCenterWidgetSize();
+double getCenterWidgetVerticalOffset();
