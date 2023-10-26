@@ -1,5 +1,5 @@
 ARCHS := arm64 arm64e
-TARGET := iphone:clang:15.0
+TARGET := iphone:clang:15.0:14.0
 INSTALL_TARGET_PROCESSES := XXTAssistiveTouch
 
 TARGET_CC := $(shell xcrun --sdk iphoneos --find clang)

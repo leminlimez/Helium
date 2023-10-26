@@ -42,32 +42,56 @@ struct SettingsView: View {
                             Text("Side Widget Size")
                                 .bold()
                             Spacer()
-                            TextField("Side Size", value: $sideWidgetSize, format: .number)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .keyboardType(.decimalPad)
-                                .submitLabel(.done)
-                                .onSubmit {
-                                    UserDefaults.standard.setValue(sideWidgetSize, forKey: "DEBUG_sideWidgetSize")
-                                }
-                                .onAppear {
-                                    sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize")
-                                }
+                            if #available(iOS 15, *) {
+                                TextField("Side Size", value: $sideWidgetSize, format: .number)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .keyboardType(.decimalPad)
+                                    .submitLabel(.done)
+                                    .onSubmit {
+                                        UserDefaults.standard.setValue(sideWidgetSize, forKey: "DEBUG_sideWidgetSize")
+                                    }
+                                    .onAppear {
+                                        sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize")
+                                    }
+                            } else {
+                                TextField("Side Size", value: $sideWidgetSize, formatter: NumberFormatter())
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .keyboardType(.decimalPad)
+                                    .onChange(of: sideWidgetSize) { nv in
+                                        UserDefaults.standard.setValue(nv, forKey: "DEBUG_sideWidgetSize")
+                                    }
+                                    .onAppear {
+                                        sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize")
+                                    }
+                            }
                         }
                         
                         HStack {
                             Text("Center Widget Size")
                                 .bold()
                             Spacer()
-                            TextField("Center Size", value: $centerWidgetSize, format: .number)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .keyboardType(.decimalPad)
-                                .submitLabel(.done)
-                                .onSubmit {
-                                    UserDefaults.standard.setValue(centerWidgetSize, forKey: "DEBUG_centerWidgetSize")
-                                }
-                                .onAppear {
-                                    centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize")
-                                }
+                            if #available(iOS 15, *) {
+                                TextField("Center Size", value: $centerWidgetSize, format: .number)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .keyboardType(.decimalPad)
+                                    .submitLabel(.done)
+                                    .onSubmit {
+                                        UserDefaults.standard.setValue(centerWidgetSize, forKey: "DEBUG_centerWidgetSize")
+                                    }
+                                    .onAppear {
+                                        centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize")
+                                    }
+                            } else {
+                                TextField("Center Size", value: $centerWidgetSize, formatter: NumberFormatter())
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .keyboardType(.decimalPad)
+                                    .onChange(of: centerWidgetSize) { nv in
+                                        UserDefaults.standard.setValue(nv, forKey: "DEBUG_centerWidgetSize")
+                                    }
+                                    .onAppear {
+                                        centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize")
+                                    }
+                            }
                         }
                     } header: {
                         Label("Debug Preferences", systemImage: "ladybug")
