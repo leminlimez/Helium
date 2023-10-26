@@ -9,7 +9,7 @@
 #import <sys/utsname.h>
 #import "DeviceScaleManager.h"
 
-// Small Notch Definitions
+// Small Notch/Dynamic Island Definitions
 #define SMALL_SIDE_WIDGET_SIZE 0.27435897   // Original Size (iPhone 13 Pro): 107
 #define SMALL_CENTER_WIDGET_SIZE 0.34615385 // Original Size (iPhone 13 Pro): 135
 
@@ -48,6 +48,11 @@ NSInteger getDeviceSize()
         || [model rangeOfString: @"iPhone13"].location != NSNotFound
     ) {
         return 2;
+    } else if (
+        [model rangeOfString: @"iPhone15"].location != NSNotFound
+        || [model rangeOfString: @"iPhone16"].location != NSNotFound
+    ) {
+        return 3;
     }
     return 0;
 }
@@ -57,15 +62,15 @@ double getSideWidgetSize()
     
     NSInteger deviceSize = getDeviceSize();
     
-    if (deviceSize == 1) {
-        // Small Notch
+    if (deviceSize == 1 || deviceSize == 3) {
+        // Small Notch/Dynamic Island
         return SMALL_SIDE_WIDGET_SIZE;
     } else if (deviceSize == 2) {
         // Large Notch
         return LARGE_SIDE_WIDGET_SIZE;
     }
     
-    return SMALL_SIDE_WIDGET_SIZE;
+    return LARGE_SIDE_WIDGET_SIZE;
 }
 
 double getCenterWidgetSize()
@@ -73,15 +78,27 @@ double getCenterWidgetSize()
     
     NSInteger deviceSize = getDeviceSize();
     
-    if (deviceSize == 1) {
-        // Small Notch
+    if (deviceSize == 1 || deviceSize == 3) {
+        // Small Notch/Dynamic Island
         return SMALL_CENTER_WIDGET_SIZE;
     } else if (deviceSize == 2) {
         // Large Notch
         return LARGE_CENTER_WIDGET_SIZE;
     }
     
-    return SMALL_CENTER_WIDGET_SIZE;
+    return LARGE_CENTER_WIDGET_SIZE;
+}
+
+double getCenterWidgetVerticalOffset()
+{
+    NSInteger deviceSize = getDeviceSize();
+
+    if (deviceSize == 3) {
+        // Dynamic Island
+        return 20;
+    }
+
+    return 0;
 }
 
 // get the max number of (sideNum, centerNum) widgets
@@ -90,8 +107,8 @@ NSDictionary<NSString*, NSNumber*>* getMaxNumWidgets()
 {
     NSInteger deviceSize = getDeviceSize();
 
-    if (deviceSize == 1) {
-        // Small Notch
+    if (deviceSize == 1 || deviceSize == 3) {
+        // Small Notch/Dynamic Island
         return @{
             @"sideNum": @(2),
             @"centerNum": @(3)
