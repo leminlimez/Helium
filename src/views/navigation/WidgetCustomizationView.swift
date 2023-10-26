@@ -9,13 +9,34 @@ import Foundation
 import SwiftUI
 
 // MARK: Widget Customization View
-// TODO: This
 struct WidgetCustomizationView: View {
     var body: some View {
         NavigationView {
             VStack {
-                WidgetPlaceView(widgetManager: .init(widgetSide: .left))
-                WidgetPlaceView(widgetManager: .init(widgetSide: .center))
+                // TODO: Improve This UI
+                HStack {
+                    Text("Left:")
+                        .bold()
+                    Spacer()
+                    WidgetPlaceView(widgetManager: .init(widgetSide: .left))
+                }
+                .padding(5)
+                
+                HStack {
+                    Text("Center:")
+                        .bold()
+                    Spacer()
+                    WidgetPlaceView(widgetManager: .init(widgetSide: .center))
+                }
+                .padding(5)
+                
+                HStack {
+                    Text("Right:")
+                        .bold()
+                    Spacer()
+                    WidgetPlaceView(widgetManager: .init(widgetSide: .right))
+                }
+                .padding(5)
             }
             .navigationTitle("Customize")
         }
