@@ -18,7 +18,13 @@ struct WidgetCustomizationView: View {
                     Text("Left:")
                         .bold()
                     Spacer()
-                    WidgetPlaceView(widgetManager: .init(widgetSide: .left))
+                    if #available(iOS 15, *) {
+                        WidgetPlaceView(widgetManager: .init(widgetSide: .left))
+                            .background(.ultraThinMaterial, in:
+                                RoundedRectangle(cornerRadius: 8))
+                    } else {
+                        WidgetPlaceView(widgetManager: .init(widgetSide: .left))
+                    }
                 }
                 .padding(5)
                 
@@ -26,7 +32,13 @@ struct WidgetCustomizationView: View {
                     Text("Center:")
                         .bold()
                     Spacer()
-                    WidgetPlaceView(widgetManager: .init(widgetSide: .center))
+                    if #available(iOS 15, *) {
+                        WidgetPlaceView(widgetManager: .init(widgetSide: .center))
+                            .background(.ultraThinMaterial, in:
+                                RoundedRectangle(cornerRadius: 8))
+                    } else {
+                        WidgetPlaceView(widgetManager: .init(widgetSide: .center))
+                    }
                 }
                 .padding(5)
                 
@@ -34,7 +46,13 @@ struct WidgetCustomizationView: View {
                     Text("Right:")
                         .bold()
                     Spacer()
-                    WidgetPlaceView(widgetManager: .init(widgetSide: .right))
+                    if #available(iOS 15, *) {
+                        WidgetPlaceView(widgetManager: .init(widgetSide: .right))
+                            .background(.ultraThinMaterial, in:
+                                RoundedRectangle(cornerRadius: 8))
+                    } else {
+                        WidgetPlaceView(widgetManager: .init(widgetSide: .right))
+                    }
                 }
                 .padding(5)
             }
@@ -64,33 +82,43 @@ struct WidgetPlaceView: View {
                 .padding(.horizontal, 1)
                 if widgetManager.widgetStructs.count < widgetManager.maxNumWidgets {
                     // add a plus button
-                    Button(action: {
-                        showingAddView.toggle()
-                    }) {
-                        Image(systemName: "plus")
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 3)
+                    if #available(iOS 15, *) {
+                        Button(action: {
+                            showingAddView.toggle()
+                        }) {
+                            Image(systemName: "plus")
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 3)
+                        }
+                        .background(.ultraThinMaterial, in:
+                                        RoundedRectangle(cornerRadius: 100.0))
+                    } else {
+                        Button(action: {
+                            showingAddView.toggle()
+                        }) {
+                            Image(systemName: "plus")
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 3)
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 100.0).opacity(0.6))
                     }
-                    .background(.ultraThinMaterial, in:
-                                    RoundedRectangle(cornerRadius: 100.0))
                 }
             }
             .padding(.horizontal, 5)
             .sheet(isPresented: $showingAddView, content: {
-                WidgetAddView(widgetManager: widgetManager)
+                WidgetAddView(showing: $showingAddView, widgetManager: widgetManager)
             })
             .sheet(isPresented: $showingModView, content: {
-                WidgetModifyView(widgetManager: widgetManager, widgetIndex: $viewIndex)
+                WidgetModifyView(showing: $showingModView, widgetManager: widgetManager, widgetIndex: $viewIndex)
             })
         }
-        .background(.ultraThinMaterial, in:
-            RoundedRectangle(cornerRadius: 8))
     }
 }
 
 // MARK: Widget Modify View
 struct WidgetModifyView: View {
-    @Environment(\.dismiss) var dismiss
+    @Binding var showing: Bool
     @StateObject var widgetManager: WidgetManager
     @Binding var widgetIndex: Int
     
@@ -104,14 +132,14 @@ struct WidgetModifyView: View {
                         // Save Button
                         Button("Save") {
                             widgetManager.saveWidgetStructs()
-                            dismiss()
+                            showing = false
                         }
                         .buttonStyle(TintedButton(color: .blue, fullWidth: true))
                         .padding(.horizontal, 7)
                         // Delete Button
                         Button("Delete") {
                             widgetManager.removeWidget(id: widgetIndex)
-                            dismiss()
+                            showing = false
                         }
                         .buttonStyle(TintedButton(color: .red, fullWidth: true))
                         .padding(.horizontal, 7)
@@ -124,7 +152,7 @@ struct WidgetModifyView: View {
 
 // MARK: Widget Add View
 struct WidgetAddView: View {
-    @Environment(\.dismiss) var dismiss
+    @Binding var showing: Bool
     @StateObject var widgetManager: WidgetManager
     
     var body: some View {
@@ -132,7 +160,7 @@ struct WidgetAddView: View {
             ForEach(WidgetModule.allCases, id: \.self) { id in
                 Button(action: {
                     widgetManager.addWidget(module: id)
-                    dismiss()
+                    showing = false
                 }) {
                     WidgetChoiceView(widgetName: WidgetDetails.getWidgetName(id), exampleText: WidgetDetails.getWidgetExample(id))
                 }
@@ -148,15 +176,26 @@ struct WidgetChoiceView: View {
 
     var body: some View {
         HStack {
-            ZStack {
-                Text(exampleText)
-                    .padding(.vertical, 5)
-                    .foregroundColor(.secondary)
+            if #available(iOS 15, *) {
+                ZStack {
+                    Text(exampleText)
+                        .padding(.vertical, 5)
+                        .foregroundColor(.secondary)
+                }
+                .frame(width: 125)
+                .background(.ultraThinMaterial, in:
+                                RoundedRectangle(cornerRadius: 8))
+                .padding(.trailing, 5)
+            } else {
+                ZStack {
+                    Text(exampleText)
+                        .padding(.vertical, 5)
+                        .foregroundColor(.secondary)
+                }
+                .frame(width: 125)
+                .background(RoundedRectangle(cornerRadius: 8).opacity(0.6))
+                .padding(.trailing, 5)
             }
-            .frame(width: 125)
-            .background(.ultraThinMaterial, in:
-                RoundedRectangle(cornerRadius: 8))
-            .padding(.trailing, 5)
             Text(widgetName)
                 .foregroundColor(.primary)
                 .bold()
