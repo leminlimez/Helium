@@ -18,6 +18,7 @@ if [ -d ".theos/obj/debug/XXTAssistiveTouch.app" ]; then
 	echo "Adding application files"
 	cp -r "$APP_BUILD_FILES/icon.png" "$BUILD_LOCATION/icon.png"
 	cp -r "$APP_BUILD_FILES/Info.plist" "$BUILD_LOCATION/Info.plist"
+	cp -r "$APP_BUILD_FILES/Assets.car" "$BUILD_LOCATION/Assets.car"
 	
 	# Create payload
 	echo "Creating payload"
