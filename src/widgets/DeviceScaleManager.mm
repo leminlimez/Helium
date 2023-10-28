@@ -32,6 +32,7 @@ NSString* getDeviceName()
  2 = Large Notch
  3 = Dynamic Island
  */
+extern "C" NSInteger getDeviceSize(void);
 NSInteger getDeviceSize()
 {
     NSString *model = getDeviceName();
@@ -57,6 +58,7 @@ NSInteger getDeviceSize()
     return 0;
 }
 
+extern "C" double getSideWidgetSize(void);
 double getSideWidgetSize()
 {
     
@@ -73,6 +75,7 @@ double getSideWidgetSize()
     return LARGE_SIDE_WIDGET_SIZE;
 }
 
+extern "C" double getCenterWidgetSize(void);
 double getCenterWidgetSize()
 {
     

@@ -20,6 +20,7 @@ struct WidgetPreferencesView: View {
                 // MARK: Date Format Textbox
                 HStack {
                     Text("Date Format")
+                        .foregroundColor(.primary)
                         .bold()
                     Spacer()
                     TextField("E MMM dd", text: $text)
@@ -37,6 +38,7 @@ struct WidgetPreferencesView: View {
                 // MARK: Network Choice
                 HStack {
                     Text("Network Type")
+                        .foregroundColor(.primary)
                         .bold()
                     Spacer()
                     Picker(selection: $intSelection, label: Text("Network Type")) {
@@ -55,6 +57,7 @@ struct WidgetPreferencesView: View {
                 // MARK: Battery Value Type
                 HStack {
                     Text("Battery Option")
+                        .foregroundColor(.primary)
                         .bold()
                     Spacer()
                     Picker(selection: $intSelection, label: Text("Battery Option")) {

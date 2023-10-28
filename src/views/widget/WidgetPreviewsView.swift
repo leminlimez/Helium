@@ -11,11 +11,13 @@ import SwiftUI
 struct WidgetPreviewsView: View {
     @Binding var widget: WidgetStruct
     @State var text: String = ""
+    @State var previewColor: Color = .primary
     
     var body: some View {
         HStack {
             Text(text)
-                .foregroundColor(.primary)
+                .foregroundColor(previewColor)
+                .minimumScaleFactor(0.01)
         }
         .onAppear {
             updatePreview()

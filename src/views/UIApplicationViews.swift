@@ -30,6 +30,12 @@ struct RootView: View {
                     Label("Settings", systemImage: "gear")
                 }
         }
+        .onAppear {
+            let tabBarAppearance = UITabBarAppearance()
+            tabBarAppearance.configureWithDefaultBackground()
+            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+            UIApplication.shared.statusBarStyle = .default
+        }
     }
 }
 

@@ -38,3 +38,22 @@ NSDictionary<NSString*, NSNumber*>* getMaxNumWidgetsBridger()
 {
     return getMaxNumWidgets();
 }
+
+extern NSInteger getDeviceSize(void);
+extern double getSideWidgetSize(void);
+extern double getCenterWidgetSize(void);
+
+NSInteger getDeviceSizeBridger()
+{
+    return getDeviceSize();
+}
+
+double getSideWidgetSizeBridger()
+{
+    return getSideWidgetSize();
+}
+
+double getCenterWidgetSizeBridger()
+{
+    return getCenterWidgetSize();
+}
