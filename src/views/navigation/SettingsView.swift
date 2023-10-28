@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 let buildNumber: Int = 1
-let DEBUG_MODE_ENABLED = true
+let DEBUG_MODE_ENABLED = false
 
 // MARK: Settings View
 // TODO: This
