@@ -18,3 +18,7 @@ void waitForNotificationBridger(void (^onFinish)(), BOOL isEnabled);
 #pragma mark - Device Scale Manager
 
 NSDictionary<NSString*, NSNumber*>* getMaxNumWidgetsBridger();
+
+NSInteger getDeviceSizeBridger();
+double getSideWidgetSizeBridger();
+double getCenterWidgetSizeBridger();
