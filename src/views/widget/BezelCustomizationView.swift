@@ -139,7 +139,7 @@ struct BezelCustomizationView: View {
         VStack {
             GeometryReader { geometry in
                 ZStack {
-                    Image("DynamicIsland")
+                    Image(deviceType == 3 ? "DynamicIsland" : deviceType == 1 ? "SmallNotch" : "BigNotch")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: geometry.size.width * bezelSize)
@@ -156,7 +156,7 @@ struct BezelCustomizationView: View {
                     VStack {
                         HStack {
                             Spacer()
-                                .frame(height: geometry.size.height * 0.09)
+                                .frame(height: geometry.size.height * 0.075)
                         }
                         HStack {
                             BezelButtonsMainView(widgetManager: .init(widgetSide: .left), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: sideWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons)
