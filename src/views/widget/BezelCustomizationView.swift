@@ -169,6 +169,7 @@ struct BezelCustomizationView: View {
                         Spacer()
                     }
                 }
+                .scaleEffect(1.25, anchor: .top)
                 .scaleEffect(zoomAnimAmount, anchor: (zoomedInPos == 0 ? .topLeading : zoomedInPos == 1 ? .top : .topTrailing))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .animation(
