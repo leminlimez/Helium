@@ -21,7 +21,7 @@
 #include "../widgets/WidgetManager.h"
 #include "../widgets/DeviceScaleManager.h"
 
-#define DEBUG_MODE_ENABLED 1
+#define DEBUG_MODE_ENABLED 0
 
 
 extern "C" char **environ;
