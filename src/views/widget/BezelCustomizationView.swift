@@ -25,7 +25,7 @@ struct BezelButtonsMainView: View {
                 playAnimation()
             }) {
                 BezelButtonView(widgetManager: widgetManager, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, zoomedOutAction: playAnimation)
-                    .frame(width: geometry.size.width * widgetOffsetSize * trueWidgetSize, height: 14)
+                    .frame(width: geometry.size.width * widgetOffsetSize * trueWidgetSize, height: 18)
                     .background(
                         RoundedRectangle(cornerRadius: 3)
                             .opacity(0.4)
@@ -111,7 +111,7 @@ struct BezelButtonView: View {
                 }
             }
         }
-        .frame(height: 12)
+        .frame(height: 14)
         .padding(.vertical, 2)
         .sheet(isPresented: $showingAddView, content: {
             WidgetAddView(widgetManager: widgetManager)
