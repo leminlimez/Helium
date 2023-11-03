@@ -814,13 +814,13 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         if (orientation == UIInterfaceOrientationPortrait)
         {
             [UIView animateWithDuration:duration animations:^{
-                self->_contentView.alpha =1.0;
+                self->_contentView.alpha = 1.0;
             }];
         }
         else
         {
             [UIView animateWithDuration:duration animations:^{
-                self->_contentView.alpha = 0.5;
+                self->_contentView.alpha = 0.0;
             }];
         }
         return;
