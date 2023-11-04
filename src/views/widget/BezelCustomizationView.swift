@@ -161,6 +161,10 @@ struct BezelCustomizationView: View {
                                 if canPressButtons {
                                     if flippedWidget != nil {
                                         // close the current widget
+                                        withAnimation(Animation.easeInOut(duration: CardAnimationSpeed)) {
+                                            flippedWidget = nil
+                                            animate3d.toggle()
+                                        }
                                     } else if zoomAnimAmount != 1 {
                                         canPressButtons = false
                                         zoomAnimAmount = 1
@@ -194,6 +198,7 @@ struct BezelCustomizationView: View {
                         .easeInOut(duration: 0.5),
                         value: zoomAnimAmount
                     )
+                    .blur(radius: animate3d ? 8 : 0)
                     
                     // MARK: Widget Flip View
                     WidgetSettingsFlipView(screenGeom: geometry, flippedWidget: $flippedWidget, canPressButtons: $canPressButtons, flipped: $flipped, animate3d: $animate3d)
