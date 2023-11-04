@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+let CardAnimationSpeed = 0.3
+
 struct BezelButtonsMainView: View {
     @StateObject var widgetManager: WidgetManager
     
@@ -19,19 +21,18 @@ struct BezelButtonsMainView: View {
     @Binding var zoomAnimAmount: CGFloat
     @Binding var canPressButtons: Bool
     
+    @Binding var flippedWidget: WidgetStruct?
+    @Binding var animate3d: Bool
+    
     var body: some View {
         VStack {
-            Button(action: {
-                playAnimation()
-            }) {
-                BezelButtonView(widgetManager: widgetManager, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, zoomedOutAction: playAnimation)
-                    .frame(width: geometry.size.width * widgetOffsetSize * trueWidgetSize, height: 18)
-                    .background(
-                        RoundedRectangle(cornerRadius: 3)
-                            .opacity(0.4)
-                            .foregroundColor(.black)
-                    )
-            }
+            BezelButtonView(widgetManager: widgetManager, flippedWidget: $flippedWidget, animate3d: $animate3d, geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: trueWidgetSize, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, zoomedOutAction: playAnimation)
+                .frame(width: geometry.size.width * widgetOffsetSize * trueWidgetSize, height: 18)
+                .background(
+                    RoundedRectangle(cornerRadius: 3)
+                        .opacity(0.4)
+                        .foregroundColor(.black)
+                )
         }
     }
     
@@ -65,31 +66,40 @@ struct BezelButtonsMainView: View {
 
 struct BezelButtonView: View {
     @StateObject var widgetManager: WidgetManager
+    @Binding var flippedWidget: WidgetStruct?
+    @Binding var animate3d: Bool
+    
+    var geometry: GeometryProxy
+    var widgetOffsetSize: CGFloat
+    var trueWidgetSize: CGFloat
     
     @Binding var zoomAnimAmount: CGFloat
     @Binding var canPressButtons: Bool
     
-    @State var viewIndex: Int = -1
     @State var showingAddView: Bool = false
-    @State var showingModView: Bool = false
     
     var zoomedOutAction: () -> Void
     
     var body: some View {
         HStack {
-            ForEach (0..<widgetManager.widgetStructs.count, id: \.self) { widget in
-                Button(action: {
-                    if canPressButtons {
-                        if zoomAnimAmount == 1 {
-                            zoomedOutAction()
-                        } else {
-                            viewIndex = widget
-                            showingModView.toggle()
+            ForEach ($widgetManager.widgetStructs) { widget in
+                WidgetPreviewsView(widget: widget, previewColor: .white)
+                    .onTapGesture {
+                        if canPressButtons {
+                            if zoomAnimAmount == 1 {
+                                zoomedOutAction()
+                            } else {
+                                withAnimation(Animation.easeInOut(duration: CardAnimationSpeed)) {
+                                    if animate3d {
+                                        flippedWidget = nil
+                                    } else {
+                                        flippedWidget = widget.wrappedValue
+                                    }
+                                    animate3d.toggle()
+                                }
+                            }
                         }
                     }
-                }) {
-                    WidgetPreviewsView(widget: $widgetManager.widgetStructs[widget], previewColor: .white)
-                }
             }
             if widgetManager.widgetStructs.count < widgetManager.maxNumWidgets {
                 // plus button
@@ -116,9 +126,6 @@ struct BezelButtonView: View {
         .sheet(isPresented: $showingAddView, content: {
             WidgetAddView(widgetManager: widgetManager)
         })
-        .sheet(isPresented: $showingModView, content: {
-            WidgetModifyView(widgetManager: widgetManager, widgetIndex: $viewIndex)
-        })
     }
 }
 
@@ -135,47 +142,63 @@ struct BezelCustomizationView: View {
     @State var zoomAnimAmount: CGFloat = 1.0
     @State var canPressButtons: Bool = true
     
+    @State var flippedWidget: WidgetStruct?
+    @State var flipped: Bool = false
+    @State var animate3d: Bool = false
+    
     var body: some View {
-        VStack {
+        ZStack {
             GeometryReader { geometry in
                 ZStack {
-                    Image(deviceType == 3 ? "DynamicIsland" : deviceType == 1 ? "SmallNotch" : "BigNotch")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: geometry.size.width * bezelSize)
-                        .frame(maxHeight: .infinity)
-                        .onTapGesture {
-                            if canPressButtons && zoomAnimAmount != 1 {
-                                canPressButtons = false
-                                zoomAnimAmount = 1
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                                    canPressButtons = true
+                    // MARK: Phone and Widgets
+                    ZStack {
+                        Image(deviceType == 3 ? "DynamicIsland" : deviceType == 1 ? "SmallNotch" : "BigNotch")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: geometry.size.width * bezelSize)
+                            .frame(maxHeight: .infinity)
+                            .onTapGesture {
+                                if canPressButtons {
+                                    if flippedWidget != nil {
+                                        // close the current widget
+                                    } else if zoomAnimAmount != 1 {
+                                        canPressButtons = false
+                                        zoomAnimAmount = 1
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                                            canPressButtons = true
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    VStack {
-                        HStack {
+                        VStack {
+                            HStack {
+                                Spacer()
+                                    .frame(height: geometry.size.height * 0.075)
+                            }
+                            HStack {
+                                BezelButtonsMainView(widgetManager: .init(widgetSide: .left), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: sideWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, flippedWidget: $flippedWidget, animate3d: $animate3d)
+                                Spacer()
+                                BezelButtonsMainView(widgetManager: .init(widgetSide: .center), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: centerWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, flippedWidget: $flippedWidget, animate3d: $animate3d)
+                                Spacer()
+                                BezelButtonsMainView(widgetManager: .init(widgetSide: .right), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: sideWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, flippedWidget: $flippedWidget, animate3d: $animate3d)
+                            }
+                            .frame(width: geometry.size.width * 0.68)
                             Spacer()
-                                .frame(height: geometry.size.height * 0.075)
                         }
-                        HStack {
-                            BezelButtonsMainView(widgetManager: .init(widgetSide: .left), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: sideWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons)
-                            Spacer()
-                            BezelButtonsMainView(widgetManager: .init(widgetSide: .center), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: centerWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons)
-                            Spacer()
-                            BezelButtonsMainView(widgetManager: .init(widgetSide: .right), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: sideWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons)
-                        }
-                        .frame(width: geometry.size.width * 0.68)
-                        Spacer()
                     }
+                    .coordinateSpace(name: "mainFrame")
+                    .scaleEffect(1.25, anchor: .top)
+                    .scaleEffect(zoomAnimAmount, anchor: (zoomedInPos == 0 ? .topLeading : zoomedInPos == 1 ? .top : .topTrailing))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .animation(
+                        .easeInOut(duration: 0.5),
+                        value: zoomAnimAmount
+                    )
+                    
+                    // MARK: Widget Flip View
+                    WidgetSettingsFlipView(screenGeom: geometry, flippedWidget: $flippedWidget, canPressButtons: $canPressButtons, flipped: $flipped, animate3d: $animate3d)
+                        .aspectRatio(1, contentMode: .fit)
                 }
-                .scaleEffect(1.25, anchor: .top)
-                .scaleEffect(zoomAnimAmount, anchor: (zoomedInPos == 0 ? .topLeading : zoomedInPos == 1 ? .top : .topTrailing))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .animation(
-                    .easeInOut(duration: 0.5),
-                    value: zoomAnimAmount
-                )
             }
         }
         .onAppear {
