@@ -21,7 +21,11 @@ enum WidgetModule: Int, CaseIterable {
     case battery = 4
 }
 
-struct WidgetStruct: Identifiable {
+struct WidgetStruct: Identifiable, Equatable {
+    static func == (lhs: WidgetStruct, rhs: WidgetStruct) -> Bool {
+        return (lhs.id == rhs.id)
+    }
+    
     var id = UUID()
     var module: WidgetModule
     var config: [String: Any]
