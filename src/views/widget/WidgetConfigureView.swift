@@ -8,10 +8,11 @@
 import Foundation
 import SwiftUI
 
-let cardScale: CGFloat = 0.8
+let cardScale: CGFloat = 0.9
 
 struct WidgetSettingsFlipView: View {
     var screenGeom: GeometryProxy
+    @StateObject var widgetManager: WidgetManager
     
     @Binding var flippedWidget: WidgetStruct?
     
@@ -24,7 +25,7 @@ struct WidgetSettingsFlipView: View {
         return GeometryReader {cardGeometry in
             VStack {
                 if animate3d && flippedWidget != nil {
-                    BackWidgetOptionView(screenGeom: screenGeom, flippedWidget: $flippedWidget, canPressButtons: $canPressButtons, flipFunction: flipCard)
+                    BackWidgetOptionView(screenGeom: screenGeom, widgetManager: widgetManager, flippedWidget: $flippedWidget, widgetIndex: widgetManager.getWidgetID(widget: flippedWidget!), canPressButtons: $canPressButtons, flipFunction: flipCard)
                         .frame(
                             width: animate3d ? (min(screenGeom.size.width, screenGeom.size.height)) : 0,
                             height: animate3d ? (min(screenGeom.size.width, screenGeom.size.height)) : 0
@@ -51,8 +52,10 @@ struct WidgetSettingsFlipView: View {
 // MARK: Back Widget View/Edit Widget View
 struct BackWidgetOptionView: View {
     var screenGeom: GeometryProxy
+    @StateObject var widgetManager: WidgetManager
     
     @Binding var flippedWidget: WidgetStruct?
+    @State var widgetIndex: Int
     
     @Binding var canPressButtons: Bool
     
@@ -60,29 +63,25 @@ struct BackWidgetOptionView: View {
     
     var body: some View {
         return VStack(alignment: .center) {
-            Text("TODO: Edit View")
+            Text("Configure Widget")
                 .bold()
+                .padding(.top, 25)
             
             Spacer()
             
-            // MARK: Save Button
-            Button(action: {
-                // close menu
-                if canPressButtons && flippedWidget != nil {//}&& flippedWidget! == widget {
-                    canPressButtons = false
-                    withAnimation(Animation.easeInOut(duration: CardAnimationSpeed)) {
-                        flippedWidget = nil
-                        flipFunction()
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + CardAnimationSpeed + 0.05) {
-                        canPressButtons = true
-                    }
+            WidgetModifyView(widgetManager: widgetManager, widgetIndex: $widgetIndex, dismiss: {
+                canPressButtons = false
+                withAnimation(Animation.easeInOut(duration: CardAnimationSpeed)) {
+                    flippedWidget = nil
+                    flipFunction()
                 }
-            }) {
-                Text("Save")
-            }
-            .buttonStyle(TintedButton(color: .blue, fullWidth: true))
-            .padding(25)
+                DispatchQueue.main.asyncAfter(deadline: .now() + CardAnimationSpeed + 0.05) {
+                    canPressButtons = true
+                }
+            })
+            .padding(5)
+            
+            Spacer()
         }
         .background(Color(uiColor14: .secondarySystemBackground))
         .cornerRadius(16)

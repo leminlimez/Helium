@@ -83,6 +83,19 @@ class WidgetManager: ObservableObject {
         return structs
     }
     
+    // get the widget id
+    public func getWidgetID(widget: WidgetStruct) -> Int {
+        if widgetStructs.count > 0 {
+            for i in 0...widgetStructs.count {
+                print(widgetStructs[i].id)
+                if widgetStructs[i] == widget {
+                    return i
+                }
+            }
+        }
+        return -1
+    }
+    
     // save widgets
     public func saveWidgetStructs() {
         let defaults = UserDefaults.standard

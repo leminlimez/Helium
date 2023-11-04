@@ -21,75 +21,33 @@ struct WidgetCustomizationView: View {
     }
 }
 
-// MARK: Widget Place View
-struct WidgetPlaceView: View {
-    @StateObject var widgetManager: WidgetManager
-    @State var viewIndex: Int = -1
-    @State var showingAddView: Bool = false
-    @State var showingModView: Bool = false
-
-    var body: some View {
-        HStack {
-            HStack {
-                ForEach (0..<widgetManager.widgetStructs.count, id: \.self) { widget in
-                    Button(action: {
-                        viewIndex = widget
-                        showingModView.toggle()
-                    }) {
-                        WidgetPreviewsView(widget: $widgetManager.widgetStructs[widget], previewColor: .white)
-                    }
-                }
-                .padding(.horizontal, 1)
-                if widgetManager.widgetStructs.count < widgetManager.maxNumWidgets {
-                    // add a plus button
-                    Button(action: {
-                        showingAddView.toggle()
-                    }) {
-                        Image(systemName: "plus")
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 3)
-                    }
-                }
-            }
-            .padding(.horizontal, 5)
-            .sheet(isPresented: $showingAddView, content: {
-                WidgetAddView(widgetManager: widgetManager)
-            })
-            .sheet(isPresented: $showingModView, content: {
-                WidgetModifyView(widgetManager: widgetManager, widgetIndex: $viewIndex)//showing: $showingModView, widgetManager: widgetManager, widgetIndex: $viewIndex)
-            })
-        }
-    }
-}
-
 // MARK: Widget Modify View
 struct WidgetModifyView: View {
-    @Environment(\.dismiss) var dismiss
     @StateObject var widgetManager: WidgetManager
     @Binding var widgetIndex: Int
     
+    var dismiss: () -> Void
+    
     var body: some View {
-        VStack {
+        return List {
             if widgetIndex >= 0 && widgetIndex < widgetManager.widgetStructs.count {
-                List {
-                    // Widget Preferences
-                    WidgetPreferencesView(widgetStruct: $widgetManager.widgetStructs[widgetIndex])
-                    VStack {
-                        // Save Button
-                        Button("Save") {
-                            widgetManager.saveWidgetStructs()
-                            dismiss()
-                        }
-                        .buttonStyle(TintedButton(color: .blue, fullWidth: true))
-                        .padding(.horizontal, 7)
-                        // Delete Button
-                        Button("Delete") {
-                            widgetManager.removeWidget(id: widgetIndex)
-                            dismiss()
-                        }
-                        .buttonStyle(TintedButton(color: .red, fullWidth: true))
-                        .padding(.horizontal, 7)
+                // Widget Preferences
+                WidgetPreferencesView(widgetStruct: $widgetManager.widgetStructs[widgetIndex])
+                VStack {
+                    // Save Button
+                    Button("Save") {
+                        widgetManager.saveWidgetStructs()
+                        dismiss()
                     }
+                    .buttonStyle(TintedButton(color: .blue, fullWidth: true))
+                    .padding(.horizontal, 7)
+                    // Delete Button
+                    Button("Delete") {
+                        widgetManager.removeWidget(id: widgetIndex)
+                        dismiss()
+                    }
+                    .buttonStyle(TintedButton(color: .red, fullWidth: true))
+                    .padding(.horizontal, 7)
                 }
             }
         }
