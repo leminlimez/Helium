@@ -37,11 +37,7 @@ struct WidgetPreferencesView: View {
             case .network:
                 // MARK: Network Choice
                 HStack {
-                    Text("Network Type")
-                        .foregroundColor(.primary)
-                        .bold()
-                    Spacer()
-                    Picker(selection: $intSelection, label: Text("Network Type")) {
+                    Picker(selection: $intSelection, label: Text("Network Type").foregroundColor(.primary).bold()) {
                         Text("Down").tag(0)
                         Text("Up").tag(1)
                     }
@@ -56,11 +52,7 @@ struct WidgetPreferencesView: View {
             case .battery:
                 // MARK: Battery Value Type
                 HStack {
-                    Text("Battery Option")
-                        .foregroundColor(.primary)
-                        .bold()
-                    Spacer()
-                    Picker(selection: $intSelection, label: Text("Battery Option")) {
+                    Picker(selection: $intSelection, label: Text("Battery Option").foregroundColor(.primary).bold()) {
                         Text("Watts").tag(0)
                         Text("Charging Current").tag(1)
                         Text("Amperage").tag(2)

@@ -146,6 +146,10 @@ struct BezelCustomizationView: View {
     @State var flipped: Bool = false
     @State var animate3d: Bool = false
     
+    @StateObject var widgetManagerL: WidgetManager = .init(widgetSide: .left)
+    @StateObject var widgetManagerC: WidgetManager = .init(widgetSide: .center)
+    @StateObject var widgetManagerR: WidgetManager = .init(widgetSide: .right)
+    
     var body: some View {
         ZStack {
             GeometryReader { geometry in
@@ -180,11 +184,11 @@ struct BezelCustomizationView: View {
                                     .frame(height: geometry.size.height * 0.075)
                             }
                             HStack {
-                                BezelButtonsMainView(widgetManager: .init(widgetSide: .left), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: sideWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, flippedWidget: $flippedWidget, animate3d: $animate3d)
+                                BezelButtonsMainView(widgetManager: widgetManagerL, geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: sideWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, flippedWidget: $flippedWidget, animate3d: $animate3d)
                                 Spacer()
-                                BezelButtonsMainView(widgetManager: .init(widgetSide: .center), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: centerWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, flippedWidget: $flippedWidget, animate3d: $animate3d)
+                                BezelButtonsMainView(widgetManager: widgetManagerC, geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: centerWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, flippedWidget: $flippedWidget, animate3d: $animate3d)
                                 Spacer()
-                                BezelButtonsMainView(widgetManager: .init(widgetSide: .right), geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: sideWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, flippedWidget: $flippedWidget, animate3d: $animate3d)
+                                BezelButtonsMainView(widgetManager: widgetManagerR, geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: sideWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, flippedWidget: $flippedWidget, animate3d: $animate3d)
                             }
                             .frame(width: geometry.size.width * 0.68)
                             Spacer()
@@ -201,8 +205,17 @@ struct BezelCustomizationView: View {
                     .blur(radius: animate3d ? 8 : 0)
                     
                     // MARK: Widget Flip View
-                    WidgetSettingsFlipView(screenGeom: geometry, flippedWidget: $flippedWidget, canPressButtons: $canPressButtons, flipped: $flipped, animate3d: $animate3d)
-                        .aspectRatio(1, contentMode: .fit)
+                    // i hate state objects
+                    if zoomedInPos == 0 {
+                        WidgetSettingsFlipView(screenGeom: geometry, widgetManager: widgetManagerL, flippedWidget: $flippedWidget, canPressButtons: $canPressButtons, flipped: $flipped, animate3d: $animate3d)
+                            .aspectRatio(1, contentMode: .fit)
+                    } else if zoomedInPos == 1 {
+                        WidgetSettingsFlipView(screenGeom: geometry, widgetManager: widgetManagerC, flippedWidget: $flippedWidget, canPressButtons: $canPressButtons, flipped: $flipped, animate3d: $animate3d)
+                            .aspectRatio(1, contentMode: .fit)
+                    } else if zoomedInPos == 2 {
+                        WidgetSettingsFlipView(screenGeom: geometry, widgetManager: widgetManagerR, flippedWidget: $flippedWidget, canPressButtons: $canPressButtons, flipped: $flipped, animate3d: $animate3d)
+                            .aspectRatio(1, contentMode: .fit)
+                    }
                 }
             }
         }
