@@ -35,7 +35,7 @@ struct WidgetSettingsFlipView: View {
                         .opacity(0)
                 }
             }
-            .scaleEffect(animate3d ? ((min(screenGeom.size.width, screenGeom.size.height)*cardScale)) / cardGeometry.size.width: 1)
+            .scaleEffect(animate3d ? cardScale : 0)
             .zIndex(animate3d ? 2 : 0)
             .modifier(FlipEffect(flipped: $flipped, angle: animate3d ? 180 : 0, axis: (x: 0.0, y: 1)))
             .aspectRatio(1.0, contentMode: .fit)
