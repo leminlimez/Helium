@@ -1,5 +1,5 @@
 # Helium
-Status Bar Widgets for TrollStore devices on iOS 15+. Works on Jailbroken devices as well.
+Status Bar Widgets for TrollStore iPhones on iOS 15+. Works on Jailbroken devices as well.
 
 More widgets to come in future updates!
 
@@ -17,6 +17,7 @@ Run `./ipabuild.sh` to build the ipa. The resulting tipa should be in a folder c
 
 ## Known Issues
 - It currently does not adapt to the color of the status bar (it will always be white).
+- Scaling is incorrect and you can only add a max of 1 widget on home button devices.
 
 ## Credits
 - [TrollSpeed](https://github.com/Lessica/TrollSpeed) for the AssistiveTouch logic allowing this to work.
