@@ -29,11 +29,12 @@ struct WidgetModifyView: View {
     var dismiss: () -> Void
     
     var body: some View {
-        return List {
+        return VStack {
             if widgetIndex >= 0 && widgetIndex < widgetManager.widgetStructs.count {
                 // Widget Preferences
                 WidgetPreferencesView(widgetStruct: $widgetManager.widgetStructs[widgetIndex])
                 VStack {
+                    Spacer()
                     // Save Button
                     Button("Save") {
                         widgetManager.saveWidgetStructs()
@@ -49,6 +50,7 @@ struct WidgetModifyView: View {
                     .buttonStyle(TintedButton(color: .red, fullWidth: true))
                     .padding(.horizontal, 7)
                 }
+                .padding(10)
             }
         }
     }
