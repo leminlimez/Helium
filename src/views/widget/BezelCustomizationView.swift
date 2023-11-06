@@ -26,7 +26,7 @@ struct BezelButtonsMainView: View {
     
     var body: some View {
         VStack {
-            BezelButtonView(widgetManager: widgetManager, flippedWidget: $flippedWidget, animate3d: $animate3d, geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: trueWidgetSize, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, zoomedOutAction: playAnimation)
+            BezelButtonView(widgetManager: widgetManager, flippedWidget: $flippedWidget, animate3d: $animate3d, geometry: geometry, widgetOffsetSize: widgetOffsetSize, trueWidgetSize: trueWidgetSize, zoomedInPos: $zoomedInPos, zoomAnimAmount: $zoomAnimAmount, canPressButtons: $canPressButtons, zoomedOutAction: playAnimation)
                 .frame(width: geometry.size.width * widgetOffsetSize * trueWidgetSize, height: 18)
                 .background(
                     RoundedRectangle(cornerRadius: 3)
@@ -73,6 +73,7 @@ struct BezelButtonView: View {
     var widgetOffsetSize: CGFloat
     var trueWidgetSize: CGFloat
     
+    @Binding var zoomedInPos: Int
     @Binding var zoomAnimAmount: CGFloat
     @Binding var canPressButtons: Bool
     
@@ -86,16 +87,14 @@ struct BezelButtonView: View {
                 ForEach ($widgetManager.widgetStructs) { widget in
                     WidgetPreviewsView(widget: widget, previewColor: .white)
                         .onTapGesture {
-                            if canPressButtons {
-                                if zoomAnimAmount != 1 {
-                                    withAnimation(Animation.easeInOut(duration: CardAnimationSpeed)) {
-                                        if animate3d {
-                                            flippedWidget = nil
-                                        } else {
-                                            flippedWidget = widget.wrappedValue
-                                        }
-                                        animate3d.toggle()
+                            if canPressButtons && zoomAnimAmount != 1 && zoomedPosMatches() {
+                                withAnimation(Animation.easeInOut(duration: CardAnimationSpeed)) {
+                                    if animate3d {
+                                        flippedWidget = nil
+                                    } else {
+                                        flippedWidget = widget.wrappedValue
                                     }
+                                    animate3d.toggle()
                                 }
                             }
                         }
@@ -103,10 +102,8 @@ struct BezelButtonView: View {
                 if widgetManager.widgetStructs.count < widgetManager.maxNumWidgets {
                     // plus button
                     Button(action: {
-                        if canPressButtons {
-                            if zoomAnimAmount != 1 {
-                                showingAddView.toggle()
-                            }
+                        if canPressButtons && zoomAnimAmount != 1 && zoomedPosMatches() {
+                            showingAddView.toggle()
                         }
                     }) {
                         Image(systemName: "plus")
@@ -134,6 +131,17 @@ struct BezelButtonView: View {
                 .scaleEffect(CGSize(width: 1.05, height: 2))
             }
         }
+    }
+    
+    func zoomedPosMatches() -> Bool {
+        if (
+            (widgetManager.widgetSide == .left && zoomedInPos == 0)
+            || (widgetManager.widgetSide == .center && zoomedInPos == 1)
+            || (widgetManager.widgetSide == .right && zoomedInPos == 2)
+        ) {
+            return true
+        }
+        return false
     }
 }
 
