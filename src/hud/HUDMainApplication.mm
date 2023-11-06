@@ -709,6 +709,9 @@ static void DumpThreads(void)
 {
     [self loadUserDefaults: NO];
     NSNumber *interval = [_userDefaults objectForKey: @"updateInterval"];
+    if (interval ? [interval doubleValue] : 1.0 <= 0) {
+        return 1.0;
+    }
     return interval ? [interval doubleValue] : 1.0;
 }
 
