@@ -35,6 +35,13 @@ struct RootView: View {
             tabBarAppearance.configureWithDefaultBackground()
             UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
             UIApplication.shared.statusBarStyle = .default
+            
+            do {
+                try FileManager.default.contentsOfDirectory(atPath: "/var/mobile")
+                return
+            } catch {
+                UIApplication.shared.alert(title: "Not Supported", body: "This app must be installed with TrollStore.")
+            }
         }
     }
 }
