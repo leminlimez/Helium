@@ -81,51 +81,59 @@ struct BezelButtonView: View {
     var zoomedOutAction: () -> Void
     
     var body: some View {
-        HStack {
-            ForEach ($widgetManager.widgetStructs) { widget in
-                WidgetPreviewsView(widget: widget, previewColor: .white)
-                    .onTapGesture {
-                        if canPressButtons {
-                            if zoomAnimAmount == 1 {
-                                zoomedOutAction()
-                            } else {
-                                withAnimation(Animation.easeInOut(duration: CardAnimationSpeed)) {
-                                    if animate3d {
-                                        flippedWidget = nil
-                                    } else {
-                                        flippedWidget = widget.wrappedValue
+        ZStack {
+            HStack {
+                ForEach ($widgetManager.widgetStructs) { widget in
+                    WidgetPreviewsView(widget: widget, previewColor: .white)
+                        .onTapGesture {
+                            if canPressButtons {
+                                if zoomAnimAmount != 1 {
+                                    withAnimation(Animation.easeInOut(duration: CardAnimationSpeed)) {
+                                        if animate3d {
+                                            flippedWidget = nil
+                                        } else {
+                                            flippedWidget = widget.wrappedValue
+                                        }
+                                        animate3d.toggle()
                                     }
-                                    animate3d.toggle()
                                 }
                             }
                         }
-                    }
-            }
-            if widgetManager.widgetStructs.count < widgetManager.maxNumWidgets {
-                // plus button
-                Button(action: {
-                    if canPressButtons {
-                        if zoomAnimAmount == 1 {
-                            zoomedOutAction()
-                        } else {
-                            showingAddView.toggle()
+                }
+                if widgetManager.widgetStructs.count < widgetManager.maxNumWidgets {
+                    // plus button
+                    Button(action: {
+                        if canPressButtons {
+                            if zoomAnimAmount != 1 {
+                                showingAddView.toggle()
+                            }
                         }
+                    }) {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .minimumScaleFactor(0.01)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 3)
                     }
-                }) {
-                    Image(systemName: "plus")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .minimumScaleFactor(0.01)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 3)
                 }
             }
+            .frame(height: 14)
+            .padding(.vertical, 2)
+            .sheet(isPresented: $showingAddView, content: {
+                WidgetAddView(widgetManager: widgetManager)
+            })
+            
+            if zoomAnimAmount == 1 {
+                Button(action: {
+                    zoomedOutAction()
+                }) {
+                    Rectangle()
+                        .opacity(0)
+                }
+                .scaleEffect(CGSize(width: 1.05, height: 2))
+            }
         }
-        .frame(height: 14)
-        .padding(.vertical, 2)
-        .sheet(isPresented: $showingAddView, content: {
-            WidgetAddView(widgetManager: widgetManager)
-        })
     }
 }
 
