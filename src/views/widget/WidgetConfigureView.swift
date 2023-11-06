@@ -65,9 +65,8 @@ struct BackWidgetOptionView: View {
         return VStack(alignment: .center) {
             Text("Configure Widget")
                 .bold()
+                .font(.title2)
                 .padding(.top, 25)
-            
-            Spacer()
             
             WidgetModifyView(widgetManager: widgetManager, widgetIndex: $widgetIndex, dismiss: {
                 canPressButtons = false

@@ -15,6 +15,19 @@ struct WidgetPreferencesView: View {
     
     var body: some View {
         VStack {
+            // MARK: Preview
+            ZStack {
+                Image(uiImage: UIImage(named: "wallpaper")!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .scaleEffect(1.5)
+                    .frame(width: 190, height: 50)
+                    .cornerRadius(12)
+                    .clipped()
+                WidgetPreviewsView(widget: $widgetStruct, previewColor: .white)
+            }
+            .padding(.bottom, 25)
+            
             switch (widgetStruct.module) {
             case .date:
                 // MARK: Date Format Textbox
