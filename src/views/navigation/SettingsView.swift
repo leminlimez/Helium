@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-let buildNumber: Int = 1
+let buildNumber: Int = 0
 let DEBUG_MODE_ENABLED = false
 
 // MARK: Settings View
@@ -42,10 +42,16 @@ struct SettingsView: View {
                             .keyboardType(.decimalPad)
                             .submitLabel(.done)
                             .onSubmit {
+                                if updateInterval <= 0 {
+                                    updateInterval = 1
+                                }
                                 UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval")
                             }
                             .onAppear {
                                 updateInterval = UserDefaults.standard.double(forKey: "updateInterval")
+                                if updateInterval <= 0 {
+                                    updateInterval = 1
+                                }
                             }
                     }
                 } header: {
