@@ -18,6 +18,9 @@ struct SettingsView: View {
     @State var sideWidgetSize: Int = 100
     @State var centerWidgetSize: Int = 100
     
+    // Preference Variables
+    @State var updateInterval: Double = 1.0
+    
     var body: some View {
         NavigationView {
             List {
@@ -30,7 +33,21 @@ struct SettingsView: View {
                 
                 // Preferences List
                 Section {
-                    Text("TODO")
+                    HStack {
+                        Text("Update Interval (seconds)")
+                            .bold()
+                        Spacer()
+                        TextField("Seconds", value: $updateInterval, format: .number)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .keyboardType(.decimalPad)
+                            .submitLabel(.done)
+                            .onSubmit {
+                                UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval")
+                            }
+                            .onAppear {
+                                updateInterval = UserDefaults.standard.double(forKey: "updateInterval")
+                            }
+                    }
                 } header: {
                     Label("Preferences", systemImage: "gear")
                 }
