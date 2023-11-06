@@ -15,6 +15,9 @@ Run `./ipabuild.sh` to build the ipa. The resulting tipa should be in a folder c
 - iPhone 13 Pro (iOS 15.3.1)
 - iPhone X (iOS 16.1.1, Jailbroken)
 
+## Known Issues
+- It currently does not adapt to the color of the status bar (it will always be white).
+
 ## Credits
 - [TrollSpeed](https://github.com/Lessica/TrollSpeed) for the AssistiveTouch logic allowing this to work.
 - [Cowabunga](https://github.com/leminlimez/Cowabunga) for part of the code.
