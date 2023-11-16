@@ -13,6 +13,14 @@ struct WidgetPreferencesView: View {
     @State var text: String = ""
     @State var intSelection: Int = 0
     
+    let timeFormats: [String] = [
+        "hh:mm",
+        "hh:mm a",
+        "hh:mm:ss",
+        "HH:mm",
+        "HH:mm:ss"
+    ]
+    
     var body: some View {
         VStack {
             // MARK: Preview
@@ -79,6 +87,28 @@ struct WidgetPreferencesView: View {
                         }
                     }
                 }
+            case .time:
+                // MARK: Time Format Selector
+                HStack {
+                    Picker(selection: $intSelection, label: Text("Time Format").foregroundColor(.primary).bold()) {
+                        Text("5:00         (hh:mm)").tag(0)
+                        Text("5:00 PM   (hh:mm a)").tag(1)
+                        Text("5:00:00   (hh:mm:ss)").tag(2)
+                        Text("17:00       (HH:mm)").tag(3)
+                        Text("17:00:00  (HH:mm:ss)").tag(4)
+                    }
+                    .onAppear {
+                        if let timeFormat = widgetStruct.config["dateFormat"] as? String {
+                            for i in 0...timeFormats.count {
+                                if timeFormat == timeFormats[i] {
+                                    intSelection = i
+                                    return;
+                                }
+                            }
+                        }
+                        intSelection = 0
+                    }
+                }
             default:
                 Text("No Configurable Aspects")
             }
@@ -108,6 +138,9 @@ struct WidgetPreferencesView: View {
             case .battery:
                 // MARK: Battery Value Type Handling
                 widgetStruct.config["batteryValueType"] = newInt
+            case .time:
+                // MARK: time Format Handling
+                widgetStruct.config["dateFormat"] = timeFormats[newInt]
             default:
                 return
             }
