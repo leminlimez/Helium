@@ -235,8 +235,11 @@ static NSString* formattedBattery(NSInteger valueType)
  2 = Network Up/Down
  3 = Device Temp
  4 = Battery Detail
- 5 = Weather
- 6 = Music Visualizer
+ 5 = Time
+
+ TODO:
+ - Weather
+ - Music Visualizer
  */
 NSAttributedString* formattedAttributedString(NSArray *identifiers)
 {
@@ -249,21 +252,48 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers)
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
                 switch (parsedID) {
                     case 1:
-                        // Date
-                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedDate([parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : @"E MMM dd")] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+                    case 5:
+                        // Date/Time
+                        [
+                            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
+                                NSString stringWithFormat: @"%c%@",
+                                getSeparator(mutableString),
+                                formattedDate(
+                                    [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? @"E MMM dd" : @"hh:mm")
+                                )
+                            ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+                        ];
                         break;
                     case 2:
                         // Network Speed
-                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [NSString stringWithFormat: @"%c", getSeparator(mutableString)] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
-                        [mutableString appendAttributedString: formattedAttributedSpeedString([parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO)];
+                        [
+                            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
+                                NSString stringWithFormat: @"%c", getSeparator(mutableString)
+                            ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+                        ];
+                        [
+                            mutableString appendAttributedString: formattedAttributedSpeedString(
+                                [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO
+                            )
+                        ];
                         break;
                     case 3:
                         // Device Temp
-                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedTemp()] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+                        [
+                            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
+                                NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedTemp()
+                            ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+                        ];
                         break;
                     case 4:
                         // Battery Stats
-                        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedBattery([parsedInfo valueForKey:@"batteryValueType"] ? [[parsedInfo valueForKey:@"batteryValueType"] integerValue] : 0)] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+                        [
+                            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
+                                NSString stringWithFormat: @"%c%@",
+                                getSeparator(mutableString),
+                                formattedBattery([parsedInfo valueForKey:@"batteryValueType"] ? [[parsedInfo valueForKey:@"batteryValueType"] integerValue] : 0)
+                            ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+                        ];
                         break;
                     default:
                         // do not add anything

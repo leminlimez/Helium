@@ -31,8 +31,8 @@ struct WidgetPreviewsView: View {
     
     func updatePreview() {
         switch (widget.module) {
-        case .date:
-            let dateFormat: String = widget.config["dateFormat"] as? String ?? "E MMM dd"
+        case .date, .time:
+            let dateFormat: String = widget.config["dateFormat"] as? String ?? (widget.module == .date ? "E MMM dd" : "hh:mm")
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = dateFormat
             text = dateFormatter.string(from: Date())

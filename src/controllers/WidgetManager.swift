@@ -19,6 +19,7 @@ enum WidgetModule: Int, CaseIterable {
     case network = 2
     case temperature = 3
     case battery = 4
+    case time = 5
 }
 
 struct WidgetStruct: Identifiable, Equatable {
