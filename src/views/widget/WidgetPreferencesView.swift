@@ -109,6 +109,24 @@ struct WidgetPreferencesView: View {
                         intSelection = 0
                     }
                 }
+            case .text:
+                // MARK: Custom Text Label Textbox
+                HStack {
+                    Text("Label Text")
+                        .foregroundColor(.primary)
+                        .bold()
+                    Spacer()
+                    TextField("Example", text: $text)
+                        .frame(maxWidth: 120)
+                        .multilineTextAlignment(.trailing)
+                        .onAppear {
+                            if let format = widgetStruct.config["text"] as? String {
+                                text = format
+                            } else {
+                                text = "Example"
+                            }
+                        }
+                }
             default:
                 Text("No Configurable Aspects")
             }

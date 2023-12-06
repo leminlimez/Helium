@@ -236,6 +236,7 @@ static NSString* formattedBattery(NSInteger valueType)
  3 = Device Temp
  4 = Battery Detail
  5 = Time
+ 6 = Text
 
  TODO:
  - Weather
@@ -285,6 +286,16 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                     NSString stringWithFormat: @"%c%@",
                     getSeparator(mutableString),
                     formattedBattery([parsedInfo valueForKey:@"batteryValueType"] ? [[parsedInfo valueForKey:@"batteryValueType"] integerValue] : 0)
+                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+            ];
+            break;
+        case 6:
+            // Text
+            [
+                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
+                    NSString stringWithFormat: @"%c%@",
+                    getSeparator(mutableString),
+                    [parsedInfo valueForKey:@"text"] ? [parsedInfo valueForKey:@"text"] : "Unknown"
                 ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
             ];
             break;
