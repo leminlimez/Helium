@@ -36,6 +36,10 @@ struct WidgetPreviewsView: View {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = dateFormat
             text = dateFormatter.string(from: Date())
+            // SAFEGUARD
+            if (text == "") {
+                text = "ERROR"
+            }
         case .network:
             let isUp: Bool = widget.config["isUp"] as? Bool ?? false
             text = "\(isUp ? "▲" : "▼") 0 KB/s"
