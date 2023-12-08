@@ -56,6 +56,8 @@ struct WidgetPreviewsView: View {
                 text = "0 mAh"
             case 3:
                 text = "25"
+            case 4:
+                text = "50%"
             default:
                 text = "???"
             }

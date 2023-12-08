@@ -187,6 +187,7 @@ static NSString* formattedTemp()
  1 = Charging Current
  2 = Regular Amperage
  3 = Charge Cycles
+ 4 = Current Capacity
  */
 static NSString* formattedBattery(NSInteger valueType)
 {
@@ -219,6 +220,9 @@ static NSString* formattedBattery(NSInteger valueType)
         } else if (valueType == 3) {
             // Charge Cycles
             return [batteryInfo[@"CycleCount"] stringValue];
+        } else if (valueType == 4) {
+            // Current Capacity
+            return [batteryInfo[@"CurrentCapacity"] stringValue];
         } else {
             return @"???";
         }
