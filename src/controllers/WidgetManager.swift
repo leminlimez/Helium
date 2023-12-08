@@ -58,7 +58,7 @@ class WidgetManager: ObservableObject {
         let defaults = UserDefaults.standard
         var structs: [WidgetStruct] = []
         
-        if let dict: [[String: Any]] = defaults.array(forKey: "\(widgetSide.rawValue)WidgetIDs") as? [[String: Any]] {
+        if let dict: [[String: Any]] = defaults.array(forKey: "\(widgetSide.rawValue)WidgetIDs", forPath: USER_DEFAULTS_PATH) as? [[String: Any]] {
             for s in dict {
                 var widgetID: Int = 0
                 var config: [String: Any] = [:]
@@ -114,10 +114,10 @@ class WidgetManager: ObservableObject {
         
         // save it to user defaults
         if dict.count > 0 {
-            defaults.setValue(dict, forKey: "\(widgetSide.rawValue)WidgetIDs")
+            defaults.setValue(dict, forKey: "\(widgetSide.rawValue)WidgetIDs", forPath: USER_DEFAULTS_PATH)
         } else {
             // remove from the defaults
-            defaults.removeObject(forKey: "\(widgetSide.rawValue)WidgetIDs")
+            defaults.removeObject(forKey: "\(widgetSide.rawValue)WidgetIDs", forPath: USER_DEFAULTS_PATH)
         }
     }
     
