@@ -10,6 +10,7 @@ import SwiftUI
 
 let buildNumber: Int = 0
 let DEBUG_MODE_ENABLED = false
+let USER_DEFAULTS_PATH = "/var/mobile/Library/Preferences/com.leemin.helium.plist"
 
 // MARK: Settings View
 // TODO: This
@@ -45,10 +46,10 @@ struct SettingsView: View {
                                 if updateInterval <= 0 {
                                     updateInterval = 1
                                 }
-                                UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval")
+                                UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
                             }
                             .onAppear {
-                                updateInterval = UserDefaults.standard.double(forKey: "updateInterval")
+                                updateInterval = UserDefaults.standard.double(forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
                                 if updateInterval <= 0 {
                                     updateInterval = 1
                                 }
@@ -70,10 +71,10 @@ struct SettingsView: View {
                                 .keyboardType(.decimalPad)
                                 .submitLabel(.done)
                                 .onSubmit {
-                                    UserDefaults.standard.setValue(sideWidgetSize, forKey: "DEBUG_sideWidgetSize")
+                                    UserDefaults.standard.setValue(sideWidgetSize, forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
                                 }
                                 .onAppear {
-                                    sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize")
+                                    sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
                                 }
                         }
                         
@@ -86,10 +87,10 @@ struct SettingsView: View {
                                 .keyboardType(.decimalPad)
                                 .submitLabel(.done)
                                 .onSubmit {
-                                    UserDefaults.standard.setValue(centerWidgetSize, forKey: "DEBUG_centerWidgetSize")
+                                    UserDefaults.standard.setValue(centerWidgetSize, forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
                                 }
                                 .onAppear {
-                                    centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize")
+                                    centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
                                 }
                         }
                     } header: {
