@@ -59,9 +59,9 @@ struct WidgetPreviewsView: View {
             default:
                 text = "???"
             }
-        }
         case .text:
             text = widget.config["text"] as? String ?? "Unknown"
+        }
         widget.modified = false
     }
 }
