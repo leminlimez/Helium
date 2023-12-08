@@ -36,6 +36,10 @@ extension UserDefaults {
         setValue(nil, forKey: defaultName, forPath: path)
     }
     
+    func deleteUserDefaults(forPath path: String) throws {
+        try FileManager.default.removeItem(atPath: path)
+    }
+    
     
     // MARK: Specific Type Functions
     
