@@ -40,7 +40,7 @@ struct SettingsView: View {
                         Spacer()
                         TextField("Seconds", value: $updateInterval, format: .number)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .keyboardType(.decimalPad)
+//                            .keyboardType(.decimalPad)
                             .submitLabel(.done)
                             .onSubmit {
                                 if updateInterval <= 0 {
