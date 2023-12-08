@@ -78,6 +78,7 @@ struct WidgetPreferencesView: View {
                         Text("Charging Current").tag(1)
                         Text("Amperage").tag(2)
                         Text("Charge Cycles").tag(3)
+                        Text("Current Capacity").tag(4)
                     }
                     .onAppear {
                         if let batteryType = widgetStruct.config["batteryValueType"] as? Int {
