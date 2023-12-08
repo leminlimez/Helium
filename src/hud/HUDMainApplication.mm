@@ -954,6 +954,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         sideWidgetWidth = [self debugSideWidgetSize];
         centerWidgetWidth = [self debugCenterWidgetSize];
     }
+    // NOTE FOR LATER: to get above the status bar, set vertical offset to -35
     
     // MARK: Left Widget
     [_constraints addObjectsFromArray:@[
