@@ -142,6 +142,15 @@ struct WidgetPreferencesView: View {
                 } else {
                     widgetStruct.config["dateFormat"] = text
                 }
+                break;
+            case .text:
+                // MARK: Custom Text Handling
+                if newText == "" {
+                    widgetStruct.config["text"] = nil
+                } else {
+                    widgetStruct.config["text"] = text
+                }
+                break;
             default:
                 return
             }
@@ -153,12 +162,15 @@ struct WidgetPreferencesView: View {
             case .network:
                 // MARK: Network Choice Handling
                 widgetStruct.config["isUp"] = newInt == 1 ? true : false
+                break;
             case .battery:
                 // MARK: Battery Value Type Handling
                 widgetStruct.config["batteryValueType"] = newInt
+                break;
             case .time:
                 // MARK: time Format Handling
                 widgetStruct.config["dateFormat"] = timeFormats[newInt]
+                break;
             default:
                 return
             }
