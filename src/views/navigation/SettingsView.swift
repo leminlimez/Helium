@@ -55,6 +55,23 @@ struct SettingsView: View {
                                 }
                             }
                     }
+                    
+                    HStack {
+                        Text("Helium Data")
+                            .bold()
+                        Spacer()
+                        Button(action: {
+                            do {
+                                try UserDefaults.standard.deleteUserDefaults(forPath: USER_DEFAULTS_PATH)
+                                UIApplication.shared.alert(title: "Successfully deleted user data!", body: "Please restart the app to continue.")
+                            } catch {
+                                UIApplication.shared.alert(title: "Failed to delete user data!", body: error.localizedDescription)
+                            }
+                        }) {
+                            Text("Reset Data")
+                                .foregroundColor(.red)
+                        }
+                    }
                 } header: {
                     Label("Preferences", systemImage: "gear")
                 }
