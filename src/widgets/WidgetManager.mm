@@ -295,7 +295,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                 mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
                     NSString stringWithFormat: @"%c%@",
                     getSeparator(mutableString),
-                    [parsedInfo valueForKey:@"text"] ? [parsedInfo valueForKey:@"text"] : "Unknown"
+                    [parsedInfo valueForKey:@"text"] ? [parsedInfo valueForKey:@"text"] : @"Unknown"
                 ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
             ];
             break;
