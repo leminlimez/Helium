@@ -210,6 +210,7 @@ class WidgetManager: ObservableObject {
     }
     
     // removing widgets
+    // remove at index in list
     public func removeWidget(widgetSet: WidgetSetStruct, id: Int, save: Bool = true) {
         for (i, wSet) in widgetSets.enumerated() {
             if wSet == widgetSet {
@@ -217,6 +218,16 @@ class WidgetManager: ObservableObject {
             }
         }
         if save { saveWidgetSets(); }
+    }
+    
+    // remove based on object
+    public func removeWidget(widgetSet: WidgetSetStruct, id: WidgetIDStruct, save: Bool = true) {
+        for (i, wID) in widgetSet.widgetIDs.enumerated() {
+            if wID == id {
+                removeWidget(widgetSet: widgetSet, id: i, save: save)
+                break
+            }
+        }
     }
     
     // MARK: Widget Set Modification Management
@@ -260,6 +271,29 @@ class WidgetManager: ObservableObject {
             textAlignment: 1,
             fontSize: 10.0
         ), save: save)
+    }
+    
+    // editing an existing widget set
+    public func editWidgetSet(widgetSet: WidgetSetStruct, newSetDetails ns: WidgetSetStruct, save: Bool = true) {
+        for (i, wSet) in widgetSets.enumerated() {
+            if wSet == widgetSet {
+                widgetSets[i].title = ns.title
+                
+                widgetSets[i].anchor = ns.anchor
+                widgetSets[i].offsetX = ns.offsetX
+                widgetSets[i].offsetY = ns.offsetY
+                widgetSets[i].autoResizes = ns.autoResizes
+                widgetSets[i].scale = ns.scale
+                
+                widgetSets[i].blurDetails = ns.blurDetails
+                
+                widgetSets[i].textAlpha = ns.textAlpha
+                widgetSets[i].textAlignment = ns.textAlignment
+                widgetSets[i].fontSize = ns.fontSize
+                break
+            }
+        }
+        if save { saveWidgetSets(); }
     }
 }
 

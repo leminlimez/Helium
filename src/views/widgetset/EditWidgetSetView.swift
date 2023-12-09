@@ -166,10 +166,26 @@ struct EditWidgetSetView: View {
                             // MARK: Remove Widget ID Button
                             Button(action: {
                                 // save changes
+                                saveSet(save: false)
+                                widgetManager.removeWidget(widgetSet: widgetSet, id: widgetID.wrappedValue)
                             }) {
                                 Image(systemName: "trash")
                                     .foregroundColor(.red)
                             }
+                        }
+                    }
+                }
+            }
+            .toolbar {
+                HStack {
+                    // MARK: Save Button
+                    // only shows up if something is changed
+                    // this if statement is abysmal, must be changed
+                    if (nameInput != widgetSet.title || anchorSelection != widgetSet.anchor || offsetX != widgetSet.offsetX || offsetY != widgetSet.offsetY || autoResizes != widgetSet.autoResizes || scale != widgetSet.scale || hasBlur != widgetSet.blurDetails.hasBlur || cornerRadius != widgetSet.blurDetails.cornerRadius || textAlpha != widgetSet.textAlpha || textAlignment != widgetSet.textAlignment || fontSize != widgetSet.fontSize) {
+                        Button(action: {
+                            saveSet()
+                        }) {
+                            Image(systemName: "checkmark.circle")
                         }
                     }
                 }
@@ -184,7 +200,7 @@ struct EditWidgetSetView: View {
                 scale = widgetSet.scale
                 
                 hasBlur = widgetSet.blurDetails.hasBlur
-                cornerRadius = Double(widgetSet.blurDetails.cornerRadius)
+                cornerRadius = widgetSet.blurDetails.cornerRadius
                 
                 textAlpha = widgetSet.textAlpha
                 textAlignment = widgetSet.textAlignment
@@ -194,5 +210,28 @@ struct EditWidgetSetView: View {
                 WidgetAddView(widgetManager: widgetManager, widgetSet: widgetSet, isOpen: $showingAddView)
             })
         }
+    }
+    
+    func saveSet(save: Bool = true) {
+        widgetManager.editWidgetSet(widgetSet: widgetSet, newSetDetails: .init(
+            title: nameInput,
+            
+            anchor: anchorSelection,
+            offsetX: offsetX,
+            offsetY: offsetY,
+            autoResizes: autoResizes,
+            scale: scale,
+            
+            widgetIDs: [],
+            
+            blurDetails: .init(
+                hasBlur: hasBlur,
+                cornerRadius: cornerRadius
+            ),
+            
+            textAlpha: textAlpha,
+            textAlignment: textAlignment,
+            fontSize: fontSize
+        ), save: save)
     }
 }
