@@ -816,9 +816,39 @@ Example format for properties:
 */
 - (NSArray*) widgetProperties
 {
-    [self loadUserDefaults: NO];
-    NSArray *properties = [_userDefaults objectForKey: @"widgetProperties"];
-    return properties;
+    // [self loadUserDefaults: NO];
+    // NSArray *properties = [_userDefaults objectForKey: @"widgetProperties"];
+    // return properties;
+    return @[
+        @{
+            @"anchor" : @(0),
+            @"offsetX" : @(10),
+            @"offsetY" : @(0),
+            @"autoResizes" : @(NO),
+            @"scale" : @(50),
+
+            @"widgetIDs" : @[
+                @{
+                    @"widgetID" : @(2),
+                    @"isUp" : @(YES)
+                },
+                @{
+                    @"widgetID" : @(2)
+                }
+            ],
+
+            @"blurDetails" : @{
+                @"hasBlur" : @(YES),
+                @"cornerRadius" : @(4)
+            },
+            @"colorDetails" : @{
+                @"usesCustomColor" : @(NO)
+            },
+            @"textAlpha" : @(1),
+            @"textAlignment" : @(1),
+            @"fontSize" : @(10)
+        }
+    ];
 } 
 
 - (NSArray*) widgetIDs:(NSString*) widgetName
@@ -852,7 +882,7 @@ Example format for properties:
     for (NSUInteger i = 0; i < [widgetProps count]; i++) {
         UILabel *labelView = [_labelViews objectAtIndex:i];
         NSDictionary *properties = [widgetProps objectAtIndex:i];
-        NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : [NSArray init];
+        NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
         [self updateLabel: labelView identifiers: identifiers];
     }
     [self updateLabel: _leftLabel identifiers: [self widgetIDs: @"left"]];
@@ -975,7 +1005,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     for (id propID in [self widgetProperties]) {
         NSDictionary *properties = propID;
         // create the blur
-        NSDictionary *blurDetails = [properties valueForKey:@"blurDetails"] ? [properties valueForKey:@"blurDetails"] : [NSDictionary init];
+        NSDictionary *blurDetails = [properties valueForKey:@"blurDetails"] ? [properties valueForKey:@"blurDetails"] : @{@"hasBlur" : @(NO)};
         UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
         blurView.layer.cornerRadius = getIntFromDictKey(blurDetails, @"cornerRadius");
         blurView.layer.masksToBounds = YES;
@@ -1009,7 +1039,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         labelView.textColor = [UIColor blackColor];
         labelView.font = [UIFont systemFontOfSize: FONT_SIZE];
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
-        [blurView addSubview:labelView];
+        [blurView.contentView addSubview:labelView];
         [_labelViews addObject: labelView];
     }
     
