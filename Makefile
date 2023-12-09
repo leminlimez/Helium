@@ -25,6 +25,7 @@ HUD_DIR := $(SRC_DIR)/hud
 VIEWS_DIR := $(SRC_DIR)/views
 NAVVIEWS_DIR := $(VIEWS_DIR)/navigation
 WIDGETVIEWS_DIR := $(VIEWS_DIR)/widget
+WIDGETSETVIEWS_DIR := $(VIEWS_DIR)/widgetsets
 
 WIDGETS_DIR := $(SRC_DIR)/widgets
 
@@ -41,6 +42,7 @@ $(APPLICATION_NAME)_FILES += $(wildcard $(HUD_DIR)/*.mm)
 $(APPLICATION_NAME)_FILES += $(wildcard $(VIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(NAVVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETVIEWS_DIR)/*.swift)
+$(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETSETVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETS_DIR)/*.mm)
 
 $(APPLICATION_NAME)_CFLAGS += -fobjc-arc -Iinclude

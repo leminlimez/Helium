@@ -22,6 +22,12 @@ struct SettingsView: View {
     // Preference Variables
     @State var updateInterval: Double = 1.0
     
+    let formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
+    
     var body: some View {
         NavigationView {
             List {
@@ -38,22 +44,39 @@ struct SettingsView: View {
                         Text("Update Interval (seconds)")
                             .bold()
                         Spacer()
-                        TextField("Seconds", value: $updateInterval, format: .number)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-//                            .keyboardType(.decimalPad)
-                            .submitLabel(.done)
-                            .onSubmit {
-                                if updateInterval <= 0 {
-                                    updateInterval = 1
+                        if #available(iOS 15, *) {
+                            TextField("Seconds", value: $updateInterval, formatter: formatter)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            //                            .keyboardType(.decimalPad)
+                                .submitLabel(.done)
+                                .onSubmit {
+                                    if updateInterval <= 0 {
+                                        updateInterval = 1
+                                    }
+                                    UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
                                 }
-                                UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                            }
-                            .onAppear {
-                                updateInterval = UserDefaults.standard.double(forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                                if updateInterval <= 0 {
-                                    updateInterval = 1
+                                .onAppear {
+                                    updateInterval = UserDefaults.standard.double(forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
+                                    if updateInterval <= 0 {
+                                        updateInterval = 1
+                                    }
                                 }
-                            }
+                        } else {
+                            TextField("Seconds", value: $updateInterval, formatter: formatter)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .onChange(of: updateInterval) { nv in
+                                    if updateInterval <= 0 {
+                                        updateInterval = 1
+                                    }
+                                    UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
+                                }
+                                .onAppear {
+                                    updateInterval = UserDefaults.standard.double(forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
+                                    if updateInterval <= 0 {
+                                        updateInterval = 1
+                                    }
+                                }
+                        }
                     }
                     
                     HStack {
@@ -77,7 +100,7 @@ struct SettingsView: View {
                 }
                 
                 // Debug Settings
-                if DEBUG_MODE_ENABLED {
+                if #available(iOS 15, *), DEBUG_MODE_ENABLED {
                     Section {
                         HStack {
                             Text("Side Widget Size")

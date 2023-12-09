@@ -10,12 +10,25 @@ import SwiftUI
 
 // MARK: Widget Customization View
 struct WidgetCustomizationView: View {
+    @StateObject var widgetManager: WidgetManager = .init()
+    
     var body: some View {
         NavigationView {
             VStack {
                 // List of Widget Sets
                 List {
-                    
+                    ForEach($widgetManager.widgetSets) { widgetSet in
+                        NavigationLink(destination: EditWidgetSetView(widgetManager: widgetManager, widgetSet: widgetSet.wrappedValue)) {
+                            Text(widgetSet.title.wrappedValue)
+                        }
+                    }
+                    .onDelete { indexSet in
+                        indexSet.forEach { i in
+                            UIApplication.shared.confirmAlert(title: "Delete \(widgetManager.widgetSets[i])", body: "Are you sure you want to delete the widget set \"\(widgetManager.widgetSets[i])\"?", onOK: {
+                                widgetManager.removeWidgetSet(widgetSet: widgetManager.widgetSets[i])
+                            }, noCancel: false)
+                        }
+                    }
                 }
             }
             .navigationTitle("Customize")
@@ -57,25 +70,26 @@ struct WidgetCustomizationView: View {
 //        }
 //    }
 //}
-//
-//// MARK: Widget Add View
-//struct WidgetAddView: View {
-//    @Environment(\.dismiss) var dismiss
-//    @StateObject var widgetManager: WidgetManager
-//    
-//    var body: some View {
-//        List {
-//            ForEach(WidgetModule.allCases, id: \.self) { id in
-//                Button(action: {
-//                    widgetManager.addWidget(module: id)
-//                    dismiss()
-//                }) {
-//                    WidgetChoiceView(widgetName: WidgetDetails.getWidgetName(id), exampleText: WidgetDetails.getWidgetExample(id))
-//                }
-//            }
-//        }
-//    }
-//}
+
+// MARK: Widget Add View
+struct WidgetAddView: View {
+    @StateObject var widgetManager: WidgetManager
+    @State var widgetSet: WidgetSetStruct
+    @Binding var isOpen: Bool
+    
+    var body: some View {
+        List {
+            ForEach(WidgetModule.allCases, id: \.self) { id in
+                Button(action: {
+                    widgetManager.addWidget(widgetSet: widgetSet, module: id)
+                    isOpen = false
+                }) {
+                    WidgetChoiceView(widgetName: WidgetDetails.getWidgetName(id), exampleText: WidgetDetails.getWidgetExample(id))
+                }
+            }
+        }
+    }
+}
 
 // MARK: Widget Choice View
 struct WidgetChoiceView: View {

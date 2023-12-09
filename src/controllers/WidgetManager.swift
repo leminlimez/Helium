@@ -26,6 +26,7 @@ struct WidgetIDStruct: Identifiable, Equatable {
     
     var module: WidgetModule
     var config: [String: Any]
+    var modified: Bool = false
 }
 
 struct BlurDetailsStruct: Identifiable, Equatable {
@@ -52,6 +53,8 @@ struct WidgetSetStruct: Identifiable, Equatable {
     }
     
     var id = UUID()
+    
+    var title: String
     
     var anchor: Int
     var offsetX: Double
@@ -122,6 +125,7 @@ class WidgetManager: ObservableObject {
                 )
                 // create the object
                 sets.append(.init(
+                    title: s["title"] as? String ?? "Untitled",
                     anchor: s["anchor"] as? Int ?? 0,
                     offsetX: s["offsetX"] as? Double ?? 10.0,
                     offsetY: s["offsetY"] as? Double ?? 0.0,
@@ -149,6 +153,7 @@ class WidgetManager: ObservableObject {
         
         for s in widgetSets {
             var wSet: [String: Any] = [:]
+            wSet["title"] = s.title
             wSet["anchor"] = s.anchor
             wSet["offsetX"] = s.offsetX
             wSet["offsetY"] = s.offsetY
@@ -209,6 +214,24 @@ class WidgetManager: ObservableObject {
         for (i, wSet) in widgetSets.enumerated() {
             if wSet == widgetSet {
                 widgetSets[i].widgetIDs.remove(at: id)
+            }
+        }
+        if save { saveWidgetSets(); }
+    }
+    
+    // MARK: Widget Set Modification Management
+    // adding widget sets
+    public func addWidgetSet(widgetSet: WidgetSetStruct, save: Bool = true) {
+        widgetSets.append(widgetSet)
+        if save { saveWidgetSets(); }
+    }
+    
+    // removing widget sets
+    public func removeWidgetSet(widgetSet: WidgetSetStruct, save: Bool = true) {
+        for (i, wSet) in widgetSets.enumerated() {
+            if widgetSet == wSet {
+                widgetSets.remove(at: i)
+                break
             }
         }
         if save { saveWidgetSets(); }
