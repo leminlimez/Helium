@@ -22,8 +22,6 @@
 #include "../widgets/DeviceScaleManager.h"
 #include "../extensions/UsefulFunctions.h"
 
-#define DEBUG_MODE_ENABLED 0
-
 
 extern "C" char **environ;
 
@@ -631,10 +629,6 @@ static void DumpThreads(void)
     
     UIView *_contentView;
     
-    UILabel *_leftLabel;
-    UILabel *_centerLabel;
-    UILabel *_rightLabel;
-    
     NSTimer *_timer;
     UIInterfaceOrientation _orientation;
 }
@@ -849,28 +843,6 @@ Example format for properties:
             @"fontSize" : @(10)
         }
     ];
-} 
-
-- (NSArray*) widgetIDs:(NSString*) widgetName
-{
-    [self loadUserDefaults:NO];
-    NSArray *identifiers = [_userDefaults objectForKey: [NSString stringWithFormat: @"%@WidgetIDs", widgetName]];
-    return identifiers;
-}
-
-#pragma mark - Debug Preference Defaults
-- (double) debugSideWidgetSize
-{
-    [self loadUserDefaults: NO];
-    NSNumber *sizeValue = [_userDefaults objectForKey: @"DEBUG_sideWidgetSize"];
-    return sizeValue ? [sizeValue doubleValue] : 100.0;
-}
-
-- (double) debugCenterWidgetSize
-{
-    [self loadUserDefaults: NO];
-    NSNumber *sizeValue = [_userDefaults objectForKey: @"DEBUG_centerWidgetSize"];
-    return sizeValue ? [sizeValue doubleValue] : 100.0;
 }
 
 #pragma mark - Label Updating
@@ -887,9 +859,6 @@ Example format for properties:
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
         [self updateLabel: labelView identifiers: identifiers];
     }
-    [self updateLabel: _leftLabel identifiers: [self widgetIDs: @"left"]];
-    [self updateLabel: _centerLabel identifiers: [self widgetIDs: @"center"]];
-    [self updateLabel: _rightLabel identifiers: [self widgetIDs: @"right"]];
 }
 
 - (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers
@@ -1047,40 +1016,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         [_labelViews addObject: labelView];
     }
     
-    // MARK: Left Widget
-    _leftLabel = [[UILabel alloc] initWithFrame: CGRectZero];
-    _leftLabel.numberOfLines = 0;
-    _leftLabel.textAlignment = NSTextAlignmentCenter;
-    _leftLabel.textColor = [UIColor whiteColor];
-    _leftLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
-    _leftLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [_contentView addSubview:_leftLabel];
-    
-    // MARK: Center Widget
-    _centerLabel = [[UILabel alloc] initWithFrame: CGRectZero];
-    _centerLabel.numberOfLines = 0;
-    _centerLabel.textAlignment = NSTextAlignmentCenter;
-    _centerLabel.textColor = [UIColor whiteColor];
-    _centerLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
-    _centerLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [_contentView addSubview:_centerLabel];
-    
-    // MARK: Right Widget
-    _rightLabel = [[UILabel alloc] initWithFrame: CGRectZero];
-    _rightLabel.numberOfLines = 0;
-    _rightLabel.textAlignment = NSTextAlignmentCenter;
-    _rightLabel.textColor = [UIColor whiteColor];
-    _rightLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
-    _rightLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [_contentView addSubview:_rightLabel];
-
-    if (DEBUG_MODE_ENABLED == 1) {
-        // enable the background color to see the sizes
-        _leftLabel.backgroundColor = [UIColor blackColor];
-        _centerLabel.backgroundColor = [UIColor blackColor];
-        _rightLabel.backgroundColor = [UIColor blackColor];
-    }
-    
     [self reloadUserDefaults];
     
     [self resetLoopTimer];
@@ -1170,42 +1105,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [blurView.bottomAnchor constraintEqualToAnchor:labelView.bottomAnchor constant:2],
         ]];
     }
-    
-    CGFloat width = [UIScreen mainScreen].bounds.size.width;
-    double sideWidgetWidth = getSideWidgetSize() * width;
-    double centerWidgetWidth = getCenterWidgetSize() * width;
-    double centerWidgetOffset = getCenterWidgetVerticalOffset();
-
-    if (DEBUG_MODE_ENABLED == 1) {
-        sideWidgetWidth = [self debugSideWidgetSize];
-        centerWidgetWidth = [self debugCenterWidgetSize];
-    }
-    // NOTE FOR LATER: to get above the status bar, set vertical offset to -35
-    
-    // MARK: Left Widget
-    [_constraints addObjectsFromArray:@[
-        [_leftLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
-        [_leftLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-        [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant: 10],
-        [_leftLabel.widthAnchor constraintEqualToConstant:sideWidgetWidth],
-    ]];
-    
-    // MARK: Center Widget
-    [_constraints addObjectsFromArray:@[
-        [_centerLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: centerWidgetOffset],
-        [_centerLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: centerWidgetOffset],
-        [_centerLabel.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor],
-        [_centerLabel.widthAnchor constraintEqualToConstant:centerWidgetWidth],
-    ]];
-    
-    // MARK: Right Widget
-    // -35 offset to put above
-    [_constraints addObjectsFromArray:@[
-        [_rightLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
-        [_rightLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-        [_rightLabel.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant: -10],
-        [_rightLabel.widthAnchor constraintEqualToConstant:sideWidgetWidth],
-    ]];
     
     [NSLayoutConstraint activateConstraints:_constraints];
     [super updateViewConstraints];
