@@ -23,6 +23,7 @@ struct EditWidgetSetView: View {
     @State var scale: Double = 100.0
     
     @State var widgetIDs: [WidgetIDStruct] = []
+    @State var updatedWidgetIDs: Bool = false
     
     @State var hasBlur: Bool = false
     @State var cornerRadius: Double = 4
@@ -200,15 +201,24 @@ struct EditWidgetSetView: View {
                                 Image(systemName: "gear")
                             }
                             // MARK: Remove Widget ID Button
-                            Button(action: {
-                                // save changes
-                                widgetManager.removeWidget(widgetSet: widgetSet, id: widgetID.wrappedValue, save: false)
+//                            Button(action: {
+//                                // save changes
+//                                widgetManager.removeWidget(widgetSet: widgetSet, id: widgetID.wrappedValue, save: false)
+//                                saveSet()
+//                                widgetIDs = widgetSet.widgetIDs
+//                            }) {
+//                                Image(systemName: "trash")
+//                                    .foregroundColor(.red)
+//                            }
+                        }
+                    }
+                    .onDelete { indexSet in
+                        indexSet.forEach { i in
+                            UIApplication.shared.confirmAlert(title: "Delete Widget", body: "Are you sure you want to delete this widget?", onOK: {
+                                widgetManager.removeWidget(widgetSet: widgetSet, id: widgetIDs[i], save: false)
                                 saveSet()
-                                widgetIDs = widgetSet.widgetIDs
-                            }) {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.red)
-                            }
+                                widgetIDs.remove(at: i)
+                            }, noCancel: false)
                         }
                     }
                 }
@@ -235,7 +245,10 @@ struct EditWidgetSetView: View {
                 autoResizes = widgetSet.autoResizes
                 scale = widgetSet.scale
                 
-                widgetIDs = widgetSet.widgetIDs
+                if !updatedWidgetIDs {
+                    widgetIDs = widgetSet.widgetIDs
+                    updatedWidgetIDs = true
+                }
                 
                 hasBlur = widgetSet.blurDetails.hasBlur
                 cornerRadius = widgetSet.blurDetails.cornerRadius
@@ -247,9 +260,9 @@ struct EditWidgetSetView: View {
                 changesMade = false
             }
             .sheet(isPresented: $showingAddView, content: {
-                WidgetAddView(widgetManager: widgetManager, widgetSet: widgetSet, isOpen: $showingAddView, onChoice: {
+                WidgetAddView(widgetManager: widgetManager, widgetSet: widgetSet, isOpen: $showingAddView, onChoice: { newWidget in
                     saveSet()
-                    widgetIDs = widgetSet.widgetIDs
+                    widgetIDs.append(newWidget)
                 })
             })
         }
