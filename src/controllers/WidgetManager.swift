@@ -195,18 +195,20 @@ class WidgetManager: ObservableObject {
     
     // MARK: Widget Modification Management
     // adding widgets
-    public func addWidget(widgetSet: WidgetSetStruct, module: WidgetModule, config: [String: Any], save: Bool = true) {
+    public func addWidget(widgetSet: WidgetSetStruct, module: WidgetModule, config: [String: Any], save: Bool = true) -> WidgetIDStruct {
+        let newWidget: WidgetIDStruct = .init(module: module, config: config)
         for (i, wSet) in widgetSets.enumerated() {
             if wSet == widgetSet {
-                widgetSets[i].widgetIDs.append(.init(module: module, config: config))
+                widgetSets[i].widgetIDs.append(newWidget)
             }
         }
         if save { saveWidgetSets(); }
+        return newWidget
     }
     
-    public func addWidget(widgetSet: WidgetSetStruct, module: WidgetModule, save: Bool = true) {
+    public func addWidget(widgetSet: WidgetSetStruct, module: WidgetModule, save: Bool = true) -> WidgetIDStruct {
         let config: [String: Any] = [:]
-        addWidget(widgetSet: widgetSet, module: module, config: config, save: save)
+        return addWidget(widgetSet: widgetSet, module: module, config: config, save: save)
     }
     
     // removing widgets

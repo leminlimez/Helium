@@ -24,7 +24,7 @@ struct WidgetCustomizationView: View {
                     }
                     .onDelete { indexSet in
                         indexSet.forEach { i in
-                            UIApplication.shared.confirmAlert(title: "Delete \(widgetManager.widgetSets[i])", body: "Are you sure you want to delete the widget set \"\(widgetManager.widgetSets[i])\"?", onOK: {
+                            UIApplication.shared.confirmAlert(title: "Delete \(widgetManager.widgetSets[i].title)", body: "Are you sure you want to delete the widget set \"\(widgetManager.widgetSets[i].title)\"?", onOK: {
                                 widgetManager.removeWidgetSet(widgetSet: widgetManager.widgetSets[i])
                             }, noCancel: false)
                         }
@@ -107,15 +107,15 @@ struct WidgetAddView: View {
     @State var widgetSet: WidgetSetStruct
     @Binding var isOpen: Bool
     
-    var onChoice: () -> ()
+    var onChoice: (WidgetIDStruct) -> ()
     
     var body: some View {
         List {
             ForEach(WidgetModule.allCases, id: \.self) { id in
                 Button(action: {
-                    widgetManager.addWidget(widgetSet: widgetSet, module: id)
+                    let newWidget = widgetManager.addWidget(widgetSet: widgetSet, module: id)
                     isOpen = false
-                    onChoice()
+                    onChoice(newWidget)
                 }) {
                     WidgetChoiceView(widgetName: WidgetDetails.getWidgetName(id), exampleText: WidgetDetails.getWidgetExample(id))
                 }
