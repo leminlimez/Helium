@@ -15,9 +15,23 @@ struct WidgetPreviewsView: View {
     
     var body: some View {
         HStack {
-            Text(text)
-                .foregroundColor(previewColor)
-                .minimumScaleFactor(0.01)
+            ZStack {
+                Image(uiImage: UIImage(named: "wallpaper")!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .scaleEffect(1.5)
+                    .frame(width: 125, height: 50)
+                    .cornerRadius(12)
+                    .clipped()
+                ZStack {
+                    Text(text)
+                        .padding(.vertical, 5)
+                        .foregroundColor(previewColor)
+                        .minimumScaleFactor(0.01)
+                }
+                .frame(width: 125, height: 50)
+            }
+            .padding(.trailing, 5)
         }
         .onAppear {
             updatePreview()

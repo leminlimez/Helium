@@ -23,17 +23,11 @@ struct EditWidgetSetView: View {
     @State var scale: Double = 100.0
     
     @State var hasBlur: Bool = false
-    @State var cornerRadius: Int = 4
+    @State var cornerRadius: Double = 4
     
     @State var textAlpha: Double = 1.0
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
-    
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
     
     var body: some View {
         VStack {
@@ -61,16 +55,14 @@ struct EditWidgetSetView: View {
                         Text("Offset X")
                             .bold()
                         Spacer()
-                        TextField("10", value: $offsetX, formatter: formatter)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                        Slider(value: $offsetX, in: 0...300)
                     }
                     // MARK: Offset Y
                     HStack {
                         Text("Offset Y")
                             .bold()
                         Spacer()
-                        TextField("0", value: $offsetY, formatter: formatter)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                        Slider(value: $offsetY, in: 0...300)
                     }
                     // MARK: Auto Resizes
                     HStack {
@@ -86,8 +78,7 @@ struct EditWidgetSetView: View {
                             Text("Width")
                                 .bold()
                             Spacer()
-                            TextField("100", value: $scale, formatter: formatter)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            Slider(value: $scale, in: 10...500)
                         }
                     }
                 }
@@ -107,8 +98,7 @@ struct EditWidgetSetView: View {
                             Text("Blur Corner Radius")
                                 .bold()
                             Spacer()
-                            TextField("4", value: $cornerRadius, formatter: formatter)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            Slider(value: $cornerRadius, in: 0...30, step: 1)
                         }
                     }
                 }
@@ -119,8 +109,7 @@ struct EditWidgetSetView: View {
                         Text("Text Alpha")
                             .bold()
                         Spacer()
-                        TextField("1", value: $textAlpha, formatter: formatter)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                        Slider(value: $textAlpha, in: 0...1, step: 0.01)
                     }
                     // MARK: Text Alignment
                     HStack {
@@ -134,8 +123,7 @@ struct EditWidgetSetView: View {
                         Text("Font Size")
                             .bold()
                         Spacer()
-                        TextField("10", value: $fontSize, formatter: formatter)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                        Slider(value: $fontSize, in: 5...50)
                     }
                 }
                 
@@ -165,7 +153,7 @@ struct EditWidgetSetView: View {
                 scale = widgetSet.scale
                 
                 hasBlur = widgetSet.blurDetails.hasBlur
-                cornerRadius = widgetSet.blurDetails.cornerRadius
+                cornerRadius = Double(widgetSet.blurDetails.cornerRadius)
                 
                 textAlpha = widgetSet.textAlpha
                 textAlignment = widgetSet.textAlignment
