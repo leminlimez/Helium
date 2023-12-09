@@ -37,7 +37,7 @@ struct BlurDetailsStruct: Identifiable, Equatable {
     var id = UUID()
     
     var hasBlur: Bool
-    var cornerRadius: Int
+    var cornerRadius: Double // Int when saving, Double for runtime convenience
 }
 
 struct ColorDetailsStruct: Identifiable {
@@ -121,7 +121,7 @@ class WidgetManager: ObservableObject {
                 let blurDetails: [String: Any] = s["blurDetails"] as? [String: Any] ?? [:]
                 let blurDetailsStruct: BlurDetailsStruct = .init(
                     hasBlur: blurDetails["hasBlur"] as? Bool ?? false,
-                    cornerRadius: blurDetails["cornerRadius"] as? Int ?? 4
+                    cornerRadius: blurDetails["cornerRadius"] as? Double ?? 4
                 )
                 // create the object
                 sets.append(.init(
@@ -173,7 +173,7 @@ class WidgetManager: ObservableObject {
             
             let blurDetails: [String: Any] = [
                 "hasBlur": s.blurDetails.hasBlur,
-                "cornerRadius": s.blurDetails.cornerRadius
+                "cornerRadius": Int(s.blurDetails.cornerRadius)
             ]
             wSet["blurDetails"] = blurDetails
             
@@ -236,6 +236,31 @@ class WidgetManager: ObservableObject {
         }
         if save { saveWidgetSets(); }
     }
+    
+    // creating a new widget set
+    public func createWidgetSet(title: String, anchor: Int = 0, save: Bool = true) {
+        // create a widget set with the default values
+        addWidgetSet(widgetSet: .init(
+            title: title,
+            
+            anchor: anchor,
+            offsetX: anchor == 1 ? 0.0 : 10.0,
+            offsetY: 0.0,
+            autoResizes: true,
+            scale: 100.0,
+            
+            widgetIDs: [],
+            
+            blurDetails: .init(
+                hasBlur: false,
+                cornerRadius: 4
+            ),
+            
+            textAlpha: 1.0,
+            textAlignment: 1,
+            fontSize: 10.0
+        ), save: save)
+    }
 }
 
 // MARK: Widget Details for Previews
@@ -255,8 +280,6 @@ class WidgetDetails {
             return ("Time", "14:57:05")
         case .text:
             return ("Text Label", "Example")
-        default:
-            return ("UNKNOWN", "(null)")
         }
     }
     

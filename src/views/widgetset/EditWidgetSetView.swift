@@ -14,21 +14,6 @@ struct EditWidgetSetView: View {
     
     @State var showingAddView: Bool = false
     
-    @State var nameInput: String = ""
-    
-    @State var anchorSelection: Int = 0
-    @State var offsetX: Double = 10.0
-    @State var offsetY: Double = 0.0
-    @State var autoResizes: Bool = true
-    @State var scale: Double = 100.0
-    
-    @State var hasBlur: Bool = false
-    @State var cornerRadius: Double = 4
-    
-    @State var textAlpha: Double = 1.0
-    @State var textAlignment: Int = 1
-    @State var fontSize: Double = 10.0
-    
     var body: some View {
         VStack {
             List {
@@ -37,14 +22,14 @@ struct EditWidgetSetView: View {
                     Text("Widget Set Title")
                         .bold()
                     Spacer()
-                    TextField("Title", text: $nameInput)
+                    TextField("Title", text: $widgetSet.title)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 
                 VStack {
                     // MARK: Anchor Side
                     HStack {
-                        Picker(selection: $anchorSelection, label: Text("Anchor Side").foregroundColor(.primary).bold()) {
+                        Picker(selection: $widgetSet.anchor, label: Text("Anchor Side").foregroundColor(.primary).bold()) {
                             Text("Left").tag(0)
                             Text("Center").tag(1)
                             Text("Right").tag(2)
@@ -55,30 +40,30 @@ struct EditWidgetSetView: View {
                         Text("Offset X")
                             .bold()
                         Spacer()
-                        Slider(value: $offsetX, in: 0...300)
+                        Slider(value: $widgetSet.offsetX, in: 0...300)
                     }
                     // MARK: Offset Y
                     HStack {
                         Text("Offset Y")
                             .bold()
                         Spacer()
-                        Slider(value: $offsetY, in: 0...300)
+                        Slider(value: $widgetSet.offsetY, in: 0...300)
                     }
                     // MARK: Auto Resizes
                     HStack {
-                        Toggle(isOn: $autoResizes) {
+                        Toggle(isOn: $widgetSet.autoResizes) {
                             Text("Auto Resize")
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
                     }
                     // MARK: Width
-                    if !autoResizes {
+                    if !widgetSet.autoResizes {
                         HStack {
                             Text("Width")
                                 .bold()
                             Spacer()
-                            Slider(value: $scale, in: 10...500)
+                            Slider(value: $widgetSet.scale, in: 10...500)
                         }
                     }
                 }
@@ -86,19 +71,19 @@ struct EditWidgetSetView: View {
                 VStack {
                     // MARK: Has Blur
                     HStack {
-                        Toggle(isOn: $hasBlur) {
+                        Toggle(isOn: $widgetSet.blurDetails.hasBlur) {
                             Text("Background Blur")
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
                     }
                     // MARK: Blur Corner Radius
-                    if hasBlur {
+                    if widgetSet.blurDetails.hasBlur {
                         HStack {
                             Text("Blur Corner Radius")
                                 .bold()
                             Spacer()
-                            Slider(value: $cornerRadius, in: 0...30, step: 1)
+                            Slider(value: $widgetSet.blurDetails.cornerRadius, in: 0...30, step: 1)
                         }
                     }
                 }
@@ -109,11 +94,11 @@ struct EditWidgetSetView: View {
                         Text("Text Alpha")
                             .bold()
                         Spacer()
-                        Slider(value: $textAlpha, in: 0...1, step: 0.01)
+                        Slider(value: $widgetSet.textAlpha, in: 0...1, step: 0.01)
                     }
                     // MARK: Text Alignment
                     HStack {
-                        Picker(selection: $textAlignment, label: Text("Text Alignment").foregroundColor(.primary).bold()) {
+                        Picker(selection: $widgetSet.textAlignment, label: Text("Text Alignment").foregroundColor(.primary).bold()) {
                             Text("Left").tag(0)
                             Text("Center").tag(1)
                         }
@@ -123,13 +108,14 @@ struct EditWidgetSetView: View {
                         Text("Font Size")
                             .bold()
                         Spacer()
-                        Slider(value: $fontSize, in: 5...50)
+                        Slider(value: $widgetSet.fontSize, in: 5...50)
                     }
                 }
                 
                 VStack {
                     // MARK: Add Widget Button
                     Button(action: {
+                        //TODO: save changes when clicked
                         showingAddView.toggle()
                     }) {
                         Text("Add Widget")
@@ -139,25 +125,23 @@ struct EditWidgetSetView: View {
                     ForEach($widgetSet.widgetIDs) { widgetID in
                         HStack {
                             WidgetPreviewsView(widget: widgetID, previewColor: .white)
+                            Spacer()
+                            // MARK: Configure Widget Button
+                            Button(action: {
+                                
+                            }) {
+                                Image(systemName: "gear")
+                            }
+                            // MARK: Remove Widget ID Button
+                            Button(action: {
+                                // save changes
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                            }
                         }
                     }
                 }
-            }
-            .onAppear {
-                nameInput = widgetSet.title
-                
-                anchorSelection = widgetSet.anchor
-                offsetX = widgetSet.offsetX
-                offsetY = widgetSet.offsetY
-                autoResizes = widgetSet.autoResizes
-                scale = widgetSet.scale
-                
-                hasBlur = widgetSet.blurDetails.hasBlur
-                cornerRadius = Double(widgetSet.blurDetails.cornerRadius)
-                
-                textAlpha = widgetSet.textAlpha
-                textAlignment = widgetSet.textAlignment
-                fontSize = widgetSet.fontSize
             }
             .sheet(isPresented: $showingAddView, content: {
                 WidgetAddView(widgetManager: widgetManager, widgetSet: widgetSet, isOpen: $showingAddView)
