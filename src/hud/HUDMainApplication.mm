@@ -20,6 +20,7 @@
 #import <objc/runtime.h>
 #include "../widgets/WidgetManager.h"
 #include "../widgets/DeviceScaleManager.h"
+#include "../extensions/UsefulFunctions.h"
 
 #define DEBUG_MODE_ENABLED 0
 
@@ -622,6 +623,9 @@ static void DumpThreads(void)
     NSMutableDictionary *_userDefaults;
     NSMutableArray <NSLayoutConstraint *> *_constraints;
     FBSOrientationObserver *_orientationObserver;
+    // view object arrays
+    NSMutableArray <UIVisualEffectView *> *_blurViews;
+    NSMutableArray <UILabel *> *_labelViews;
     
     NSArray *testArr;
     
@@ -715,6 +719,108 @@ static void DumpThreads(void)
     return interval ? [interval doubleValue] : 1.0;
 }
 
+/*
+Example format for properties:
+@[
+    // EXAMPLE 1 \\
+    @{
+        // offset properties
+        @"anchor" : @(0),               // 0 = left, 1 = center, 2 = right
+        @"offsetX" : @(0),
+        @"offsetY" : @(0),
+        @"autoResizes" : @(NO),         // if yes, ignores scale property
+        @"scale" : @(50),               // horizontal scale of label
+
+        // widget properties
+        @"widgetIDs" : @[
+            @{
+                @"widgetID" : @(2),
+                @"isUp" : @(YES)
+            },
+            @{
+                @"widgetID" : @(2)
+            }
+        ],
+
+        // label properties
+        @"blurDetails" : @{
+            @"hasBlur" : @(YES),
+            @"cornerRadius" : @(4)
+        },
+        @"colorDetails" : @{
+            @"usesCustomColor" : @(YES),
+            @"dynamicColor" : @(YES),   // if yes, different colors for dark/light mode
+            @"lightColor" : @([UIColor blackColor]),
+            @"darkColor" : @([UIColor whiteColor])
+        },
+        @"textAlpha" : @(1),
+        @"textAlignment" : @(1),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
+        @"fontSize" : @(10)
+    },
+
+    // EXAMPLE 2 \\
+    @{
+        // offset properties
+        @"anchor" : @(1),               // 0 = left, 1 = center, 2 = right
+        @"offsetX" : @(0),
+        @"offsetY" : @(0),
+        @"autoResizes" : @(YES),
+
+        // widget properties
+        @"widgetIDs" : @[
+            @{
+                @"widgetID" : @(6),
+                @"text" : @"Cowabunga!"
+            }
+        ],
+
+        // label properties
+        @"blurDetails" : @{
+            @"hasBlur" : @(YES),
+            @"cornerRadius" : @(4)
+        },
+        @"colorDetails" : @{
+            @"usesCustomColor" : @(YES),
+            @"dynamicColor" : @(NO),
+            @"color" : @([UIColor whiteColor])
+        },
+        @"textAlpha" : @(1),
+        @"textAlignment" : @(0),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
+        @"fontSize" : @(10)
+    },
+
+    // EXAMPLE 3: bare minimum \\
+    @{
+        // offset properties
+        @"anchor" : @(1),               // 0 = left, 1 = center, 2 = right
+        @"offsetX" : @(0),
+        @"offsetY" : @(0),
+        @"autoResizes" : @(YES),
+
+        // widget properties
+        @"widgetIDs" : @[
+            @{
+                @"widgetID" : @(5)
+            }
+        ],
+
+        // label properties
+        @"blurDetails" : @{
+            @"hasBlur" : @(NO)
+        },
+        @"colorDetails" : @{
+            @"usesCustomColor" : @(NO)
+        },
+    }
+]
+*/
+- (NSArray*) widgetProperties
+{
+    [self loadUserDefaults: NO];
+    NSArray *properties = [_userDefaults objectForKey: @"widgetProperties"];
+    return properties;
+} 
+
 - (NSArray*) widgetIDs:(NSString*) widgetName
 {
     [self loadUserDefaults:NO];
@@ -741,6 +847,14 @@ static void DumpThreads(void)
 
 - (void) updateAllLabels
 {
+    // TODO: THIS NEEDS OPTIMIZATION (is updated frequently)
+    NSArray *widgetProps = [self widgetProperties];
+    for (NSUInteger i = 0; i < [widgetProps count]; i++) {
+        UILabel *labelView = [_labelViews objectAtIndex:i];
+        NSDictionary *properties = [widgetProps objectAtIndex:i];
+        NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : [NSArray init];
+        [self updateLabel: labelView identifiers: identifiers];
+    }
     [self updateLabel: _leftLabel identifiers: [self widgetIDs: @"left"]];
     [self updateLabel: _centerLabel identifiers: [self widgetIDs: @"center"]];
     [self updateLabel: _rightLabel identifiers: [self widgetIDs: @"right"]];
@@ -855,6 +969,48 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     _contentView.backgroundColor = [UIColor clearColor];
     _contentView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_contentView];
+
+    // MARK: Create the Widgets
+    // MIGHT NEED OPTIMIZATION
+    for (NSDictionary *properties in [self widgetProperties]) {
+        // create the blur
+        NSDictionary *blurDetails = [properties valueForKey:@"blurDetails"] ? [properties valueForKey:@"blurDetails"] : [NSDictionary init];
+        UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
+        blurView.layer.cornerRadius = getIntFromDictKey(blurDetails, @"cornerRadius");
+        blurView.layer.masksToBounds = YES;
+        blurView.translatesAutoresizingMaskIntoConstraints = NO;
+        if (!getBoolFromDictKey(blurDetails, @"hasBlur")) {
+            blurView.alpha = 0.0;
+        }
+        [_contentView addSubview:blurView];
+        [_blurViews addObject:blurView];
+        // create the label
+        UILabel *labelView = [[UILabel alloc] initWithFrame: CGRectZero];
+        labelView.numberOfLines = 0;
+        NSInteger alignment = getIntFromDictKey(properties, @"textAlignment", 1);
+        // alignment is different from anchor
+        if (alignment == 0) {
+            // align left
+            labelView.textAlignment = NSTextAlignmentLeft;
+        } else {
+            // align center
+            labelView.textAlignment = NSTextAlignmentCenter;
+        }
+        // TODO: make functional
+        /*NSDictionary *colorDetails = [properties valueForKey:@"colorDetails"] ? [properties valueForKey:@"colorDetails"] : [NSDictionary init];
+        if (getBoolFromDictKey(colorDetails, @"usesCustomColor")) {
+            // custom color
+            UIColor color;
+            if (getBoolFromDictKey(colorDetails, @"dynamicColor")) {
+                color = []
+            }
+        }*/
+        labelView.textColor = [UIColor blackColor];
+        labelView.font = [UIFont systemFontOfSize: FONT_SIZE];
+        labelView.translatesAutoresizingMaskIntoConstraints = NO;
+        [blurView addSubview:labelView];
+        [_labelViews addObject: labelView];
+    }
     
     // MARK: Left Widget
     _leftLabel = [[UILabel alloc] initWithFrame: CGRectZero];
@@ -943,6 +1099,39 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:-10]];
         else
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:(isPad ? 30 : 20)]];
+    }
+
+    // MARK: Set Label Constraints
+    NSArray *widgetProps = [self widgetProperties];
+    // DEFINITELY NEEDS OPTIMIZATION
+    for (NSUInteger i = 0; i < [widgetProps count]; i++) {
+        UIVisualEffectView *blurView = [_blurViews objectAtIndex:i];
+        UILabel *labelView = [_labelViews objectAtIndex:i];
+        NSDictionary *properties = [widgetProps objectAtIndex:i];
+        [_constraints addObjectsFromArray:@[
+            [labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
+            [labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
+        ]];
+        NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
+        double offsetX = getDoubleFromDictKey(properties, @"offsetX");
+        // set the horizontal anchor
+        if (anchorSide == 1)
+            [_constraints addObject:[labelView.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor constant: offsetX]];
+        else if (anchorSide == 0)
+            [_constraints addObject:[labelView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant: offsetX]];
+        else
+            [_constraints addObject:[labelView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant: -offsetX]];
+        // set the width
+        if (!getBoolFromDictKey(properties, @"autoResizes")) {
+            [_constraints addObject:[labelView.widthAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scale", 50.0)]];
+        }
+        
+        [_constraints addObjectsFromArray:@[
+            [blurView.topAnchor constraintEqualToAnchor:labelView.topAnchor constant:-2],
+            [blurView.leadingAnchor constraintEqualToAnchor:labelView.leadingAnchor constant:-4],
+            [blurView.trailingAnchor constraintEqualToAnchor:labelView.trailingAnchor constant:4],
+            [blurView.bottomAnchor constraintEqualToAnchor:labelView.bottomAnchor constant:2],
+        ]];
     }
     
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
