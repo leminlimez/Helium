@@ -909,6 +909,8 @@ Example format for properties:
     self = [super init];
     if (self) {
         _constraints = [NSMutableArray array];
+        _blurViews = [NSMutableArray array];
+        _labelViews = [NSMutableArray array];
         _orientationObserver = [[objc_getClass("FBSOrientationObserver") alloc] init];
         __weak HUDRootViewController *weakSelf = self;
         [_orientationObserver setHandler:^(FBSOrientationUpdate *orientationUpdate) {
