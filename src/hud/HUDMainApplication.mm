@@ -879,7 +879,9 @@ Example format for properties:
 {
     // TODO: THIS NEEDS OPTIMIZATION (is updated frequently)
     NSArray *widgetProps = [self widgetProperties];
-    for (NSUInteger i = 0; i < [widgetProps count]; i++) {
+    for (int i = 0; i < [widgetProps count]; i++) {
+        if (![_labelViews objectAtIndex:i] || ![widgetProps objectAtIndex:i])
+            break;
         UILabel *labelView = [_labelViews objectAtIndex:i];
         NSDictionary *properties = [widgetProps objectAtIndex:i];
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
@@ -1007,7 +1009,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         // create the blur
         NSDictionary *blurDetails = [properties valueForKey:@"blurDetails"] ? [properties valueForKey:@"blurDetails"] : @{@"hasBlur" : @(NO)};
         UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
-        blurView.layer.cornerRadius = getIntFromDictKey(blurDetails, @"cornerRadius");
+        blurView.layer.cornerRadius = getIntFromDictKey(blurDetails, @"cornerRadius", 4);
         blurView.layer.masksToBounds = YES;
         blurView.translatesAutoresizingMaskIntoConstraints = NO;
         if (!getBoolFromDictKey(blurDetails, @"hasBlur")) {
@@ -1135,7 +1137,9 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     // MARK: Set Label Constraints
     NSArray *widgetProps = [self widgetProperties];
     // DEFINITELY NEEDS OPTIMIZATION
-    for (NSUInteger i = 0; i < [widgetProps count]; i++) {
+    for (int i = 0; i < [widgetProps count]; i++) {
+        if (![_blurViews objectAtIndex:i] || ![_labelViews objectAtIndex:i] || ![widgetProps objectAtIndex:i])
+            break;
         UIVisualEffectView *blurView = [_blurViews objectAtIndex:i];
         UILabel *labelView = [_labelViews objectAtIndex:i];
         NSDictionary *properties = [widgetProps objectAtIndex:i];
