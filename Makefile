@@ -1,5 +1,5 @@
 ARCHS := arm64 arm64e
-TARGET := iphone:clang:15.0
+TARGET := iphone:clang:15.0:14.0
 INSTALL_TARGET_PROCESSES := XXTAssistiveTouch
 
 TARGET_CC := $(shell xcrun --sdk iphoneos --find clang)
@@ -25,7 +25,7 @@ HUD_DIR := $(SRC_DIR)/hud
 VIEWS_DIR := $(SRC_DIR)/views
 NAVVIEWS_DIR := $(VIEWS_DIR)/navigation
 WIDGETVIEWS_DIR := $(VIEWS_DIR)/widget
-WIDGETSETVIEWS_DIR := $(VIEWS_DIR)/widgetsets
+WIDGETSETVIEWS_DIR := $(VIEWS_DIR)/widgetset
 
 WIDGETS_DIR := $(SRC_DIR)/widgets
 
@@ -65,6 +65,6 @@ endif
 include $(THEOS_MAKE_PATH)/application.mk
 
 after-stage::
-	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
+	$(ECHO_NOTHING)mkdir -p packages $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
 	$(ECHO_NOTHING)cp -rp $(THEOS_STAGING_DIR)/Applications/XXTAssistiveTouch.app $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
 	$(ECHO_NOTHING)cd $(THEOS_STAGING_DIR); zip -qr XXTAssistiveTouch.tipa Payload; cd -;$(ECHO_END)

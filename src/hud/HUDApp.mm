@@ -78,8 +78,19 @@ static __used void _HUDEventCallback(void *target, void *refcon, IOHIDServiceRef
     static UIApplication *app = [UIApplication sharedApplication];
     [app _enqueueHIDEvent:event];
 
+    BOOL shouldUseAXEvent = NO;
+
     if (@available(iOS 15.2, *))
     {
+        if (@available(iOS 16.2, *))
+        {
+            
+        } else {
+            shouldUseAXEvent = YES;
+        }
+    }
+
+    if (shouldUseAXEvent) {
         static Class AXEventRepresentationCls = nil;
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{

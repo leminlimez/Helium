@@ -42,6 +42,12 @@ struct RootView: View {
             
             do {
                 try FileManager.default.contentsOfDirectory(atPath: "/var/mobile")
+                // warn to turn on developer mode if iOS 16+
+                if #available(iOS 16.0, *), !UserDefaults.standard.bool(forKey: "hasWarnedOfDevMode", forPath: USER_DEFAULTS_PATH) {
+                    UIApplication.shared.confirmAlert(title: "Info", body: "Make sure you enable developer mode before using! This will not work otherwise.", onOK: {
+                        UserDefaults.standard.setValue(true, forKey: "hasWarnedOfDevMode", forPath: USER_DEFAULTS_PATH)
+                    }, noCancel: true)
+                }
                 return
             } catch {
                 UIApplication.shared.alert(title: "Not Supported", body: "This app must be installed with TrollStore.")
