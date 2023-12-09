@@ -30,6 +30,36 @@ struct WidgetCustomizationView: View {
                         }
                     }
                 }
+                .toolbar {
+                    HStack {
+                        // create a new widget set
+                        Button(action: {
+                            UIApplication.shared.inputAlert(title: "Enter Name", body: "Choose a name for the widget set.", confirmTitle: "Confirm", placeholder: "Name", onOK: { title in
+                                // make selection for anchor
+                                UIApplication.shared.optionsAlert(title: "Choose Side", body: "Choose a side for the widget set to anchor to. This can be changed later.", options: ["Left", "Center", "Right"]) { anchorSide in
+                                    var anchor: Int
+                                    switch (anchorSide) {
+                                    case "Left":
+                                        anchor = 0
+                                        break
+                                    case "Center":
+                                        anchor = 1
+                                        break
+                                    case "Right":
+                                        anchor = 2
+                                        break
+                                    default:
+                                        anchor = 0
+                                        break
+                                    }
+                                    widgetManager.createWidgetSet(title: title == "" ? "Untitled" : title, anchor: anchor)
+                                }
+                            }, noCancel: false)
+                        }) {
+                            Image(systemName: "plus")
+                        }
+                    }
+                }
             }
             .navigationTitle("Customize")
         }
