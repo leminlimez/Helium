@@ -8,12 +8,6 @@
 import Foundation
 import SwiftUI
 
-enum WidgetSide: String {
-    case left = "left"
-    case center = "center"
-    case right = "right"
-}
-
 enum WidgetModule: Int, CaseIterable {
     case date = 1
     case network = 2
@@ -23,120 +17,201 @@ enum WidgetModule: Int, CaseIterable {
     case text = 6
 }
 
-struct WidgetStruct: Identifiable, Equatable {
-    static func == (lhs: WidgetStruct, rhs: WidgetStruct) -> Bool {
+struct WidgetIDStruct: Identifiable, Equatable {
+    static func == (lhs: WidgetIDStruct, rhs: WidgetIDStruct) -> Bool {
         return (lhs.id == rhs.id)
     }
     
     var id = UUID()
+    
     var module: WidgetModule
     var config: [String: Any]
-    var modified: Bool = false
+}
+
+struct BlurDetailsStruct: Identifiable, Equatable {
+    static func == (lhs: BlurDetailsStruct, rhs: BlurDetailsStruct) -> Bool {
+        return (lhs.id == rhs.id)
+    }
+    
+    var id = UUID()
+    
+    var hasBlur: Bool
+    var cornerRadius: Int
+}
+
+struct ColorDetailsStruct: Identifiable {
+    var id = UUID()
+    
+    var usesCustomColor: Bool
+    var dynamicColor: Bool
+}
+
+struct WidgetSetStruct: Identifiable, Equatable {
+    static func == (lhs: WidgetSetStruct, rhs: WidgetSetStruct) -> Bool {
+        return (lhs.id == rhs.id)
+    }
+    
+    var id = UUID()
+    
+    var anchor: Int
+    var offsetX: Double
+    var offsetY: Double
+    var autoResizes: Bool
+    var scale: Double
+    
+    var widgetIDs: [WidgetIDStruct]
+    
+    var blurDetails: BlurDetailsStruct
+    
+    // var colorDetails: ColorDetailsStruct
+    
+    var textAlpha: Double
+    var textAlignment: Int
+    var fontSize: Double
 }
 
 // MARK: Widget Manager Class
 class WidgetManager: ObservableObject {
-    let widgetSide: WidgetSide
-    let maxNumWidgets: Int
-    @Published var widgetStructs: [WidgetStruct]
+    @Published var widgetSets: [WidgetSetStruct]
 
-    init(widgetSide: WidgetSide, maxNumWidgets: Int, widgetStructs: [WidgetStruct]) {
-        self.widgetSide = widgetSide
-        self.maxNumWidgets = maxNumWidgets
-        self.widgetStructs = widgetStructs
+    init(widgetSets: [WidgetSetStruct]) {
+        self.widgetSets = widgetSets
     }
     
-    convenience init(widgetSide: WidgetSide) {
-        let maxNumDict: [String: NSNumber] = getMaxNumWidgetsBridger()
-        let maxNum: Int = maxNumDict[widgetSide == .left || widgetSide == .right ? "sideNum" : "centerNum"] as? Int ?? 1
-        self.init(widgetSide: widgetSide, maxNumWidgets: maxNum, widgetStructs: [])
-        self.widgetStructs = getWidgetStructs()
+    convenience init() {
+        self.init(widgetSets: [])
+        self.widgetSets = getWidgetSets()
     }
     
-    // get the list of widgets
-    public func getWidgetStructs() -> [WidgetStruct] {
+    // get the list of widget sets
+    public func getWidgetSets() -> [WidgetSetStruct] {
         let defaults = UserDefaults.standard
-        var structs: [WidgetStruct] = []
+        var sets: [WidgetSetStruct] = []
         
-        if let dict: [[String: Any]] = defaults.array(forKey: "\(widgetSide.rawValue)WidgetIDs", forPath: USER_DEFAULTS_PATH) as? [[String: Any]] {
+        if let dict: [[String: Any]] = defaults.array(forKey: "widgetProperties", forPath: USER_DEFAULTS_PATH) as? [[String: Any]] {
             for s in dict {
-                var widgetID: Int = 0
-                var config: [String: Any] = [:]
-                for k in s.keys {
-                    if k == "widgetID" {
-                        widgetID = s[k] as? Int ?? 0
-                    } else {
-                        config[k] = s[k]
+                // get the list of widget ids
+                var widgetIDs: [WidgetIDStruct] = []
+                if let ids = s["widgetIDs"] as? [[String: Any]] {
+                    for w in ids {
+                        var widgetID: Int = 0
+                        var config: [String: Any] = [:]
+                        for k in w.keys {
+                            if k == "widgetID" {
+                                widgetID = w[k] as? Int ?? 0
+                            } else {
+                                config[k] = w[k]
+                            }
+                        }
+                        var module: WidgetModule? = nil
+                        for m in WidgetModule.allCases {
+                            if m.rawValue == widgetID {
+                                module = m
+                                break
+                            }
+                        }
+                        if let module = module {
+                            widgetIDs.append(.init(module: module, config: config))
+                        }
                     }
                 }
-                var module: WidgetModule? = nil
-                for m in WidgetModule.allCases {
-                    if m.rawValue == widgetID {
-                        module = m
-                        break
-                    }
-                }
-                if let module = module {
-                    structs.append(.init(module: module, config: config))
-                }
+                let blurDetails: [String: Any] = s["blurDetails"] as? [String: Any] ?? [:]
+                let blurDetailsStruct: BlurDetailsStruct = .init(
+                    hasBlur: blurDetails["hasBlur"] as? Bool ?? false,
+                    cornerRadius: blurDetails["cornerRadius"] as? Int ?? 4
+                )
+                // create the object
+                sets.append(.init(
+                    anchor: s["anchor"] as? Int ?? 0,
+                    offsetX: s["offsetX"] as? Double ?? 10.0,
+                    offsetY: s["offsetY"] as? Double ?? 0.0,
+                    autoResizes: s["autoResizes"] as? Bool ?? false,
+                    scale: s["scale"] as? Double ?? 100.0,
+                    
+                    widgetIDs: widgetIDs,
+                    
+                    blurDetails: blurDetailsStruct,
+                    
+                    textAlpha: s["textAlpha"] as? Double ?? 1.0,
+                    textAlignment: s["textAlignment"] as? Int ?? 1,
+                    fontSize: s["fontSize"] as? Double ?? 10.0
+                ))
             }
         }
         
-        return structs
+        return sets
     }
     
-    // get the widget id
-    public func getWidgetID(widget: WidgetStruct) -> Int {
-        if widgetStructs.count > 0 {
-            for i in 0...widgetStructs.count {
-                print(widgetStructs[i].id)
-                if widgetStructs[i] == widget {
-                    return i
-                }
-            }
-        }
-        return -1
-    }
-    
-    // save widgets
-    public func saveWidgetStructs() {
+    // save widget sets
+    public func saveWidgetSets() {
         let defaults = UserDefaults.standard
         var dict: [[String: Any]] = []
         
-        for s in widgetStructs {
-            var widget: [String: Any] = [:]
-            widget["widgetID"] = s.module.rawValue
-            for c in s.config.keys {
-                widget[c] = s.config[c]
+        for s in widgetSets {
+            var wSet: [String: Any] = [:]
+            wSet["anchor"] = s.anchor
+            wSet["offsetX"] = s.offsetX
+            wSet["offsetY"] = s.offsetY
+            wSet["autoResizes"] = s.autoResizes
+            wSet["scale"] = s.scale
+            
+            var widgetIDs: [[String: Any]] = []
+            for w in s.widgetIDs {
+                var widget: [String: Any] = [:]
+                widget["widgetID"] = w.module.rawValue
+                for c in w.config.keys {
+                    widget[c] = w.config[c]
+                }
+                widgetIDs.append(widget)
             }
-            dict.append(widget)
+            wSet["widgetIDs"] = widgetIDs
+            
+            let blurDetails: [String: Any] = [
+                "hasBlur": s.blurDetails.hasBlur,
+                "cornerRadius": s.blurDetails.cornerRadius
+            ]
+            wSet["blurDetails"] = blurDetails
+            
+            wSet["textAlpha"] = s.textAlpha
+            wSet["textAlignment"] = s.textAlignment
+            wSet["fontSize"] = s.fontSize
+            
+            dict.append(wSet)
         }
         
         // save it to user defaults
         if dict.count > 0 {
-            defaults.setValue(dict, forKey: "\(widgetSide.rawValue)WidgetIDs", forPath: USER_DEFAULTS_PATH)
+            defaults.setValue(dict, forKey: "widgetProperties", forPath: USER_DEFAULTS_PATH)
         } else {
             // remove from the defaults
-            defaults.removeObject(forKey: "\(widgetSide.rawValue)WidgetIDs", forPath: USER_DEFAULTS_PATH)
+            defaults.removeObject(forKey: "widgetProperties", forPath: USER_DEFAULTS_PATH)
         }
     }
     
     // MARK: Widget Modification Management
     // adding widgets
-    public func addWidget(module: WidgetModule, config: [String: Any], save: Bool = true) {
-        widgetStructs.append(.init(module: module, config: config))
-        if save { saveWidgetStructs(); }
+    public func addWidget(widgetSet: WidgetSetStruct, module: WidgetModule, config: [String: Any], save: Bool = true) {
+        for (i, wSet) in widgetSets.enumerated() {
+            if wSet == widgetSet {
+                widgetSets[i].widgetIDs.append(.init(module: module, config: config))
+            }
+        }
+        if save { saveWidgetSets(); }
     }
     
-    public func addWidget(module: WidgetModule, save: Bool = true) {
+    public func addWidget(widgetSet: WidgetSetStruct, module: WidgetModule, save: Bool = true) {
         let config: [String: Any] = [:]
-        addWidget(module: module, config: config, save: save)
+        addWidget(widgetSet: widgetSet, module: module, config: config, save: save)
     }
     
     // removing widgets
-    public func removeWidget(id: Int, save: Bool = true) {
-        widgetStructs.remove(at: id)
-        if save { saveWidgetStructs(); }
+    public func removeWidget(widgetSet: WidgetSetStruct, id: Int, save: Bool = true) {
+        for (i, wSet) in widgetSets.enumerated() {
+            if wSet == widgetSet {
+                widgetSets[i].widgetIDs.remove(at: id)
+            }
+        }
+        if save { saveWidgetSets(); }
     }
 }
 
