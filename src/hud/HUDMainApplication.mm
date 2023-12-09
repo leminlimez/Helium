@@ -164,7 +164,6 @@ void waitForNotification(void (^onFinish)(), BOOL isEnabled) {
 
 #pragma mark -
 
-static double FONT_SIZE = 10.0;
 static double UPDATE_INTERVAL = 1.0;
 
 
@@ -953,7 +952,8 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         blurView.layer.cornerRadius = getIntFromDictKey(blurDetails, @"cornerRadius", 4);
         blurView.layer.masksToBounds = YES;
         blurView.translatesAutoresizingMaskIntoConstraints = NO;
-        if (!getBoolFromDictKey(blurDetails, @"hasBlur")) {
+        BOOL hasBlur = getBoolFromDictKey(blurDetails, @"hasBlur");
+        if (!hasBlur) {
             blurView.alpha = 0.0;
         }
         [_contentView addSubview:blurView];
@@ -979,10 +979,14 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
                 color = []
             }
         }*/
-        labelView.textColor = [UIColor blackColor];
-        labelView.font = [UIFont systemFontOfSize: FONT_SIZE];
+        labelView.textColor = [UIColor whiteColor];
+        labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
-        [blurView.contentView addSubview:labelView];
+        if (hasBlur) {
+            [blurView.contentView addSubview:labelView];
+        } else {
+            [_contentView addSubview: labelView];
+        }
         [_labelViews addObject: labelView];
     }
     
