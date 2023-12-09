@@ -22,12 +22,16 @@ struct EditWidgetSetView: View {
     @State var autoResizes: Bool = true
     @State var scale: Double = 100.0
     
+    @State var widgetIDs: [WidgetIDStruct] = []
+    
     @State var hasBlur: Bool = false
     @State var cornerRadius: Double = 4
     
     @State var textAlpha: Double = 1.0
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
+    
+    @State var changesMade: Bool = false
     
     var body: some View {
         VStack {
@@ -40,6 +44,9 @@ struct EditWidgetSetView: View {
                         Spacer()
                         TextField("Title", text: $nameInput)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .onChange(of: nameInput) { _ in
+                                changesMade = true
+                            }
                     }
                 }
                 
@@ -52,6 +59,9 @@ struct EditWidgetSetView: View {
                             Text("Right").tag(2)
                         }
                         .pickerStyle(.menu)
+                        .onChange(of: anchorSelection) { _ in
+                            changesMade = true
+                        }
                     }
                     // MARK: Offset X
                     VStack {
@@ -61,6 +71,9 @@ struct EditWidgetSetView: View {
                             Spacer()
                         }
                         BetterSlider(value: $offsetX, bounds: -300...300)
+                            .onChange(of: offsetX) { _ in
+                                changesMade = true
+                            }
                     }
                     // MARK: Offset Y
                     VStack {
@@ -70,6 +83,9 @@ struct EditWidgetSetView: View {
                             Spacer()
                         }
                         BetterSlider(value: $offsetY, bounds: -300...300)
+                            .onChange(of: offsetY) { _ in
+                                changesMade = true
+                            }
                     }
                     // MARK: Auto Resizes
                     HStack {
@@ -77,6 +93,9 @@ struct EditWidgetSetView: View {
                             Text("Auto Resize")
                                 .bold()
                                 .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: autoResizes) { _ in
+                            changesMade = true
                         }
                     }
                     // MARK: Width
@@ -88,6 +107,9 @@ struct EditWidgetSetView: View {
                                 Spacer()
                             }
                             BetterSlider(value: $scale, bounds: 10...500)
+                                .onChange(of: scale) { _ in
+                                    changesMade = true
+                                }
                         }
                     }
                 }
@@ -100,6 +122,9 @@ struct EditWidgetSetView: View {
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
+                        .onChange(of: hasBlur) { _ in
+                            changesMade = true
+                        }
                     }
                     // MARK: Blur Corner Radius
                     if hasBlur {
@@ -110,6 +135,9 @@ struct EditWidgetSetView: View {
                                 Spacer()
                             }
                             BetterSlider(value: $cornerRadius, bounds: 0...30, step: 1)
+                                .onChange(of: cornerRadius) { _ in
+                                    changesMade = true
+                                }
                         }
                     }
                 }
@@ -123,6 +151,9 @@ struct EditWidgetSetView: View {
                             Spacer()
                         }
                         BetterSlider(value: $textAlpha, bounds: 0...1, step: 0.01)
+                            .onChange(of: textAlpha) { _ in
+                                changesMade = true
+                            }
                     }
                     // MARK: Text Alignment
                     HStack {
@@ -131,6 +162,9 @@ struct EditWidgetSetView: View {
                             Text("Center").tag(1)
                         }
                         .pickerStyle(.menu)
+                        .onChange(of: textAlignment) { _ in
+                            changesMade = true
+                        }
                     }
                     // MARK: Font Size
                     VStack {
@@ -140,20 +174,22 @@ struct EditWidgetSetView: View {
                             Spacer()
                         }
                         BetterSlider(value: $fontSize, bounds: 5...50, step: 0.5)
+                            .onChange(of: fontSize) { _ in
+                                changesMade = true
+                            }
                     }
                 }
                 
                 Section {
                     // MARK: Add Widget Button
                     Button(action: {
-                        //TODO: save changes when clicked
                         showingAddView.toggle()
                     }) {
                         Text("Add Widget")
                             .buttonStyle(TintedButton(color: .blue, fullWidth: true))
                     }
                     // MARK: Widget IDs
-                    ForEach($widgetSet.widgetIDs) { widgetID in
+                    ForEach($widgetIDs) { widgetID in
                         HStack {
                             WidgetPreviewsView(widget: widgetID, previewColor: .white)
                             Spacer()
@@ -166,8 +202,9 @@ struct EditWidgetSetView: View {
                             // MARK: Remove Widget ID Button
                             Button(action: {
                                 // save changes
-                                saveSet(save: false)
-                                widgetManager.removeWidget(widgetSet: widgetSet, id: widgetID.wrappedValue)
+                                widgetManager.removeWidget(widgetSet: widgetSet, id: widgetID.wrappedValue, save: false)
+                                saveSet()
+                                widgetIDs = widgetSet.widgetIDs
                             }) {
                                 Image(systemName: "trash")
                                     .foregroundColor(.red)
@@ -180,8 +217,7 @@ struct EditWidgetSetView: View {
                 HStack {
                     // MARK: Save Button
                     // only shows up if something is changed
-                    // this if statement is abysmal, must be changed
-                    if (nameInput != widgetSet.title || anchorSelection != widgetSet.anchor || offsetX != widgetSet.offsetX || offsetY != widgetSet.offsetY || autoResizes != widgetSet.autoResizes || scale != widgetSet.scale || hasBlur != widgetSet.blurDetails.hasBlur || cornerRadius != widgetSet.blurDetails.cornerRadius || textAlpha != widgetSet.textAlpha || textAlignment != widgetSet.textAlignment || fontSize != widgetSet.fontSize) {
+                    if (changesMade) {
                         Button(action: {
                             saveSet()
                         }) {
@@ -199,20 +235,28 @@ struct EditWidgetSetView: View {
                 autoResizes = widgetSet.autoResizes
                 scale = widgetSet.scale
                 
+                widgetIDs = widgetSet.widgetIDs
+                
                 hasBlur = widgetSet.blurDetails.hasBlur
                 cornerRadius = widgetSet.blurDetails.cornerRadius
                 
                 textAlpha = widgetSet.textAlpha
                 textAlignment = widgetSet.textAlignment
                 fontSize = widgetSet.fontSize
+                
+                changesMade = false
             }
             .sheet(isPresented: $showingAddView, content: {
-                WidgetAddView(widgetManager: widgetManager, widgetSet: widgetSet, isOpen: $showingAddView)
+                WidgetAddView(widgetManager: widgetManager, widgetSet: widgetSet, isOpen: $showingAddView, onChoice: {
+                    saveSet()
+                    widgetIDs = widgetSet.widgetIDs
+                })
             })
         }
     }
     
     func saveSet(save: Bool = true) {
+        changesMade = false
         widgetManager.editWidgetSet(widgetSet: widgetSet, newSetDetails: .init(
             title: nameInput,
             
@@ -233,5 +277,9 @@ struct EditWidgetSetView: View {
             textAlignment: textAlignment,
             fontSize: fontSize
         ), save: save)
+        let updatedSet = widgetManager.getUpdatedWidgetSet(widgetSet: widgetSet)
+        if updatedSet != nil {
+            widgetSet = updatedSet!
+        }
     }
 }

@@ -107,12 +107,15 @@ struct WidgetAddView: View {
     @State var widgetSet: WidgetSetStruct
     @Binding var isOpen: Bool
     
+    var onChoice: () -> ()
+    
     var body: some View {
         List {
             ForEach(WidgetModule.allCases, id: \.self) { id in
                 Button(action: {
                     widgetManager.addWidget(widgetSet: widgetSet, module: id)
                     isOpen = false
+                    onChoice()
                 }) {
                     WidgetChoiceView(widgetName: WidgetDetails.getWidgetName(id), exampleText: WidgetDetails.getWidgetExample(id))
                 }

@@ -295,6 +295,15 @@ class WidgetManager: ObservableObject {
         }
         if save { saveWidgetSets(); }
     }
+    
+    public func getUpdatedWidgetSet(widgetSet: WidgetSetStruct) -> WidgetSetStruct? {
+        for wSet in widgetSets {
+            if wSet == widgetSet {
+                return wSet
+            }
+        }
+        return nil
+    }
 }
 
 // MARK: Widget Details for Previews
