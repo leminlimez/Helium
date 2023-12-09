@@ -810,39 +810,9 @@ Example format for properties:
 */
 - (NSArray*) widgetProperties
 {
-    // [self loadUserDefaults: NO];
-    // NSArray *properties = [_userDefaults objectForKey: @"widgetProperties"];
-    // return properties;
-    return @[
-        @{
-            @"anchor" : @(0),
-            @"offsetX" : @(10),
-            @"offsetY" : @(0),
-            @"autoResizes" : @(NO),
-            @"scale" : @(50),
-
-            @"widgetIDs" : @[
-                @{
-                    @"widgetID" : @(2),
-                    @"isUp" : @(YES)
-                },
-                @{
-                    @"widgetID" : @(2)
-                }
-            ],
-
-            @"blurDetails" : @{
-                @"hasBlur" : @(YES),
-                @"cornerRadius" : @(4)
-            },
-            @"colorDetails" : @{
-                @"usesCustomColor" : @(NO)
-            },
-            @"textAlpha" : @(1),
-            @"textAlignment" : @(1),
-            @"fontSize" : @(10)
-        }
-    ];
+    [self loadUserDefaults: NO];
+    NSArray *properties = [_userDefaults objectForKey: @"widgetProperties"];
+    return properties;
 }
 
 #pragma mark - Label Updating

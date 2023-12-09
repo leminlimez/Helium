@@ -13,8 +13,10 @@ struct WidgetCustomizationView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // TODO: Improve This UI
-                BezelCustomizationView(deviceType: getDeviceSizeBridger())
+                // List of Widget Sets
+                List {
+                    
+                }
             }
             .navigationTitle("Customize")
         }
@@ -22,58 +24,58 @@ struct WidgetCustomizationView: View {
 }
 
 // MARK: Widget Modify View
-struct WidgetModifyView: View {
-    @StateObject var widgetManager: WidgetManager
-    @Binding var widgetIndex: Int
-    
-    var dismiss: () -> Void
-    
-    var body: some View {
-        return VStack {
-            if widgetIndex >= 0 && widgetIndex < widgetManager.widgetStructs.count {
-                // Widget Preferences
-                WidgetPreferencesView(widgetStruct: $widgetManager.widgetStructs[widgetIndex])
-                VStack {
-                    Spacer()
-                    // Save Button
-                    Button("Save") {
-                        widgetManager.saveWidgetStructs()
-                        dismiss()
-                    }
-                    .buttonStyle(TintedButton(color: .blue, fullWidth: true))
-                    .padding(.horizontal, 7)
-                    // Delete Button
-                    Button("Delete") {
-                        widgetManager.removeWidget(id: widgetIndex)
-                        dismiss()
-                    }
-                    .buttonStyle(TintedButton(color: .red, fullWidth: true))
-                    .padding(.horizontal, 7)
-                }
-                .padding(10)
-            }
-        }
-    }
-}
-
-// MARK: Widget Add View
-struct WidgetAddView: View {
-    @Environment(\.dismiss) var dismiss
-    @StateObject var widgetManager: WidgetManager
-    
-    var body: some View {
-        List {
-            ForEach(WidgetModule.allCases, id: \.self) { id in
-                Button(action: {
-                    widgetManager.addWidget(module: id)
-                    dismiss()
-                }) {
-                    WidgetChoiceView(widgetName: WidgetDetails.getWidgetName(id), exampleText: WidgetDetails.getWidgetExample(id))
-                }
-            }
-        }
-    }
-}
+//struct WidgetModifyView: View {
+//    @StateObject var widgetManager: WidgetManager
+//    @Binding var widgetIndex: Int
+//    
+//    var dismiss: () -> Void
+//    
+//    var body: some View {
+//        return VStack {
+//            if widgetIndex >= 0 && widgetIndex < widgetManager.widgetStructs.count {
+//                // Widget Preferences
+//                WidgetPreferencesView(widgetStruct: $widgetManager.widgetStructs[widgetIndex])
+//                VStack {
+//                    Spacer()
+//                    // Save Button
+//                    Button("Save") {
+//                        widgetManager.saveWidgetStructs()
+//                        dismiss()
+//                    }
+//                    .buttonStyle(TintedButton(color: .blue, fullWidth: true))
+//                    .padding(.horizontal, 7)
+//                    // Delete Button
+//                    Button("Delete") {
+//                        widgetManager.removeWidget(id: widgetIndex)
+//                        dismiss()
+//                    }
+//                    .buttonStyle(TintedButton(color: .red, fullWidth: true))
+//                    .padding(.horizontal, 7)
+//                }
+//                .padding(10)
+//            }
+//        }
+//    }
+//}
+//
+//// MARK: Widget Add View
+//struct WidgetAddView: View {
+//    @Environment(\.dismiss) var dismiss
+//    @StateObject var widgetManager: WidgetManager
+//    
+//    var body: some View {
+//        List {
+//            ForEach(WidgetModule.allCases, id: \.self) { id in
+//                Button(action: {
+//                    widgetManager.addWidget(module: id)
+//                    dismiss()
+//                }) {
+//                    WidgetChoiceView(widgetName: WidgetDetails.getWidgetName(id), exampleText: WidgetDetails.getWidgetExample(id))
+//                }
+//            }
+//        }
+//    }
+//}
 
 // MARK: Widget Choice View
 struct WidgetChoiceView: View {
