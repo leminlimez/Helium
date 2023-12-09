@@ -972,7 +972,8 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
 
     // MARK: Create the Widgets
     // MIGHT NEED OPTIMIZATION
-    for (NSDictionary *properties in [self widgetProperties]) {
+    for (id propID in [self widgetProperties]) {
+        NSDictionary *properties = propID;
         // create the blur
         NSDictionary *blurDetails = [properties valueForKey:@"blurDetails"] ? [properties valueForKey:@"blurDetails"] : [NSDictionary init];
         UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
@@ -1113,7 +1114,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
         ]];
         NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
-        double offsetX = getDoubleFromDictKey(properties, @"offsetX");
+        double offsetX = getDoubleFromDictKey(properties, @"offsetX", 10);
         // set the horizontal anchor
         if (anchorSide == 1)
             [_constraints addObject:[labelView.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor constant: offsetX]];
