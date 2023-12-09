@@ -41,12 +41,13 @@ extension UIApplication {
             self.present(alert: currentUIAlertController!)
         }
     }
-    func inputAlert(title: String, body: String, confirmTitle: String = okString, placeholder: String = placeholderString, text: String = "", onOK: @escaping (String) -> (), noCancel: Bool) {
+    func inputAlert(title: String, body: String, confirmTitle: String = okString, placeholder: String = placeholderString, text: String = "", keyboardType: UIKeyboardType = .default, onOK: @escaping (String) -> (), noCancel: Bool) {
         DispatchQueue.main.async {
             currentUIAlertController = UIAlertController(title: title, message: body, preferredStyle: .alert)
             currentUIAlertController?.addTextField { (textField) in
                 textField.placeholder = placeholder
                 textField.text = text
+                textField.keyboardType = keyboardType
             }
             if !noCancel {
                 currentUIAlertController?.addAction(.init(title: cancelString, style: .cancel))
