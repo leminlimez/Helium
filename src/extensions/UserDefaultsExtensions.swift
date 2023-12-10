@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension UserDefaults {
     // MARK: Managing the Data

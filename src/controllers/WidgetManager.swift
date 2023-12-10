@@ -40,11 +40,16 @@ struct BlurDetailsStruct: Identifiable, Equatable {
     var cornerRadius: Double // Int when saving, Double for runtime convenience
 }
 
-struct ColorDetailsStruct: Identifiable {
+struct ColorDetailsStruct: Identifiable, Equatable {
+    static func == (lhs: ColorDetailsStruct, rhs: ColorDetailsStruct) -> Bool {
+        return (lhs.id == rhs.id)
+    }
+    
     var id = UUID()
     
-    var usesCustomColor: Bool
-    var dynamicColor: Bool
+    var usesCustomColor: Bool = false
+    var color: UIColor = .white
+//    var dynamicColor: Bool
 }
 
 struct WidgetSetStruct: Identifiable, Equatable {
@@ -66,7 +71,7 @@ struct WidgetSetStruct: Identifiable, Equatable {
     
     var blurDetails: BlurDetailsStruct
     
-    // var colorDetails: ColorDetailsStruct
+    var colorDetails: ColorDetailsStruct = .init()
     
     var textAlpha: Double
     var textAlignment: Int
@@ -123,8 +128,14 @@ class WidgetManager: ObservableObject {
                     hasBlur: blurDetails["hasBlur"] as? Bool ?? false,
                     cornerRadius: blurDetails["cornerRadius"] as? Double ?? 4
                 )
+                let colorDetails: [String: Any] = s["colorDetails"] as? [String: Any] ?? [:]
+                let selectedColor: UIColor = UIColor.getColorFromData(data: colorDetails["color"] as? Data) ?? UIColor.white
+                let colorDetailsStruct: ColorDetailsStruct = .init(
+                    usesCustomColor: colorDetails["usesCustomColor"] as? Bool ?? false,
+                    color: selectedColor
+                )
                 // create the object
-                sets.append(.init(
+                var widgetSet: WidgetSetStruct = .init(
                     title: s["title"] as? String ?? "Untitled",
                     anchor: s["anchor"] as? Int ?? 0,
                     offsetX: s["offsetX"] as? Double ?? 10.0,
@@ -139,7 +150,9 @@ class WidgetManager: ObservableObject {
                     textAlpha: s["textAlpha"] as? Double ?? 1.0,
                     textAlignment: s["textAlignment"] as? Int ?? 1,
                     fontSize: s["fontSize"] as? Double ?? 10.0
-                ))
+                )
+                widgetSet.colorDetails = colorDetailsStruct
+                sets.append(widgetSet)
             }
         }
         
@@ -176,6 +189,12 @@ class WidgetManager: ObservableObject {
                 "cornerRadius": Int(s.blurDetails.cornerRadius)
             ]
             wSet["blurDetails"] = blurDetails
+            
+            let colorDetails: [String: Any] = [
+                "usesCustomColor": s.colorDetails.usesCustomColor,
+                "color": s.colorDetails.color.data
+            ]
+            wSet["colorDetails"] = colorDetails
             
             wSet["textAlpha"] = s.textAlpha
             wSet["textAlignment"] = s.textAlignment
@@ -288,6 +307,8 @@ class WidgetManager: ObservableObject {
                 widgetSets[i].scale = ns.scale
                 
                 widgetSets[i].blurDetails = ns.blurDetails
+                
+                widgetSets[i].colorDetails = ns.colorDetails
                 
                 widgetSets[i].textAlpha = ns.textAlpha
                 widgetSets[i].textAlignment = ns.textAlignment
