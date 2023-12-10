@@ -979,7 +979,15 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
                 color = []
             }
         }*/
-        labelView.textColor = [UIColor whiteColor];
+        NSDictionary *colorDetails = [properties valueForKey:@"colorDetails"] ? [properties valueForKey:@"colorDetails"] : @{@"usesCustomColor" : @(NO)};
+        BOOL usesCustomColor = getBoolFromDictKey(colorDetails, @"usesCustomColor");
+        if (usesCustomColor && [colorDetails valueForKey:@"color"]) {
+            NSData *customColorData = [colorDetails valueForKey:@"color"];
+            UIColor *customColor = [NSKeyedUnarchiver unarchiveObjectWithData:customColorData];
+            labelView.textColor = customColor;
+        } else {
+            labelView.textColor = [UIColor whiteColor];
+        }
         labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
         if (hasBlur) {

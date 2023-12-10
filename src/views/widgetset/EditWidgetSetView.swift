@@ -28,6 +28,9 @@ struct EditWidgetSetView: View {
     @State var hasBlur: Bool = false
     @State var cornerRadius: Double = 4
     
+    @State var usesCustomColor: Bool = false
+    @State var customColor: Color = .white
+    
     @State var textAlpha: Double = 1.0
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
@@ -144,6 +147,33 @@ struct EditWidgetSetView: View {
                 }
                 
                 Section {
+                    // MARK: Uses Custom Color
+                    HStack {
+                        Toggle(isOn: $usesCustomColor) {
+                            Text("Custom Text Color")
+                                .bold()
+                                .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: usesCustomColor) { _ in
+                            changesMade = true
+                        }
+                    }
+                    // MARK: Custom Text Color
+                    if usesCustomColor {
+                        HStack {
+                            Text("Text Color")
+                                .bold()
+                            Spacer()
+                            ColorPicker("Set Text Color", selection: $customColor)
+                                .labelsHidden()
+                                .onChange(of: customColor) { _ in
+                                    changesMade = true
+                                }
+                        }
+                    }
+                }
+                
+                Section {
                     // MARK: Text Alpha
                     VStack {
                         HStack {
@@ -253,6 +283,9 @@ struct EditWidgetSetView: View {
                 hasBlur = widgetSet.blurDetails.hasBlur
                 cornerRadius = widgetSet.blurDetails.cornerRadius
                 
+                usesCustomColor = widgetSet.colorDetails.usesCustomColor
+                customColor = Color(widgetSet.colorDetails.color)
+                
                 textAlpha = widgetSet.textAlpha
                 textAlignment = widgetSet.textAlignment
                 fontSize = widgetSet.fontSize
@@ -284,6 +317,11 @@ struct EditWidgetSetView: View {
             blurDetails: .init(
                 hasBlur: hasBlur,
                 cornerRadius: cornerRadius
+            ),
+            
+            colorDetails: .init(
+                usesCustomColor: usesCustomColor,
+                color: UIColor(customColor)
             ),
             
             textAlpha: textAlpha,
