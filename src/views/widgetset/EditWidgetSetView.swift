@@ -16,7 +16,7 @@ struct EditWidgetSetView: View {
     
     @State var nameInput: String = ""
     
-    @State var anchorSelection: Int! = 0
+    @State var anchorSelection: Int = 0
     @State var offsetX: Double = 10.0
     @State var offsetY: Double = 0.0
     @State var autoResizes: Bool = true
