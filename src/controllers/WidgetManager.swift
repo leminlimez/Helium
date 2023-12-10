@@ -251,6 +251,21 @@ class WidgetManager: ObservableObject {
         }
     }
     
+    // update widget config
+    public func updateWidgetConfig(widgetSet: WidgetSetStruct, id: WidgetIDStruct, newID: WidgetIDStruct, save: Bool = true) {
+        for (i, wSet) in widgetSets.enumerated() {
+            if wSet == widgetSet {
+                for (j, wID) in wSet.widgetIDs.enumerated() {
+                    if wID == id {
+                        widgetSets[i].widgetIDs[j].config = newID.config
+                        if save { saveWidgetSets(); }
+                        return
+                    }
+                }
+            }
+        }
+    }
+    
     // MARK: Widget Set Modification Management
     // adding widget sets
     public func addWidgetSet(widgetSet: WidgetSetStruct, save: Bool = true) {

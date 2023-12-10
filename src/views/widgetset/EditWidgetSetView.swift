@@ -221,16 +221,17 @@ struct EditWidgetSetView: View {
                     }
                     // MARK: Widget IDs
                     ForEach($widgetIDs) { widgetID in
-                        HStack {
-                            WidgetPreviewsView(widget: widgetID, previewColor: .white)
-                            Spacer()
-                            // MARK: Configure Widget Button
-                            Button(action: {
-                                
-                            }) {
-                                Image(systemName: "gear")
-                            }
-                            // MARK: Remove Widget ID Button
+                        NavigationLink(destination: WidgetPreferencesView(widgetManager: widgetManager, widgetSet: widgetSet, widgetID: widgetID)) {
+                            HStack {
+                                WidgetPreviewsView(widget: widgetID, previewColor: .white)
+                                Spacer()
+                                // MARK: Configure Widget Button
+//                            Button(action: {
+//
+//                            }) {
+//                                Image(systemName: "gear")
+//                            }
+                                // MARK: Remove Widget ID Button
 //                            Button(action: {
 //                                // save changes
 //                                widgetManager.removeWidget(widgetSet: widgetSet, id: widgetID.wrappedValue, save: false)
@@ -240,6 +241,7 @@ struct EditWidgetSetView: View {
 //                                Image(systemName: "trash")
 //                                    .foregroundColor(.red)
 //                            }
+                            }
                         }
                     }
                     .onDelete { indexSet in
