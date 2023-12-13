@@ -154,8 +154,8 @@ struct WidgetChoiceView: View {
     }
 }
 
-//struct WidgetCustomizationView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        WidgetCustomizationView()
-//    }
-//}
+struct WidgetCustomizationView_Previews: PreviewProvider {
+    static var previews: some View {
+        WidgetCustomizationView()
+    }
+}

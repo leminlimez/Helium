@@ -52,6 +52,8 @@ struct EditWidgetSetView: View {
                                 changesMade = true
                             }
                     }
+                } header: {
+                    Text("Widget Set Details")
                 }
                 
                 Section {
@@ -118,6 +120,8 @@ struct EditWidgetSetView: View {
                                 }
                         }
                     }
+                } header: {
+                    Text("Constraints")
                 }
                 
                 Section {
@@ -146,6 +150,8 @@ struct EditWidgetSetView: View {
                                 }
                         }
                     }
+                } header: {
+                    Text("Blur")
                 }
                 
                 Section {
@@ -173,6 +179,8 @@ struct EditWidgetSetView: View {
                                 }
                         }
                     }
+                } header: {
+                    Text("Text Color")
                 }
                 
                 Section {
@@ -213,6 +221,8 @@ struct EditWidgetSetView: View {
                                 changesMade = true
                             }
                     }
+                } header: {
+                    Text("Text Properties")
                 }
                 
                 Section {
@@ -257,6 +267,8 @@ struct EditWidgetSetView: View {
                             }, noCancel: false)
                         }
                     }
+                } header: {
+                    Text("Widgets")
                 }
             }
             .toolbar {
