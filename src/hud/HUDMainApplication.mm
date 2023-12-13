@@ -821,10 +821,10 @@ Example format for properties:
     // TODO: THIS NEEDS OPTIMIZATION (is updated frequently)
     NSArray *widgetProps = [self widgetProperties];
     for (int i = 0; i < [widgetProps count]; i++) {
-        if (![_labelViews objectAtIndex:i] || ![widgetProps objectAtIndex:i])
-            break;
         UILabel *labelView = [_labelViews objectAtIndex:i];
         NSDictionary *properties = [widgetProps objectAtIndex:i];
+        if (!labelView || !properties)
+            break;
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
         double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
         [self updateLabel: labelView identifiers: identifiers fontSize: fontSize];
@@ -1058,11 +1058,11 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     NSArray *widgetProps = [self widgetProperties];
     // DEFINITELY NEEDS OPTIMIZATION
     for (int i = 0; i < [widgetProps count]; i++) {
-        if (![_blurViews objectAtIndex:i] || ![_labelViews objectAtIndex:i] || ![widgetProps objectAtIndex:i])
-            break;
         UIVisualEffectView *blurView = [_blurViews objectAtIndex:i];
         UILabel *labelView = [_labelViews objectAtIndex:i];
         NSDictionary *properties = [widgetProps objectAtIndex:i];
+        if (!blurView || !labelView || !properties)
+            break;
         double offsetY = getDoubleFromDictKey(properties, @"offsetY");
         [_constraints addObjectsFromArray:@[
             [labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY],
