@@ -57,11 +57,13 @@ struct EditWidgetSetView: View {
                 Section {
                     // MARK: Anchor Side
                     HStack {
-                        Picker(selection: $anchorSelection, label: Text("Anchor Side").foregroundColor(.primary).bold()) {
+                        Text("Anchor Side").foregroundColor(.primary).bold()
+                        Spacer()
+                        Picker(selection: $anchorSelection) {
                             Text("Left").tag(0)
                             Text("Center").tag(1)
                             Text("Right").tag(2)
-                        }
+                        } label: {}
                         .pickerStyle(.menu)
                         .onChange(of: anchorSelection) { _ in
                             changesMade = true
@@ -188,10 +190,12 @@ struct EditWidgetSetView: View {
                     }
                     // MARK: Text Alignment
                     HStack {
-                        Picker(selection: $textAlignment, label: Text("Text Alignment").foregroundColor(.primary).bold()) {
+                        Text("Text Alignment").foregroundColor(.primary).bold()
+                        Spacer()
+                        Picker(selection: $textAlignment) {
                             Text("Left").tag(0)
                             Text("Center").tag(1)
-                        }
+                        } label: {}
                         .pickerStyle(.menu)
                         .onChange(of: textAlignment) { _ in
                             changesMade = true
@@ -268,6 +272,7 @@ struct EditWidgetSetView: View {
                     }
                 }
             }
+            .navigationTitle("Edit Widget")
             .onAppear {
                 nameInput = widgetSet.title
                 

@@ -192,7 +192,7 @@ class WidgetManager: ObservableObject {
             
             let colorDetails: [String: Any] = [
                 "usesCustomColor": s.colorDetails.usesCustomColor,
-                "color": s.colorDetails.color.data
+                "color": s.colorDetails.color.data as Any
             ]
             wSet["colorDetails"] = colorDetails
             
