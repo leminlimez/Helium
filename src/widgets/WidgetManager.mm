@@ -26,8 +26,6 @@
 #define SHOW_ALWAYS 1
 #define INLINE_SEPARATOR "\t"
 
-static double FONT_SIZE = 10.0;
-
 #pragma mark - Formatting Methods
 static unsigned char getSeparator(NSMutableAttributedString *currentAttributed)
 {
@@ -116,13 +114,13 @@ static NSString* formattedSpeed(uint64_t bytes)
     }
 }
 
-static NSAttributedString* formattedAttributedSpeedString(BOOL isUp)
+static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, double fontSize)
 {
     @autoreleasepool {
         if (!attributedUploadPrefix)
-            attributedUploadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:FONT_SIZE]}];
+            attributedUploadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
         if (!attributedDownloadPrefix)
-            attributedDownloadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:FONT_SIZE]}];
+            attributedDownloadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
         
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
         
@@ -149,7 +147,7 @@ static NSAttributedString* formattedAttributedSpeedString(BOOL isUp)
         if (DATAUNIT == 1)
             diff *= 8;
         
-        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
         
         return [mutableString copy];
     }
@@ -246,7 +244,7 @@ static NSString* formattedBattery(NSInteger valueType)
  - Weather
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize)
 {
     switch (parsedID) {
         case 1:
@@ -259,7 +257,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                     formattedDate(
                         [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? @"E MMM dd" : @"hh:mm")
                     )
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
             ];
             break;
         case 2:
@@ -267,11 +265,12 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             [
                 mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
                     NSString stringWithFormat: @"%c", getSeparator(mutableString)
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
             ];
             [
                 mutableString appendAttributedString: formattedAttributedSpeedString(
-                    [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO
+                    [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO,
+                    fontSize
                 )
             ];
             break;
@@ -280,7 +279,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             [
                 mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
                     NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedTemp()
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
             ];
             break;
         case 4:
@@ -290,7 +289,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                     NSString stringWithFormat: @"%c%@",
                     getSeparator(mutableString),
                     formattedBattery([parsedInfo valueForKey:@"batteryValueType"] ? [[parsedInfo valueForKey:@"batteryValueType"] integerValue] : 0)
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
             ];
             break;
         case 6:
@@ -300,7 +299,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                     NSString stringWithFormat: @"%c%@",
                     getSeparator(mutableString),
                     [parsedInfo valueForKey:@"text"] ? [parsedInfo valueForKey:@"text"] : @"Unknown"
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]
+                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
             ];
             break;
         default:
@@ -309,7 +308,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -318,10 +317,10 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers)
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize);
             }
         } else {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:FONT_SIZE]}]];
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
         }
         
         return [mutableString copy];

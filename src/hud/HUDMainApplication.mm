@@ -826,16 +826,17 @@ Example format for properties:
         UILabel *labelView = [_labelViews objectAtIndex:i];
         NSDictionary *properties = [widgetProps objectAtIndex:i];
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
-        [self updateLabel: labelView identifiers: identifiers];
+        double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
+        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize];
     }
 }
 
-- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers
+- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize
 {
 #if DEBUG
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
-    NSAttributedString *attributedText = formattedAttributedString(identifiers);
+    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize);
     if (attributedText)
         [label setAttributedText: attributedText];
 }
