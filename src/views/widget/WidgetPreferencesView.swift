@@ -20,18 +20,16 @@ struct WidgetPreferencesView: View {
     @State var modified: Bool = false
     
     let timeFormats: [String] = [
-        "h:mm",
-        "h:mm a",
-        "h:mm:ss",
-        "h",
+        "hh:mm",
+        "hh:mm a",
+        "hh:mm:ss",
+        "hh",
         
         "HH:mm",
         "HH:mm:ss",
         "HH",
         
-        "m",
         "mm",
-        "s",
         "ss"
     ]
     
