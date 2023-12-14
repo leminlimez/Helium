@@ -162,6 +162,13 @@ struct WidgetPreferencesView: View {
                 }
             }
         }
+        .onDisappear {
+            if modified {
+                UIApplication.shared.confirmAlert(title: "Save Changes", body: "Would you like to save changes to the widget?", onOK: {
+                    saveChanges()
+                }, noCancel: false)
+            }
+        }
         .onChange(of: text) { _ in
             modified = true
         }

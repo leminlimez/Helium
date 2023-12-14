@@ -311,6 +311,13 @@ struct EditWidgetSetView: View {
                 
                 changesMade = false
             }
+            .onDisappear {
+                if changesMade {
+                    UIApplication.shared.confirmAlert(title: "Save Changes", body: "Would you like to save the changes to your current widget set?", onOK: {
+                        saveSet()
+                    }, noCancel: false)
+                }
+            }
             .sheet(isPresented: $showingAddView, content: {
                 WidgetAddView(widgetManager: widgetManager, widgetSet: widgetSet, isOpen: $showingAddView, onChoice: { newWidget in
                     saveSet()
