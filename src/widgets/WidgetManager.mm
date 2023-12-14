@@ -185,7 +185,6 @@ static NSString* formattedTemp()
  1 = Charging Current
  2 = Regular Amperage
  3 = Charge Cycles
- 4 = Current Capacity
  */
 static NSString* formattedBattery(NSInteger valueType)
 {
@@ -218,14 +217,25 @@ static NSString* formattedBattery(NSInteger valueType)
         } else if (valueType == 3) {
             // Charge Cycles
             return [batteryInfo[@"CycleCount"] stringValue];
-        } else if (valueType == 4) {
-            // Current Capacity
-            return [batteryInfo[@"CurrentCapacity"] stringValue];
         } else {
             return @"???";
         }
     }
     return @"??";
+}
+
+#pragma mark - Current Capacity Widget
+static NSString* formattedCurrentCapacity(BOOL showPercentage)
+{
+    NSDictionary *batteryInfo = getBatteryInfo();
+    if (batteryInfo) {
+        return [
+            NSString stringWithFormat: @"%@%@",
+            [batteryInfo[@"CurrentCapacity"] stringValue],
+            showPercentage ? @"%%" : @""
+            ];
+    }
+    return @"??%%";
 }
 
 
@@ -239,6 +249,7 @@ static NSString* formattedBattery(NSInteger valueType)
  4 = Battery Detail
  5 = Time
  6 = Text
+ 7 = Battery Percentage
 
  TODO:
  - Weather
@@ -246,19 +257,14 @@ static NSString* formattedBattery(NSInteger valueType)
  */
 void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize)
 {
+    NSString *widgetString;
     switch (parsedID) {
         case 1:
         case 5:
             // Date/Time
-            [
-                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
-                    NSString stringWithFormat: @"%c%@",
-                    getSeparator(mutableString),
-                    formattedDate(
-                        [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? @"E MMM dd" : @"hh:mm")
-                    )
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
-            ];
+            widgetString = formattedDate(
+                [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? @"E MMM dd" : @"hh:mm")
+            );
             break;
         case 2:
             // Network Speed
@@ -276,35 +282,36 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
         case 3:
             // Device Temp
-            [
-                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
-                    NSString stringWithFormat: @"%c%@", getSeparator(mutableString), formattedTemp()
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
-            ];
+            widgetString = formattedTemp();
             break;
         case 4:
             // Battery Stats
-            [
-                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
-                    NSString stringWithFormat: @"%c%@",
-                    getSeparator(mutableString),
-                    formattedBattery([parsedInfo valueForKey:@"batteryValueType"] ? [[parsedInfo valueForKey:@"batteryValueType"] integerValue] : 0)
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
-            ];
+            widgetString = formattedBattery(
+                [parsedInfo valueForKey:@"batteryValueType"] ? [[parsedInfo valueForKey:@"batteryValueType"] integerValue] : 0
+            );
             break;
         case 6:
             // Text
-            [
-                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
-                    NSString stringWithFormat: @"%c%@",
-                    getSeparator(mutableString),
-                    [parsedInfo valueForKey:@"text"] ? [parsedInfo valueForKey:@"text"] : @"Unknown"
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
-            ];
+            widgetString = [parsedInfo valueForKey:@"text"] ? [parsedInfo valueForKey:@"text"] : @"Unknown";
+            break;
+        case 7:
+            // Current Capacity
+            widgetString = formattedCurrentCapacity(
+                [parsedInfo valueForKey:@"showPercentage"] ? [[parsedInfo valueForKey:@"showPercentage"] boolValue] : YES
+            );
             break;
         default:
             // do not add anything
             break;
+    }
+    if (widgetString) {
+        [
+            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
+                NSString stringWithFormat: @"%c%@",
+                getSeparator(mutableString),
+                widgetString
+            ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
+        ];
     }
 }
 

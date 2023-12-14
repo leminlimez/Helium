@@ -9,12 +9,16 @@ import Foundation
 import SwiftUI
 
 enum WidgetModule: Int, CaseIterable {
-    case date = 1
+    case dateWidget = 1
+    case timeWidget = 5
+    
     case network = 2
-    case temperature = 3
+    
     case battery = 4
-    case time = 5
-    case text = 6
+    case currentCapacity = 7
+    case temperature = 3
+    
+    case textWidget = 6
 }
 
 struct WidgetIDStruct: Identifiable, Equatable {
@@ -349,7 +353,7 @@ class WidgetDetails {
     // returns Name, Example
     static func getDetails(_ module: WidgetModule) -> (String, String) {
         switch (module) {
-        case .date:
+        case .dateWidget:
             return ("Date", "Mon Oct 16")
         case .network:
             return ("Network", "▲ 0 KB/s")
@@ -357,10 +361,12 @@ class WidgetDetails {
             return ("Device Temperature", "29.34ºC")
         case .battery:
             return ("Battery Details", "25 W")
-        case .time:
+        case .timeWidget:
             return ("Time", "14:57:05")
-        case .text:
+        case .textWidget:
             return ("Text Label", "Example")
+        case .currentCapacity:
+            return ("Battery Capacity", "50%")
         }
     }
     
