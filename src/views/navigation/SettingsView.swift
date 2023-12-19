@@ -21,6 +21,7 @@ struct SettingsView: View {
     
     // Preference Variables
     @State var updateInterval: Double = 1.0
+    @State var usesRotation: Bool = false
     
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -76,6 +77,20 @@ struct SettingsView: View {
                                         updateInterval = 1
                                     }
                                 }
+                        }
+                    }
+                    
+                    HStack {
+                        Toggle(isOn: $usesRotation) {
+                            Text("Hide On Rotation")
+                                .bold()
+                                .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: usesRotation) { _ in
+                            UserDefaults.standard.setValue(usesRotation, forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
+                        }
+                        .onAppear {
+                            usesRotation = UserDefaults.standard.bool(forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
                         }
                     }
                     
