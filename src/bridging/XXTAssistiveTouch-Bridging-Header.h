@@ -9,3 +9,4 @@
 //#import "DeviceScaleManager.h"
 
 #import "SwiftObjCPPBridger.h"
+#import "../widgets/DeviceScaleManager.h"

@@ -19,7 +19,6 @@
 #import <mach-o/dyld.h>
 #import <objc/runtime.h>
 #include "../widgets/WidgetManager.h"
-#include "../widgets/DeviceScaleManager.h"
 #include "../extensions/UsefulFunctions.h"
 
 

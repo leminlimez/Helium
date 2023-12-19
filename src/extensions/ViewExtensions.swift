@@ -56,7 +56,7 @@ struct BetterSlider: View {
             }
             Spacer()
             Button(action: {
-                UIApplication.shared.inputAlert(title: inputTitle, body: inputBody, keyboardType: .decimalPad, onOK: { val in
+                UIApplication.shared.inputAlert(title: inputTitle, body: inputBody, onOK: { val in
                     var finalVal: Double = Double(val) ?? value
                     // make sure it is within bounds, then set it
                     if (finalVal > bounds.upperBound) {
