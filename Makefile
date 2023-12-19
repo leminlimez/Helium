@@ -44,6 +44,7 @@ $(APPLICATION_NAME)_FILES += $(wildcard $(NAVVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETSETVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETS_DIR)/*.mm)
+$(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETS_DIR)/*.m)
 
 $(APPLICATION_NAME)_CFLAGS += -fobjc-arc -Iinclude
 $(APPLICATION_NAME)_CFLAGS += -include hud-prefix.pch -Wno-deprecated-declarations

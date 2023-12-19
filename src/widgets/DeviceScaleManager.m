@@ -17,7 +17,7 @@
 #define LARGE_SIDE_WIDGET_SIZE 0.19466667   // Original Size (iPhone X): 73
 #define LARGE_CENTER_WIDGET_SIZE 0.50666667 // Original Size (iPhone X): 190
 
-NSString* getDeviceName()
+NSString* getDeviceName(void)
 {
     struct utsname systemInfo;
     uname(&systemInfo);
@@ -32,8 +32,7 @@ NSString* getDeviceName()
  2 = Large Notch
  3 = Dynamic Island
  */
-extern "C" NSInteger getDeviceSize(void);
-NSInteger getDeviceSize()
+NSInteger getDeviceSize(void)
 {
     NSString *model = getDeviceName();
     
@@ -58,8 +57,7 @@ NSInteger getDeviceSize()
     return 0;
 }
 
-extern "C" double getSideWidgetSize(void);
-double getSideWidgetSize()
+double getSideWidgetSize(void)
 {
     
     NSInteger deviceSize = getDeviceSize();
@@ -75,8 +73,7 @@ double getSideWidgetSize()
     return LARGE_SIDE_WIDGET_SIZE;
 }
 
-extern "C" double getCenterWidgetSize(void);
-double getCenterWidgetSize()
+double getCenterWidgetSize(void)
 {
     
     NSInteger deviceSize = getDeviceSize();
@@ -92,7 +89,7 @@ double getCenterWidgetSize()
     return LARGE_CENTER_WIDGET_SIZE;
 }
 
-double getCenterWidgetVerticalOffset()
+double getCenterWidgetVerticalOffset(void)
 {
     NSInteger deviceSize = getDeviceSize();
 
@@ -102,31 +99,4 @@ double getCenterWidgetVerticalOffset()
     }
 
     return 0;
-}
-
-// get the max number of (sideNum, centerNum) widgets
-extern "C" NSDictionary<NSString*, NSNumber*>* getMaxNumWidgets(void);
-NSDictionary<NSString*, NSNumber*>* getMaxNumWidgets()
-{
-    NSInteger deviceSize = getDeviceSize();
-
-    if (deviceSize == 1 || deviceSize == 3) {
-        // Small Notch/Dynamic Island
-        return @{
-            @"sideNum": @(2),
-            @"centerNum": @(3)
-        };
-    } else if (deviceSize == 2) {
-        // Large Notch
-        return @{
-            @"sideNum": @(1),
-            @"centerNum": @(4)
-        };
-    }
-    
-    // Unknown
-    return @{
-        @"sideNum": @(1),
-        @"centerNum": @(1)
-    };
 }
