@@ -46,6 +46,7 @@ struct HomePageView: View {
                 isNowEnabled = IsHUDEnabledBridger()
             }
             .navigationTitle("Helium")
+            .navigationViewStyle(.stack)
         }
     }
 }
