@@ -62,6 +62,7 @@ struct WidgetCustomizationView: View {
                 }
             }
             .navigationTitle("Customize")
+            .navigationViewStyle(.stack)
         }
     }
 }
