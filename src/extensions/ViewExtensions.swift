@@ -64,10 +64,10 @@ struct BetterSlider: View {
                     } else if (finalVal < bounds.lowerBound) {
                         finalVal = bounds.lowerBound
                     }
-                    if step != nil {
-                        // make sure it is within the step
-                        finalVal = finalVal.truncatingRemainder(dividingBy: step!)
-                    }
+//                    if step != nil {
+//                        // make sure it is within the step
+//                        finalVal = finalVal.truncatingRemainder(dividingBy: step!)
+//                    }
                     value = finalVal
                 }, noCancel: false)
             }) {
