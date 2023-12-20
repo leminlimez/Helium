@@ -26,6 +26,7 @@ struct HomePageView: View {
                 
                 // Activate HUD Button
                 Button(isNowEnabled ? "Disable HUD" : "Enable HUD") {
+                    Haptic.shared.play(.medium)
                    print(isNowEnabled ? "Closing HUD" : "Opening HUD")
                     SetHUDEnabledBridger(!isNowEnabled);
 
