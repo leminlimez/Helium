@@ -1,5 +1,5 @@
 ARCHS := arm64 arm64e
-TARGET := iphone:clang:15.0
+TARGET := iphone:clang:15.0:14.0
 INSTALL_TARGET_PROCESSES := XXTAssistiveTouch
 
 TARGET_CC := $(shell xcrun --sdk iphoneos --find clang)
@@ -25,6 +25,7 @@ HUD_DIR := $(SRC_DIR)/hud
 VIEWS_DIR := $(SRC_DIR)/views
 NAVVIEWS_DIR := $(VIEWS_DIR)/navigation
 WIDGETVIEWS_DIR := $(VIEWS_DIR)/widget
+WIDGETSETVIEWS_DIR := $(VIEWS_DIR)/widgetset
 
 WIDGETS_DIR := $(SRC_DIR)/widgets
 
@@ -34,13 +35,16 @@ $(APPLICATION_NAME)_FILES += $(wildcard $(APP_DIR)/*.mm)
 $(APPLICATION_NAME)_FILES += $(wildcard $(BRIDGING_DIR)/*.m)
 $(APPLICATION_NAME)_FILES += $(wildcard $(CONTROLLERS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(EXTENSIONS_DIR)/*.swift)
+$(APPLICATION_NAME)_FILES += $(wildcard $(EXTENSIONS_DIR)/*.mm)
 $(APPLICATION_NAME)_FILES += $(wildcard $(PRIV_DIR)/*.m)
 $(APPLICATION_NAME)_FILES += $(wildcard $(TS_DIR)/*.mm)
 $(APPLICATION_NAME)_FILES += $(wildcard $(HUD_DIR)/*.mm)
 $(APPLICATION_NAME)_FILES += $(wildcard $(VIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(NAVVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETVIEWS_DIR)/*.swift)
+$(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETSETVIEWS_DIR)/*.swift)
 $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETS_DIR)/*.mm)
+$(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETS_DIR)/*.m)
 
 $(APPLICATION_NAME)_CFLAGS += -fobjc-arc -Iinclude
 $(APPLICATION_NAME)_CFLAGS += -include hud-prefix.pch -Wno-deprecated-declarations
@@ -62,6 +66,6 @@ endif
 include $(THEOS_MAKE_PATH)/application.mk
 
 after-stage::
-	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
+	$(ECHO_NOTHING)mkdir -p packages $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
 	$(ECHO_NOTHING)cp -rp $(THEOS_STAGING_DIR)/Applications/XXTAssistiveTouch.app $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
 	$(ECHO_NOTHING)cd $(THEOS_STAGING_DIR); zip -qr XXTAssistiveTouch.tipa Payload; cd -;$(ECHO_END)

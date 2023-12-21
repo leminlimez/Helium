@@ -17,6 +17,26 @@ extension UIColor {
         
         return (red, green, blue, alpha)
     }
+    
+    var data: Data? {
+        do {
+            let data = try NSKeyedArchiver.archivedData(withRootObject: self, requiringSecureCoding: false)
+            return data
+        } catch let error {
+            print("error color key data not saved \(error.localizedDescription)")
+        }
+        return nil
+    }
+    
+    static func getColorFromData(data colorData: Data?) -> UIColor? {
+        guard let colorDataUnwrapped = colorData else { return nil; }
+        do {
+            return try NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: colorDataUnwrapped)
+        } catch let error {
+            print("color error \(error.localizedDescription)")
+            return nil
+        }
+    }
 }
 
 extension Color {

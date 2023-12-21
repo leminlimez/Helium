@@ -26,14 +26,7 @@ struct HomePageView: View {
                 
                 // Activate HUD Button
                 Button(isNowEnabled ? "Disable HUD" : "Enable HUD") {
-                   print(isNowEnabled ? "Closing HUD" : "Opening HUD")
-                    SetHUDEnabledBridger(!isNowEnabled);
-
-                    buttonDisabled = true
-                    waitForNotificationBridger({
-                        isNowEnabled = !isNowEnabled;
-                        buttonDisabled = false
-                    }, !isNowEnabled)
+                    toggleHUD(!isNowEnabled)
                 }
                 .buttonStyle(TintedButton(color: .blue))
                 .padding(5)
@@ -44,7 +37,32 @@ struct HomePageView: View {
             .onAppear {
                 isNowEnabled = IsHUDEnabledBridger()
             }
+            .onOpenURL(perform: { url in
+                let fm = FileManager.default
+                // MARK: URL Schemes
+                if url.absoluteString == "helium://toggle" {
+                    toggleHUD(!isNowEnabled)
+                } else if url.absoluteString == "helium://on" {
+                    toggleHUD(true)
+                } else if url.absoluteString == "helium://off" {
+                    toggleHUD(false)
+                }
+            })
             .navigationTitle("Helium")
+            .navigationViewStyle(.stack)
         }
+    }
+    
+    func toggleHUD(_ isActive: Bool) {
+        Haptic.shared.play(.medium)
+        if isNowEnabled == isActive { return; }
+        print(!isActive ? "Closing HUD" : "Opening HUD")
+         SetHUDEnabledBridger(isActive);
+        
+        buttonDisabled = true
+        waitForNotificationBridger({
+            isNowEnabled = isActive;
+            buttonDisabled = false
+        }, !isNowEnabled)
     }
 }

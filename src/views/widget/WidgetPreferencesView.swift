@@ -9,35 +9,40 @@ import Foundation
 import SwiftUI
 
 struct WidgetPreferencesView: View {
-    @Binding var widgetStruct: WidgetStruct
+    @StateObject var widgetManager: WidgetManager
+    @State var widgetSet: WidgetSetStruct
+    @Binding var widgetID: WidgetIDStruct
+    
     @State var text: String = ""
     @State var intSelection: Int = 0
+    @State var boolSelection: Bool = false
+    
+    @State var modified: Bool = false
     
     let timeFormats: [String] = [
         "hh:mm",
         "hh:mm a",
         "hh:mm:ss",
+        "hh",
+        
         "HH:mm",
-        "HH:mm:ss"
+        "HH:mm:ss",
+        "HH",
+        
+        "mm",
+        "ss"
     ]
+    
+    let dateFormatter = DateFormatter()
+    let currentDate = Date()
     
     var body: some View {
         VStack {
             // MARK: Preview
-            ZStack {
-                Image(uiImage: UIImage(named: "wallpaper")!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .scaleEffect(1.5)
-                    .frame(width: 190, height: 50)
-                    .cornerRadius(12)
-                    .clipped()
-                WidgetPreviewsView(widget: $widgetStruct, previewColor: .white)
-            }
-            .padding(.bottom, 25)
+            WidgetPreviewsView(widget: $widgetID, previewColor: .white)
             
-            switch (widgetStruct.module) {
-            case .date:
+            switch (widgetID.module) {
+            case .dateWidget:
                 // MARK: Date Format Textbox
                 HStack {
                     Text("Date Format")
@@ -48,7 +53,7 @@ struct WidgetPreferencesView: View {
                         .frame(maxWidth: 120)
                         .multilineTextAlignment(.trailing)
                         .onAppear {
-                            if let format = widgetStruct.config["dateFormat"] as? String {
+                            if let format = widgetID.config["dateFormat"] as? String {
                                 text = format
                             } else {
                                 text = "E MMM dd"
@@ -58,12 +63,15 @@ struct WidgetPreferencesView: View {
             case .network:
                 // MARK: Network Choice
                 HStack {
-                    Picker(selection: $intSelection, label: Text("Network Type").foregroundColor(.primary).bold()) {
+                    Text("Network Type").foregroundColor(.primary).bold()
+                    Spacer()
+                    Picker(selection: $intSelection) {
                         Text("Down").tag(0)
                         Text("Up").tag(1)
-                    }
+                    } label: {}
+                    .pickerStyle(.menu)
                     .onAppear {
-                        if let netUp = widgetStruct.config["isUp"] as? Bool {
+                        if let netUp = widgetID.config["isUp"] as? Bool {
                             intSelection = netUp ? 1 : 0
                         } else {
                             intSelection = 0
@@ -73,44 +81,40 @@ struct WidgetPreferencesView: View {
             case .battery:
                 // MARK: Battery Value Type
                 HStack {
-                    Picker(selection: $intSelection, label: Text("Battery Option").foregroundColor(.primary).bold()) {
+                    Text("Battery Option").foregroundColor(.primary).bold()
+                    Spacer()
+                    Picker(selection: $intSelection) {
                         Text("Watts").tag(0)
                         Text("Charging Current").tag(1)
                         Text("Amperage").tag(2)
                         Text("Charge Cycles").tag(3)
                         Text("Current Capacity").tag(4)
-                    }
+                    } label: {}
+                    .pickerStyle(.menu)
                     .onAppear {
-                        if let batteryType = widgetStruct.config["batteryValueType"] as? Int {
+                        if let batteryType = widgetID.config["batteryValueType"] as? Int {
                             intSelection = batteryType
                         } else {
                             intSelection = 0
                         }
                     }
                 }
-            case .time:
+            case .timeWidget:
                 // MARK: Time Format Selector
                 HStack {
                     Picker(selection: $intSelection, label: Text("Time Format").foregroundColor(.primary).bold()) {
-                        Text("5:00         (hh:mm)").tag(0)
-                        Text("5:00 PM   (hh:mm a)").tag(1)
-                        Text("5:00:00   (hh:mm:ss)").tag(2)
-                        Text("17:00       (HH:mm)").tag(3)
-                        Text("17:00:00  (HH:mm:ss)").tag(4)
+                        ForEach(0..<timeFormats.count, id: \.self) { index in
+                            Text("\(getFormattedDate(timeFormats[index]))\n(\(timeFormats[index]))").tag(index)
+                        }
                     }
                     .onAppear {
-                        if let timeFormat = widgetStruct.config["dateFormat"] as? String {
-                            for i in 0...timeFormats.count {
-                                if timeFormat == timeFormats[i] {
-                                    intSelection = i
-                                    return;
-                                }
-                            }
+                        if let timeFormat = widgetID.config["dateFormat"] as? String {
+                            intSelection = timeFormats.firstIndex(of: timeFormat) ?? 0
                         }
                         intSelection = 0
                     }
                 }
-            case .text:
+            case .textWidget:
                 // MARK: Custom Text Label Textbox
                 HStack {
                     Text("Label Text")
@@ -121,61 +125,113 @@ struct WidgetPreferencesView: View {
                         .frame(maxWidth: 120)
                         .multilineTextAlignment(.trailing)
                         .onAppear {
-                            if let format = widgetStruct.config["text"] as? String {
+                            if let format = widgetID.config["text"] as? String {
                                 text = format
                             } else {
                                 text = "Example"
                             }
                         }
                 }
+            case .currentCapacity:
+                // MARK: Current Capacity Choice
+                HStack {
+                    Toggle(isOn: $boolSelection) {
+                        Text("Show Percent (%) Symbol")
+                            .foregroundColor(.primary)
+                            .bold()
+                    }
+                    .onAppear {
+                        boolSelection = widgetID.config["showPercentage"] as? Bool ?? true
+                    }
+                }
             default:
                 Text("No Configurable Aspects")
             }
         }
         .padding(.horizontal, 15)
-        .onChange(of: text) { newText in
-            // MARK: Changing Text
-            switch(widgetStruct.module) {
-            case .date:
-                // MARK: Date Format Handling
-                if newText == "" {
-                    widgetStruct.config["dateFormat"] = nil
-                } else {
-                    widgetStruct.config["dateFormat"] = text
+        .toolbar {
+            HStack {
+                // MARK: Save Button
+                // only shows up if something is changed
+                if (modified) {
+                    Button(action: {
+                        saveChanges()
+                    }) {
+                        Image(systemName: "checkmark.circle")
+                    }
                 }
-                break;
-            case .text:
-                // MARK: Custom Text Handling
-                if newText == "" {
-                    widgetStruct.config["text"] = nil
-                } else {
-                    widgetStruct.config["text"] = text
-                }
-                break;
-            default:
-                return
             }
-            widgetStruct.modified = true
         }
-        .onChange(of: intSelection) { newInt in
-            // MARK: Changing Integer
-            switch(widgetStruct.module) {
-            case .network:
-                // MARK: Network Choice Handling
-                widgetStruct.config["isUp"] = newInt == 1 ? true : false
-                break;
-            case .battery:
-                // MARK: Battery Value Type Handling
-                widgetStruct.config["batteryValueType"] = newInt
-                break;
-            case .time:
-                // MARK: time Format Handling
-                widgetStruct.config["dateFormat"] = timeFormats[newInt]
-                break;
-            default:
-                return
+        .onDisappear {
+            if modified {
+                UIApplication.shared.confirmAlert(title: "Save Changes", body: "Would you like to save changes to the widget?", onOK: {
+                    saveChanges()
+                }, noCancel: false)
             }
-            widgetStruct.modified = true
         }
+        .onChange(of: text) { _ in
+            modified = true
+        }
+        .onChange(of: intSelection) { _ in
+            modified = true
+        }
+        .onChange(of: boolSelection) { _ in
+            modified = true
+        }
+    }
+    
+    func getFormattedDate(_ format: String) -> String {
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: currentDate)
+    }
+    
+    func saveChanges() {
+        var widgetStruct: WidgetIDStruct = .init(module: widgetID.module, config: widgetID.config)
+        
+        switch(widgetStruct.module) {
+        // MARK: Changing Text
+        case .dateWidget:
+            // MARK: Date Format Handling
+            if text == "" {
+                widgetStruct.config["dateFormat"] = nil
+            } else {
+                widgetStruct.config["dateFormat"] = text
+            }
+            break;
+        case .textWidget:
+            // MARK: Custom Text Handling
+            if text == "" {
+                widgetStruct.config["text"] = nil
+            } else {
+                widgetStruct.config["text"] = text
+            }
+            break;
+        
+        // MARK: Changing Integer
+        case .network:
+            // MARK: Network Choice Handling
+            widgetStruct.config["isUp"] = intSelection == 1 ? true : false
+            break;
+        case .battery:
+            // MARK: Battery Value Type Handling
+            widgetStruct.config["batteryValueType"] = intSelection
+            break;
+        case .timeWidget:
+            // MARK: Time Format Handling
+            widgetStruct.config["dateFormat"] = timeFormats[intSelection]
+            break;
+        
+        // MARK: Changing Boolean
+        case .currentCapacity:
+            // MARK: Current Capacity Handling
+            widgetStruct.config["showPercentage"] = boolSelection
+            break;
+        default:
+            break;
+        }
+        
+        widgetManager.updateWidgetConfig(widgetSet: widgetSet, id: widgetID, newID: widgetStruct)
+        widgetID.config = widgetStruct.config
+        modified = false
     }
 }
