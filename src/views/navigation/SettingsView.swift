@@ -22,6 +22,7 @@ struct SettingsView: View {
     // Preference Variables
     @State var updateInterval: Double = 1.0
     @State var usesRotation: Bool = false
+    @State var hideSaveConfirmation: Bool = false
     
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -82,7 +83,7 @@ struct SettingsView: View {
                     
                     HStack {
                         Toggle(isOn: $usesRotation) {
-                            Text("Hide On Rotation")
+                            Text("Hide when Rotating")
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -91,6 +92,20 @@ struct SettingsView: View {
                         }
                         .onAppear {
                             usesRotation = UserDefaults.standard.bool(forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
+                        }
+                    }
+                    
+                    HStack {
+                        Toggle(isOn: $hideSaveConfirmation) {
+                            Text("Hide Save Confirmation Popup")
+                                .bold()
+                                .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: hideSaveConfirmation) { _ in
+                            UserDefaults.standard.setValue(hideSaveConfirmation, forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
+                        }
+                        .onAppear {
+                            hideSaveConfirmation = UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
                         }
                     }
                     
