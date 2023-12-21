@@ -19,9 +19,7 @@
 #import <mach-o/dyld.h>
 #import <objc/runtime.h>
 #include "../widgets/WidgetManager.h"
-#include "../widgets/DeviceScaleManager.h"
-
-#define DEBUG_MODE_ENABLED 0
+#include "../extensions/UsefulFunctions.h"
 
 
 extern "C" char **environ;
@@ -165,7 +163,6 @@ void waitForNotification(void (^onFinish)(), BOOL isEnabled) {
 
 #pragma mark -
 
-static double FONT_SIZE = 10.0;
 static double UPDATE_INTERVAL = 1.0;
 
 
@@ -622,14 +619,13 @@ static void DumpThreads(void)
     NSMutableDictionary *_userDefaults;
     NSMutableArray <NSLayoutConstraint *> *_constraints;
     FBSOrientationObserver *_orientationObserver;
+    // view object arrays
+    NSMutableArray <UIVisualEffectView *> *_blurViews;
+    NSMutableArray <UILabel *> *_labelViews;
     
     NSArray *testArr;
     
     UIView *_contentView;
-    
-    UILabel *_leftLabel;
-    UILabel *_centerLabel;
-    UILabel *_rightLabel;
     
     NSTimer *_timer;
     UIInterfaceOrientation _orientation;
@@ -715,43 +711,131 @@ static void DumpThreads(void)
     return interval ? [interval doubleValue] : 1.0;
 }
 
-- (NSArray*) widgetIDs:(NSString*) widgetName
-{
-    [self loadUserDefaults:NO];
-    NSArray *identifiers = [_userDefaults objectForKey: [NSString stringWithFormat: @"%@WidgetIDs", widgetName]];
-    return identifiers;
-}
+/*
+Example format for properties:
+@[
+    // EXAMPLE 1 \\
+    @{
+        // offset properties
+        @"anchor" : @(0),               // 0 = left, 1 = center, 2 = right
+        @"offsetX" : @(0),
+        @"offsetY" : @(0),
+        @"autoResizes" : @(NO),         // if yes, ignores scale property
+        @"scale" : @(50),               // horizontal scale of label
 
-#pragma mark - Debug Preference Defaults
-- (double) debugSideWidgetSize
+        // widget properties
+        @"widgetIDs" : @[
+            @{
+                @"widgetID" : @(2),
+                @"isUp" : @(YES)
+            },
+            @{
+                @"widgetID" : @(2)
+            }
+        ],
+
+        // label properties
+        @"blurDetails" : @{
+            @"hasBlur" : @(YES),
+            @"cornerRadius" : @(4)
+        },
+        @"colorDetails" : @{
+            @"usesCustomColor" : @(YES),
+            @"dynamicColor" : @(YES),   // if yes, different colors for dark/light mode
+            @"lightColor" : @([UIColor blackColor]),
+            @"darkColor" : @([UIColor whiteColor])
+        },
+        @"textAlpha" : @(1),
+        @"textAlignment" : @(1),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
+        @"fontSize" : @(10)
+    },
+
+    // EXAMPLE 2 \\
+    @{
+        // offset properties
+        @"anchor" : @(1),               // 0 = left, 1 = center, 2 = right
+        @"offsetX" : @(0),
+        @"offsetY" : @(0),
+        @"autoResizes" : @(YES),
+
+        // widget properties
+        @"widgetIDs" : @[
+            @{
+                @"widgetID" : @(6),
+                @"text" : @"Cowabunga!"
+            }
+        ],
+
+        // label properties
+        @"blurDetails" : @{
+            @"hasBlur" : @(YES),
+            @"cornerRadius" : @(4)
+        },
+        @"colorDetails" : @{
+            @"usesCustomColor" : @(YES),
+            @"dynamicColor" : @(NO),
+            @"color" : @([UIColor whiteColor])
+        },
+        @"textAlpha" : @(1),
+        @"textAlignment" : @(0),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
+        @"fontSize" : @(10)
+    },
+
+    // EXAMPLE 3: bare minimum \\
+    @{
+        // offset properties
+        @"anchor" : @(1),               // 0 = left, 1 = center, 2 = right
+        @"offsetX" : @(0),
+        @"offsetY" : @(0),
+        @"autoResizes" : @(YES),
+
+        // widget properties
+        @"widgetIDs" : @[
+            @{
+                @"widgetID" : @(5)
+            }
+        ],
+
+        // label properties
+        @"blurDetails" : @{
+            @"hasBlur" : @(NO)
+        },
+        @"colorDetails" : @{
+            @"usesCustomColor" : @(NO)
+        },
+    }
+]
+*/
+- (NSArray*) widgetProperties
 {
     [self loadUserDefaults: NO];
-    NSNumber *sizeValue = [_userDefaults objectForKey: @"DEBUG_sideWidgetSize"];
-    return sizeValue ? [sizeValue doubleValue] : 100.0;
-}
-
-- (double) debugCenterWidgetSize
-{
-    [self loadUserDefaults: NO];
-    NSNumber *sizeValue = [_userDefaults objectForKey: @"DEBUG_centerWidgetSize"];
-    return sizeValue ? [sizeValue doubleValue] : 100.0;
+    NSArray *properties = [_userDefaults objectForKey: @"widgetProperties"];
+    return properties;
 }
 
 #pragma mark - Label Updating
 
 - (void) updateAllLabels
 {
-    [self updateLabel: _leftLabel identifiers: [self widgetIDs: @"left"]];
-    [self updateLabel: _centerLabel identifiers: [self widgetIDs: @"center"]];
-    [self updateLabel: _rightLabel identifiers: [self widgetIDs: @"right"]];
+    // TODO: THIS NEEDS OPTIMIZATION (is updated frequently)
+    NSArray *widgetProps = [self widgetProperties];
+    for (int i = 0; i < [widgetProps count]; i++) {
+        UILabel *labelView = [_labelViews objectAtIndex:i];
+        NSDictionary *properties = [widgetProps objectAtIndex:i];
+        if (!labelView || !properties)
+            break;
+        NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
+        double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
+        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize];
+    }
 }
 
-- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers
+- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize
 {
 #if DEBUG
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
-    NSAttributedString *attributedText = formattedAttributedString(identifiers);
+    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize);
     if (attributedText)
         [label setAttributedText: attributedText];
 }
@@ -763,6 +847,8 @@ static void DumpThreads(void)
     self = [super init];
     if (self) {
         _constraints = [NSMutableArray array];
+        _blurViews = [NSMutableArray array];
+        _labelViews = [NSMutableArray array];
         _orientationObserver = [[objc_getClass("FBSOrientationObserver") alloc] init];
         __weak HUDRootViewController *weakSelf = self;
         [_orientationObserver setHandler:^(FBSOrientationUpdate *orientationUpdate) {
@@ -855,39 +941,61 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     _contentView.backgroundColor = [UIColor clearColor];
     _contentView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_contentView];
-    
-    // MARK: Left Widget
-    _leftLabel = [[UILabel alloc] initWithFrame: CGRectZero];
-    _leftLabel.numberOfLines = 0;
-    _leftLabel.textAlignment = NSTextAlignmentCenter;
-    _leftLabel.textColor = [UIColor whiteColor];
-    _leftLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
-    _leftLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [_contentView addSubview:_leftLabel];
-    
-    // MARK: Center Widget
-    _centerLabel = [[UILabel alloc] initWithFrame: CGRectZero];
-    _centerLabel.numberOfLines = 0;
-    _centerLabel.textAlignment = NSTextAlignmentCenter;
-    _centerLabel.textColor = [UIColor whiteColor];
-    _centerLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
-    _centerLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [_contentView addSubview:_centerLabel];
-    
-    // MARK: Right Widget
-    _rightLabel = [[UILabel alloc] initWithFrame: CGRectZero];
-    _rightLabel.numberOfLines = 0;
-    _rightLabel.textAlignment = NSTextAlignmentCenter;
-    _rightLabel.textColor = [UIColor whiteColor];
-    _rightLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
-    _rightLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [_contentView addSubview:_rightLabel];
 
-    if (DEBUG_MODE_ENABLED == 1) {
-        // enable the background color to see the sizes
-        _leftLabel.backgroundColor = [UIColor blackColor];
-        _centerLabel.backgroundColor = [UIColor blackColor];
-        _rightLabel.backgroundColor = [UIColor blackColor];
+    // MARK: Create the Widgets
+    // MIGHT NEED OPTIMIZATION
+    for (id propID in [self widgetProperties]) {
+        NSDictionary *properties = propID;
+        // create the blur
+        NSDictionary *blurDetails = [properties valueForKey:@"blurDetails"] ? [properties valueForKey:@"blurDetails"] : @{@"hasBlur" : @(NO)};
+        UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterialDark]];
+        blurView.layer.cornerRadius = getIntFromDictKey(blurDetails, @"cornerRadius", 4);
+        blurView.layer.masksToBounds = YES;
+        blurView.translatesAutoresizingMaskIntoConstraints = NO;
+        BOOL hasBlur = getBoolFromDictKey(blurDetails, @"hasBlur");
+        if (!hasBlur) {
+            blurView.alpha = 0.0;
+        }
+        [_contentView addSubview:blurView];
+        [_blurViews addObject:blurView];
+        // create the label
+        UILabel *labelView = [[UILabel alloc] initWithFrame: CGRectZero];
+        labelView.numberOfLines = 0;
+        NSInteger alignment = getIntFromDictKey(properties, @"textAlignment", 1);
+        // alignment is different from anchor
+        if (alignment == 0) {
+            // align left
+            labelView.textAlignment = NSTextAlignmentLeft;
+        } else {
+            // align center
+            labelView.textAlignment = NSTextAlignmentCenter;
+        }
+        // TODO: make functional
+        /*NSDictionary *colorDetails = [properties valueForKey:@"colorDetails"] ? [properties valueForKey:@"colorDetails"] : [NSDictionary init];
+        if (getBoolFromDictKey(colorDetails, @"usesCustomColor")) {
+            // custom color
+            UIColor color;
+            if (getBoolFromDictKey(colorDetails, @"dynamicColor")) {
+                color = []
+            }
+        }*/
+        NSDictionary *colorDetails = [properties valueForKey:@"colorDetails"] ? [properties valueForKey:@"colorDetails"] : @{@"usesCustomColor" : @(NO)};
+        BOOL usesCustomColor = getBoolFromDictKey(colorDetails, @"usesCustomColor");
+        if (usesCustomColor && [colorDetails valueForKey:@"color"]) {
+            NSData *customColorData = [colorDetails valueForKey:@"color"];
+            UIColor *customColor = [NSKeyedUnarchiver unarchiveObjectWithData:customColorData];
+            labelView.textColor = customColor;
+        } else {
+            labelView.textColor = [UIColor whiteColor];
+        }
+        labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        labelView.translatesAutoresizingMaskIntoConstraints = NO;
+        if (hasBlur) {
+            [blurView.contentView addSubview:labelView];
+        } else {
+            [_contentView addSubview: labelView];
+        }
+        [_labelViews addObject: labelView];
     }
     
     [self reloadUserDefaults];
@@ -944,42 +1052,42 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         else
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:(isPad ? 30 : 20)]];
     }
-    
-    CGFloat width = [UIScreen mainScreen].bounds.size.width;
-    double sideWidgetWidth = getSideWidgetSize() * width;
-    double centerWidgetWidth = getCenterWidgetSize() * width;
-    double centerWidgetOffset = getCenterWidgetVerticalOffset();
 
-    if (DEBUG_MODE_ENABLED == 1) {
-        sideWidgetWidth = [self debugSideWidgetSize];
-        centerWidgetWidth = [self debugCenterWidgetSize];
+    // MARK: Set Label Constraints
+    NSArray *widgetProps = [self widgetProperties];
+    // DEFINITELY NEEDS OPTIMIZATION
+    for (int i = 0; i < [widgetProps count]; i++) {
+        UIVisualEffectView *blurView = [_blurViews objectAtIndex:i];
+        UILabel *labelView = [_labelViews objectAtIndex:i];
+        NSDictionary *properties = [widgetProps objectAtIndex:i];
+        if (!blurView || !labelView || !properties)
+            break;
+        double offsetY = getDoubleFromDictKey(properties, @"offsetY");
+        [_constraints addObjectsFromArray:@[
+            [labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY],
+            [labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: offsetY],
+        ]];
+        NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
+        double offsetX = getDoubleFromDictKey(properties, @"offsetX", 10);
+        // set the horizontal anchor
+        if (anchorSide == 1)
+            [_constraints addObject:[labelView.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor constant: offsetX]];
+        else if (anchorSide == 0)
+            [_constraints addObject:[labelView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant: offsetX]];
+        else
+            [_constraints addObject:[labelView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant: -offsetX]];
+        // set the width
+        if (!getBoolFromDictKey(properties, @"autoResizes")) {
+            [_constraints addObject:[labelView.widthAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scale", 50.0)]];
+        }
+        
+        [_constraints addObjectsFromArray:@[
+            [blurView.topAnchor constraintEqualToAnchor:labelView.topAnchor constant:-2],
+            [blurView.leadingAnchor constraintEqualToAnchor:labelView.leadingAnchor constant:-4],
+            [blurView.trailingAnchor constraintEqualToAnchor:labelView.trailingAnchor constant:4],
+            [blurView.bottomAnchor constraintEqualToAnchor:labelView.bottomAnchor constant:2],
+        ]];
     }
-    // NOTE FOR LATER: to get above the status bar, set vertical offset to -35
-    
-    // MARK: Left Widget
-    [_constraints addObjectsFromArray:@[
-        [_leftLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
-        [_leftLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-        [_leftLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant: 10],
-        [_leftLabel.widthAnchor constraintEqualToConstant:sideWidgetWidth],
-    ]];
-    
-    // MARK: Center Widget
-    [_constraints addObjectsFromArray:@[
-        [_centerLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: centerWidgetOffset],
-        [_centerLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: centerWidgetOffset],
-        [_centerLabel.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor],
-        [_centerLabel.widthAnchor constraintEqualToConstant:centerWidgetWidth],
-    ]];
-    
-    // MARK: Right Widget
-    // -35 offset to put above
-    [_constraints addObjectsFromArray:@[
-        [_rightLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor],
-        [_rightLabel.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor],
-        [_rightLabel.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant: -10],
-        [_rightLabel.widthAnchor constraintEqualToConstant:sideWidgetWidth],
-    ]];
     
     [NSLayoutConstraint activateConstraints:_constraints];
     [super updateViewConstraints];

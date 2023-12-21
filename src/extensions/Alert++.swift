@@ -14,6 +14,7 @@ var currentUIAlertController: UIAlertController?
 fileprivate let errorString = NSLocalizedString("Error", comment: "")
 fileprivate let okString = NSLocalizedString("OK", comment: "")
 fileprivate let cancelString = NSLocalizedString("Cancel", comment: "")
+fileprivate let placeholderString = NSLocalizedString("Text", comment: "")
 
 extension UIApplication {
     
@@ -37,6 +38,36 @@ extension UIApplication {
             
             currentUIAlertController = UIAlertController(title: title, message: body, preferredStyle: .alert)
             if withButton { currentUIAlertController?.addAction(.init(title: okString, style: .cancel)) }
+            self.present(alert: currentUIAlertController!)
+        }
+    }
+    func inputAlert(title: String, body: String, confirmTitle: String = okString, placeholder: String = placeholderString, text: String = "", keyboardType: UIKeyboardType = .default, onOK: @escaping (String) -> (), noCancel: Bool) {
+        DispatchQueue.main.async {
+            currentUIAlertController = UIAlertController(title: title, message: body, preferredStyle: .alert)
+            currentUIAlertController?.addTextField { (textField) in
+                textField.placeholder = placeholder
+                textField.text = text
+                textField.keyboardType = keyboardType
+            }
+            if !noCancel {
+                currentUIAlertController?.addAction(.init(title: cancelString, style: .cancel))
+            }
+            currentUIAlertController?.addAction(.init(title: confirmTitle, style: noCancel ? .cancel : .default, handler: { _ in
+                onOK(currentUIAlertController?.textFields?[0].text ?? "")
+            }))
+            self.present(alert: currentUIAlertController!)
+        }
+    }
+    func optionsAlert(title: String, body: String, options: [String], preferredStyle: UIAlertController.Style = .actionSheet, onSelection: @escaping (String) -> ()) {
+        DispatchQueue.main.async {
+            currentUIAlertController = UIAlertController(title: title, message: body, preferredStyle: preferredStyle)
+            // add all the options
+            for alertOption in options {
+                currentUIAlertController?.addAction(.init(title: alertOption, style: .default, handler: { _ in
+                    onSelection(alertOption)
+                }))
+            }
+            currentUIAlertController?.addAction(.init(title: cancelString, style: .cancel))
             self.present(alert: currentUIAlertController!)
         }
     }
