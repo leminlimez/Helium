@@ -68,6 +68,10 @@ extension UIApplication {
                 }))
             }
             currentUIAlertController?.addAction(.init(title: cancelString, style: .cancel))
+            // present popover for iPads
+            let view: UIView? = UIApplication.shared.windows.first?.rootViewController?.view
+            currentUIAlertController?.popoverPresentationController?.sourceView = view // prevents crashing on iPads
+            currentUIAlertController?.popoverPresentationController?.sourceRect = CGRect(x: view?.bounds.midX ?? 0, y: view?.bounds.maxY ?? 0, width: 0, height: 0) // show up at center bottom on iPads
             self.present(alert: currentUIAlertController!)
         }
     }
