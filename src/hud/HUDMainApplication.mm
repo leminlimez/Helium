@@ -701,6 +701,13 @@ static void DumpThreads(void)
     return mode ? [mode boolValue] : NO;
 }
 
+- (BOOL) ignoreSafeZone
+{
+    [self loadUserDefaults:NO];
+    NSNumber *mode = [_userDefaults objectForKey: @"ignoreSafeZone"];
+    return mode ? [mode boolValue] : NO;
+}
+
 - (double) updateInterval
 {
     [self loadUserDefaults: NO];
@@ -1020,7 +1027,9 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
 - (void)viewSafeAreaInsetsDidChange
 {
     [super viewSafeAreaInsetsDidChange];
-    [self updateViewConstraints];
+    if (![self ignoreSafeZone]) {
+        [self updateViewConstraints];
+    }
 }
 
 - (void)updateViewConstraints
@@ -1030,12 +1039,13 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
 
     BOOL isPad = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad);
     UILayoutGuide *layoutGuide = self.view.safeAreaLayoutGuide;
+    BOOL ignoreSZ = [self ignoreSafeZone];
     
     if (_orientation == UIInterfaceOrientationLandscapeLeft || _orientation == UIInterfaceOrientationLandscapeRight)
     {
         [_constraints addObjectsFromArray:@[
-            [_contentView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:(layoutGuide.layoutFrame.origin.y > 1) ? 20 : 4],
-            [_contentView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:(layoutGuide.layoutFrame.origin.y > 1) ? -20 : -4],
+            [_contentView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:(!ignoreSZ && layoutGuide.layoutFrame.origin.y > 1) ? 20 : 4],
+            [_contentView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:(!ignoreSZ && layoutGuide.layoutFrame.origin.y > 1) ? -20 : -4],
         ]];
 
         [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:(isPad ? 30 : 10)]];
@@ -1047,7 +1057,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [_contentView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         ]];
         
-        if (layoutGuide.layoutFrame.origin.y > 1)
+        if (!ignoreSZ && layoutGuide.layoutFrame.origin.y > 1)
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:-10]];
         else
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:(isPad ? 30 : 20)]];
