@@ -313,9 +313,13 @@ struct EditWidgetSetView: View {
             }
             .onDisappear {
                 if changesMade {
-                    UIApplication.shared.confirmAlert(title: "Save Changes", body: "Would you like to save the changes to your current widget set?", onOK: {
+                    if UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH) {
                         saveSet()
-                    }, noCancel: false)
+                    } else {
+                        UIApplication.shared.confirmAlert(title: "Save Changes", body: "Would you like to save the changes to your current widget set?", onOK: {
+                            saveSet()
+                        }, noCancel: false)
+                    }
                 }
             }
             .sheet(isPresented: $showingAddView, content: {
