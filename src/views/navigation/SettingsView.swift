@@ -23,6 +23,7 @@ struct SettingsView: View {
     @State var updateInterval: Double = 1.0
     @State var usesRotation: Bool = false
     @State var hideSaveConfirmation: Bool = false
+    @State var ignoreSafeZone: Bool = false
     
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -106,6 +107,20 @@ struct SettingsView: View {
                         }
                         .onAppear {
                             hideSaveConfirmation = UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
+                        }
+                    }
+                    
+                    HStack {
+                        Toggle(isOn: $ignoreSafeZone) {
+                            Text("Ignore Safe Zone Changes")
+                                .bold()
+                                .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: ignoreSafeZone) { _ in
+                            UserDefaults.standard.setValue(ignoreSafeZone, forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
+                        }
+                        .onAppear {
+                            ignoreSafeZone = UserDefaults.standard.bool(forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
                         }
                     }
                     
