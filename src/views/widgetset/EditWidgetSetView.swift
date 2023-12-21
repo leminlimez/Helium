@@ -11,6 +11,7 @@ import SwiftUI
 struct EditWidgetSetView: View {
     @StateObject var widgetManager: WidgetManager
     @State var widgetSet: WidgetSetStruct
+    @State var currentWidgetSet: WidgetSetStruct? = nil
     
     @State var showingAddView: Bool = false
     
@@ -286,6 +287,10 @@ struct EditWidgetSetView: View {
             }
             .navigationTitle("Edit Widget")
             .onAppear {
+                if currentWidgetSet == widgetSet {
+                    return
+                }
+                currentWidgetSet = widgetSet
                 nameInput = widgetSet.title
                 
                 anchorSelection = widgetSet.anchor
