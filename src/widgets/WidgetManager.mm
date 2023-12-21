@@ -232,10 +232,10 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
         return [
             NSString stringWithFormat: @"%@%@",
             [batteryInfo[@"CurrentCapacity"] stringValue],
-            showPercentage ? @"%%" : @""
+            showPercentage ? @"%" : @""
             ];
     }
-    return @"??%%";
+    return @"??%";
 }
 
 
