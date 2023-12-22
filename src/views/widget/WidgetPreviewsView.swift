@@ -49,6 +49,7 @@ struct WidgetPreviewsView: View {
             let dateFormat: String = widget.config["dateFormat"] as? String ?? (widget.module == .dateWidget ? "E MMM dd" : "hh:mm")
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = dateFormat
+            dateFormatter.locale = Locale(identifier: "zh_CN")
             text = dateFormatter.string(from: Date())
             // SAFEGUARD
             if (text == "") {
