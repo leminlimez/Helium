@@ -54,9 +54,7 @@ $(APPLICATION_NAME)_SWIFTFLAGS += -import-objc-header src/bridging/XXTAssistiveT
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_LAUNCHED_HUD=\"com.leemin.notification.hud.launched\"
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_DISMISSAL_HUD=\"com.leemin.notification.hud.dismissal\"
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_RELOAD_HUD=\"com.leemin.notification.hud.reload\"
-ifeq ($(SPAWN_AS_ROOT),1)
 $(APPLICATION_NAME)_CCFLAGS += -DSPAWN_AS_ROOT
-endif
 
 $(APPLICATION_NAME)_FRAMEWORKS += CoreGraphics QuartzCore UIKit Foundation
 $(APPLICATION_NAME)_PRIVATE_FRAMEWORKS += BackBoardServices GraphicsServices IOKit SpringBoardServices
