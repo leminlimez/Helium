@@ -960,11 +960,13 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         blurView.layer.masksToBounds = YES;
         blurView.translatesAutoresizingMaskIntoConstraints = NO;
         BOOL hasBlur = getBoolFromDictKey(blurDetails, @"hasBlur");
-        if (hasBlur) {
+        if (!hasBlur) {
+            blurView.alpha = 0.0;
+        } else {
             blurView.alpha = getDoubleFromDictKey(blurDetails, @"blurAlpha", 1.0);
-            [_contentView addSubview:blurView];
-            [_blurViews addObject:blurView];
         }
+        [_contentView addSubview:blurView];
+        [_blurViews addObject:blurView];
         // create the label
         UILabel *labelView = [[UILabel alloc] initWithFrame: CGRectZero];
         labelView.numberOfLines = 0;
