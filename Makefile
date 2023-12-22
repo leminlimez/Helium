@@ -1,6 +1,6 @@
 ARCHS := arm64 arm64e
 TARGET := iphone:clang:15.0:14.0
-INSTALL_TARGET_PROCESSES := XXTAssistiveTouch
+INSTALL_TARGET_PROCESSES := Helium
 ENT_PLIST := $(PWD)/ent.plist
 
 TARGET_CC := $(shell xcrun --sdk iphoneos --find clang)
@@ -8,7 +8,7 @@ TARGET_CXX := $(shell xcrun --sdk iphoneos --find clang++)
 TARGET_LD := $(shell xcrun --sdk iphoneos --find clang++)
 
 include $(THEOS)/makefiles/common.mk
-APPLICATION_NAME = XXTAssistiveTouch
+APPLICATION_NAME = Helium
 
 SRC_DIR := src
 # Directories
@@ -49,7 +49,7 @@ $(APPLICATION_NAME)_FILES += $(wildcard $(WIDGETS_DIR)/*.m)
 
 $(APPLICATION_NAME)_CFLAGS += -fobjc-arc -Iinclude
 $(APPLICATION_NAME)_CFLAGS += -include hud-prefix.pch -Wno-deprecated-declarations
-$(APPLICATION_NAME)_SWIFTFLAGS += -import-objc-header src/bridging/XXTAssistiveTouch-Bridging-Header.h
+$(APPLICATION_NAME)_SWIFTFLAGS += -import-objc-header src/bridging/Helium-Bridging-Header.h
 
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_LAUNCHED_HUD=\"com.leemin.notification.hud.launched\"
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_DISMISSAL_HUD=\"com.leemin.notification.hud.dismissal\"
@@ -72,5 +72,5 @@ before-all::
 	$(ECHO_NOTHING)plutil -convert xml1 $(ENT_PLIST)$(ECHO_END)
 after-stage::
 	$(ECHO_NOTHING)mkdir -p packages $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
-	$(ECHO_NOTHING)cp -rp $(THEOS_STAGING_DIR)/Applications/XXTAssistiveTouch.app $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
-	$(ECHO_NOTHING)cd $(THEOS_STAGING_DIR); zip -qr XXTAssistiveTouch.tipa Payload; cd -;$(ECHO_END)
+	$(ECHO_NOTHING)cp -rp $(THEOS_STAGING_DIR)/Applications/Helium.app $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
+	$(ECHO_NOTHING)cd $(THEOS_STAGING_DIR); zip -qr Helium.tipa Payload; cd -;$(ECHO_END)
