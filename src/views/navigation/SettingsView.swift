@@ -84,7 +84,7 @@ struct SettingsView: View {
                     
                     HStack {
                         Toggle(isOn: $usesRotation) {
-                            Text("Hide when Rotating")
+                            Text("Show when Rotating")
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
