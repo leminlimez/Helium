@@ -1,6 +1,7 @@
 ARCHS := arm64 arm64e
 TARGET := iphone:clang:15.0:14.0
 INSTALL_TARGET_PROCESSES := XXTAssistiveTouch
+ENT_PLIST := $(PWD)/ent.plist
 
 TARGET_CC := $(shell xcrun --sdk iphoneos --find clang)
 TARGET_CXX := $(shell xcrun --sdk iphoneos --find clang++)
@@ -53,6 +54,9 @@ $(APPLICATION_NAME)_SWIFTFLAGS += -import-objc-header src/bridging/XXTAssistiveT
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_LAUNCHED_HUD=\"com.leemin.notification.hud.launched\"
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_DISMISSAL_HUD=\"com.leemin.notification.hud.dismissal\"
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_RELOAD_HUD=\"com.leemin.notification.hud.reload\"
+ifeq ($(SPAWN_AS_ROOT),1)
+$(APPLICATION_NAME)_CCFLAGS += -DSPAWN_AS_ROOT
+endif
 
 $(APPLICATION_NAME)_FRAMEWORKS += CoreGraphics QuartzCore UIKit Foundation
 $(APPLICATION_NAME)_PRIVATE_FRAMEWORKS += BackBoardServices GraphicsServices IOKit SpringBoardServices
@@ -65,6 +69,9 @@ endif
 
 include $(THEOS_MAKE_PATH)/application.mk
 
+before-all::
+	$(ECHO_NOTHING)[ ! -z $(SPAWN_AS_ROOT) ] && defaults write $(ENT_PLIST) com.apple.private.persona-mgmt -bool true || defaults delete $(ENT_PLIST) com.apple.private.persona-mgmt || true$(ECHO_END)
+	$(ECHO_NOTHING)plutil -convert xml1 $(ENT_PLIST)$(ECHO_END)
 after-stage::
 	$(ECHO_NOTHING)mkdir -p packages $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
 	$(ECHO_NOTHING)cp -rp $(THEOS_STAGING_DIR)/Applications/XXTAssistiveTouch.app $(THEOS_STAGING_DIR)/Payload$(ECHO_END)
