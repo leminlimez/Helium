@@ -81,6 +81,7 @@ struct WidgetSetStruct: Identifiable, Equatable {
     var textAlpha: Double
     var textAlignment: Int
     var fontSize: Double
+    var fontBold: Bool
 }
 
 // MARK: Widget Manager Class
@@ -155,7 +156,8 @@ class WidgetManager: ObservableObject {
                     
                     textAlpha: s["textAlpha"] as? Double ?? 1.0,
                     textAlignment: s["textAlignment"] as? Int ?? 1,
-                    fontSize: s["fontSize"] as? Double ?? 10.0
+                    fontSize: s["fontSize"] as? Double ?? 10.0,
+                    fontBold: s["fontBold"] as? Bool ?? false
                 )
                 widgetSet.colorDetails = colorDetailsStruct
                 sets.append(widgetSet)
@@ -206,6 +208,7 @@ class WidgetManager: ObservableObject {
             wSet["textAlpha"] = s.textAlpha
             wSet["textAlignment"] = s.textAlignment
             wSet["fontSize"] = s.fontSize
+            wSet["fontBold"] = s.fontBold
             
             dict.append(wSet)
         }
@@ -313,7 +316,8 @@ class WidgetManager: ObservableObject {
             
             textAlpha: 1.0,
             textAlignment: 1,
-            fontSize: 10.0
+            fontSize: 10.0,
+            fontBold: false
         ), save: save)
     }
     
@@ -336,6 +340,7 @@ class WidgetManager: ObservableObject {
                 widgetSets[i].textAlpha = ns.textAlpha
                 widgetSets[i].textAlignment = ns.textAlignment
                 widgetSets[i].fontSize = ns.fontSize
+                widgetSets[i].fontBold = ns.fontBold
                 break
             }
         }

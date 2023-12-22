@@ -833,16 +833,17 @@ Example format for properties:
             break;
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
         double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
-        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize];
+        BOOL fontBold = [properties objectForKey: @"fontBold"] ? [[properties objectForKey: @"fontBold"] boolValue] : false;
+        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize fontBold: fontBold];
     }
 }
 
-- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize
+- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize fontBold:(BOOL) fontBold
 {
 #if DEBUG
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
-    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize);
+    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, fontBold);
     if (attributedText)
         [label setAttributedText: attributedText];
 }
@@ -998,7 +999,12 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             labelView.textColor = [UIColor whiteColor];
         }
         labelView.alpha = getDoubleFromDictKey(properties, @"textAlpha", 1.0);
-        labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        BOOL fontBold = getBoolFromDictKey(properties, @"textBold");
+        if (!fontBold) {
+            labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        } else {
+            labelView.font = [UIFont boldSystemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        }
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
         [_contentView addSubview: labelView];
         [_labelViews addObject: labelView];

@@ -115,7 +115,7 @@ static NSString* formattedSpeed(uint64_t bytes)
     }
 }
 
-static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, double fontSize)
+static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, double fontSize, BOOL fontBold)
 {
     @autoreleasepool {
         if (!attributedUploadPrefix)
@@ -148,7 +148,11 @@ static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, double font
         if (DATAUNIT == 1)
             diff *= 8;
         
-        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
+        if (!fontBold) {
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
+        } else {
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}]];
+        }
         
         return [mutableString copy];
     }
@@ -256,7 +260,7 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
  - Weather
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, BOOL fontBold)
 {
     NSString *widgetString;
     switch (parsedID) {
@@ -269,15 +273,23 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
         case 2:
             // Network Speed
-            [
-                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
-                    NSString stringWithFormat: @"%c", getSeparator(mutableString)
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
-            ];
+            if (!fontBold) {
+                [
+                    mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
+                        NSString stringWithFormat: @"%c", getSeparator(mutableString)
+                    ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
+                ];
+            } else {
+                [
+                    mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
+                        NSString stringWithFormat: @"%c", getSeparator(mutableString)
+                    ] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}]
+                ];
+            }
             [
                 mutableString appendAttributedString: formattedAttributedSpeedString(
                     [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO,
-                    fontSize
+                    fontSize, fontBold
                 )
             ];
             break;
@@ -306,17 +318,27 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
     }
     if (widgetString) {
-        [
+        if(!fontBold) {
+            [
+                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
+                    NSString stringWithFormat: @"%c%@",
+                    getSeparator(mutableString),
+                    widgetString
+                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
+            ];
+        } else {
+            [
             mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
                 NSString stringWithFormat: @"%c%@",
                 getSeparator(mutableString),
                 widgetString
-            ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
+            ] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}]
         ];
+        }
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, BOOL fontBold)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -325,10 +347,14 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, fontBold);
             }
         } else {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
+            if(!fontBold) {
+                [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
+            } else {
+                [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}]];
+            }
         }
         
         return [mutableString copy];
