@@ -1080,7 +1080,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         double offsetY = getDoubleFromDictKey(properties, @"offsetY");
         [_constraints addObjectsFromArray:@[
             [labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY],
-            [labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: offsetY],
+            // [labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: offsetY],
         ]];
         NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
         double offsetX = getDoubleFromDictKey(properties, @"offsetX", 10);

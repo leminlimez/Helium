@@ -19,6 +19,7 @@ enum WidgetModule: Int, CaseIterable {
     case temperature = 3
     
     case textWidget = 6
+    case newLineWidget = 8
 }
 
 struct WidgetIDStruct: Identifiable, Equatable {
@@ -376,6 +377,8 @@ class WidgetDetails {
             return ("Text Label", "Example")
         case .currentCapacity:
             return ("Battery Capacity", "50%")
+        case .newLineWidget:
+            return ("New Line", "New Line")
         }
     }
     

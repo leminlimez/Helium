@@ -156,11 +156,7 @@ static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, BOOL isArro
         if (DATAUNIT == 1)
             diff *= 8;
         
-        if (!fontBold) {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
-        } else {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}]];
-        }
+        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: (fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]];
         
         return [mutableString copy];
     }
@@ -281,19 +277,11 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
         case 2:
             // Network Speed
-            if (!fontBold) {
-                [
-                    mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
-                        NSString stringWithFormat: @"%c", getSeparator(mutableString)
-                    ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
-                ];
-            } else {
-                [
-                    mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
-                        NSString stringWithFormat: @"%c", getSeparator(mutableString)
-                    ] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}]
-                ];
-            }
+            [
+                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
+                    NSString stringWithFormat: @"%c", getSeparator(mutableString)
+                ] attributes:@{NSFontAttributeName: fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
+            ];
             [
                 mutableString appendAttributedString: formattedAttributedSpeedString(
                     [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO,
@@ -322,28 +310,21 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                 [parsedInfo valueForKey:@"showPercentage"] ? [[parsedInfo valueForKey:@"showPercentage"] boolValue] : YES
             );
             break;
+        case 8:
+            widgetString = @"\n";
+            break;
         default:
             // do not add anything
             break;
     }
     if (widgetString) {
-        if(!fontBold) {
-            [
-                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
-                    NSString stringWithFormat: @"%c%@",
-                    getSeparator(mutableString),
-                    widgetString
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
-            ];
-        } else {
-            [
-            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
+        [
+            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: (parsedID != 6 && parsedID != 8 ? [
                 NSString stringWithFormat: @"%c%@",
                 getSeparator(mutableString),
                 widgetString
-            ] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}]
+            ] : widgetString) attributes:@{NSFontAttributeName: (fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]
         ];
-        }
     }
 }
 
@@ -359,11 +340,7 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
                 formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, fontBold);
             }
         } else {
-            if(!fontBold) {
-                [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
-            } else {
-                [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}]];
-            }
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: (fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]];
         }
         
         return [mutableString copy];
