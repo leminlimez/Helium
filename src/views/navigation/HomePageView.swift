@@ -38,7 +38,7 @@ struct HomePageView: View {
                 isNowEnabled = IsHUDEnabledBridger()
             }
             .onOpenURL(perform: { url in
-                let fm = FileManager.default
+                let _ = FileManager.default
                 // MARK: URL Schemes
                 if url.absoluteString == "helium://toggle" {
                     toggleHUD(!isNowEnabled)
