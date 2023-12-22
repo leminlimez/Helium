@@ -15,6 +15,7 @@ struct WidgetPreferencesView: View {
     
     @State var text: String = ""
     @State var intSelection: Int = 0
+    @State var intSelection_arrow: Int = 0
     @State var boolSelection: Bool = false
     
     @State var modified: Bool = false
@@ -62,19 +63,37 @@ struct WidgetPreferencesView: View {
                 }
             case .network:
                 // MARK: Network Choice
-                HStack {
-                    Text("Network Type").foregroundColor(.primary).bold()
-                    Spacer()
-                    Picker(selection: $intSelection) {
-                        Text("Down").tag(0)
-                        Text("Up").tag(1)
-                    } label: {}
-                    .pickerStyle(.menu)
-                    .onAppear {
-                        if let netUp = widgetID.config["isUp"] as? Bool {
-                            intSelection = netUp ? 1 : 0
-                        } else {
-                            intSelection = 0
+                VStack {
+                    HStack {
+                        Text("Network Type").foregroundColor(.primary).bold()
+                        Spacer()
+                        Picker(selection: $intSelection) {
+                            Text("Down").tag(0)
+                            Text("Up").tag(1)
+                        } label: {}
+                        .pickerStyle(.menu)
+                        .onAppear {
+                            if let netUp = widgetID.config["isUp"] as? Bool {
+                                intSelection = netUp ? 1 : 0
+                            } else {
+                                intSelection = 0
+                            }
+                        }
+                    }
+                    HStack {
+                        Text("Arrow Type").foregroundColor(.primary).bold()
+                        Spacer()
+                        Picker(selection: $intSelection_arrow) {
+                            Text("Triangle").tag(0)
+                            Text("Arrow").tag(1)
+                        } label: {}
+                        .pickerStyle(.menu)
+                        .onAppear {
+                            if let arrow = widgetID.config["isArrow"] as? Bool {
+                                intSelection_arrow = arrow ? 1 : 0
+                            } else {
+                                intSelection_arrow = 0
+                            }
                         }
                     }
                 }
@@ -175,6 +194,9 @@ struct WidgetPreferencesView: View {
         .onChange(of: intSelection) { _ in
             modified = true
         }
+        .onChange(of: intSelection_arrow) { _ in
+            modified = true
+        }
         .onChange(of: boolSelection) { _ in
             modified = true
         }
@@ -212,6 +234,7 @@ struct WidgetPreferencesView: View {
         case .network:
             // MARK: Network Choice Handling
             widgetStruct.config["isUp"] = intSelection == 1 ? true : false
+            widgetStruct.config["isArrow"] = intSelection_arrow == 1 ? true : false
             break;
         case .battery:
             // MARK: Battery Value Type Handling

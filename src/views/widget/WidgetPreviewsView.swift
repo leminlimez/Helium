@@ -58,7 +58,8 @@ struct WidgetPreviewsView: View {
             break;
         case .network:
             let isUp: Bool = widget.config["isUp"] as? Bool ?? false
-            text = "\(isUp ? "▲" : "▼") 0 KB/s"
+            let isArrow: Bool = widget.config["isArrow"] as? Bool ?? false
+            text = "\(!isArrow ? (isUp ? "▲" : "▼") : (isUp ? "↑" : "↓")) 0 KB/s"
             break;
         case .temperature:
             text = "26.02ºC"
