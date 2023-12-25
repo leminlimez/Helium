@@ -7,13 +7,13 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>XXTAssistiveTouch</string>
+	<string>Helium</string>
 	<key>CFBundleDisplayName</key>
 	<string>Helium</string>
 	<key>CFBundleVersion</key>
 	<string>2.0.2</string>
 	<key>CFBundleExecutable</key>
-	<string>XXTAssistiveTouch</string>
+	<string>Helium</string>
 	<key>NSPrincipalClass</key>
 	<string>HUDMainApplication</string>
 	<key>CFBundlePackageType</key>
@@ -23,6 +23,8 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>UIApplicationShowsViewsWhileLocked</key>
+	<false/>
+	<key>UIApplicationSystemWindowsSecureKey</key>
 	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
@@ -55,6 +57,6 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2009 Apple Inc. All Rights Reserved.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0</string>
+	<string>2.0.2</string>
 </dict>
 </plist>

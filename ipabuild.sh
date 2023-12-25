@@ -1,7 +1,7 @@
 WORKING_LOCATION="$(pwd)"
-APP_BUILD_FILES="$WORKING_LOCATION/layout/Applications/XXTAssistiveTouch.app"
+APP_BUILD_FILES="$WORKING_LOCATION/layout/Applications/Helium.app"
 DEBUG_LOCATION="$WORKING_LOCATION/.theos/obj/debug"
-BUILD_LOCATION="$DEBUG_LOCATION/XXTAssistiveTouch.app"
+BUILD_LOCATION="$DEBUG_LOCATION/Helium.app"
 
 if [ ! -d "build" ]; then
     mkdir build
@@ -13,7 +13,7 @@ fi
 
 make
 
-if [ -d ".theos/obj/debug/XXTAssistiveTouch.app" ]; then
+if [ -d ".theos/obj/debug/Helium.app" ]; then
 	# Add the necessary files
 	echo "Adding application files"
 	cp -r "$APP_BUILD_FILES/icon.png" "$BUILD_LOCATION/icon.png"
@@ -24,12 +24,12 @@ if [ -d ".theos/obj/debug/XXTAssistiveTouch.app" ]; then
 	echo "Creating payload"
 	cd build
 	mkdir Payload
-	cp -r $BUILD_LOCATION Payload/XXTAssistiveTouch.app
+	cp -r $BUILD_LOCATION Payload/Helium.app
 	
 	# Archive
 	echo "Archiving"
-	strip Payload/XXTAssistiveTouch.app/XXTAssistiveTouch
+	strip Payload/Helium.app/Helium
 	zip -vr Helium.tipa Payload
-	rm -rf XXTAssistiveTouch.app
+	rm -rf Helium.app
 	rm -rf Payload
 fi
