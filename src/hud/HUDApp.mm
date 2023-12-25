@@ -4,10 +4,15 @@
 #import <dlfcn.h>
 #import <spawn.h>
 #import <unistd.h>
+#import <os/log.h>
+#import <objc/objc.h>
 #import <sys/param.h>
 #import <sys/sysctl.h>
 #import <mach-o/dyld.h>
 #import <objc/runtime.h>
+#import <CoreFoundation/CoreFoundation.h>
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 
 #pragma mark -
@@ -76,28 +81,39 @@ void GSEventRegisterEventCallBack(void (*)(GSEventRef));
 static __used void _HUDEventCallback(void *target, void *refcon, IOHIDServiceRef service, IOHIDEventRef event)
 {
     static UIApplication *app = [UIApplication sharedApplication];
-    [app _enqueueHIDEvent:event];
-
-    BOOL shouldUseAXEvent = NO;
-
-    if (@available(iOS 15.2, *))
-    {
-        if (@available(iOS 16.2, *))
-        {
-            
-        } else {
-            shouldUseAXEvent = YES;
-        }
+#if DEBUG
+    os_log_debug(OS_LOG_DEFAULT, "_HUDEventCallback => %{public}@", event);
+#endif
+    
+    // iOS 15.1+ has a new API for handling HID events.
+    if (@available(iOS 15.1, *)) {}
+    else {
+        [app _enqueueHIDEvent:event];
     }
 
-    if (shouldUseAXEvent) {
+    BOOL shouldUseAXEvent = YES;  // Always use AX events now...
+
+    BOOL isExactly15 = NO;
+    static NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
+    if (version.majorVersion == 15 && version.minorVersion == 0 && version.patchVersion == 0) {
+        isExactly15 = YES;
+    }
+
+    if (@available(iOS 15.0, *)) {
+        shouldUseAXEvent = !isExactly15;
+    } else {
+        shouldUseAXEvent = NO;
+    }
+
+    if (shouldUseAXEvent)
+    {
         static Class AXEventRepresentationCls = nil;
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             [[NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/AccessibilityUtilities.framework"] load];
             AXEventRepresentationCls = objc_getClass("AXEventRepresentation");
         });
-        
+
         AXEventRepresentation *rep = [AXEventRepresentationCls representationWithHIDEvent:event hidStreamIdentifier:@"UIApplicationEvents"];
 #if DEBUG
         os_log_debug(OS_LOG_DEFAULT, "_HUDEventCallback => %{public}@", rep.handInfo);
@@ -105,40 +121,30 @@ static __used void _HUDEventCallback(void *target, void *refcon, IOHIDServiceRef
 
         /* I don't like this. It's too hacky, but it works. */
         {
-            static UIWindow *keyWindow = nil;
-            static dispatch_once_t onceToken;
-            dispatch_once(&onceToken, ^{
-                if ([NSThread isMainThread])
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                static UIWindow *keyWindow = nil;
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
                     keyWindow = [[app windows] firstObject];
-                else
-                {
-                    dispatch_sync(dispatch_get_main_queue(), ^{
-                        keyWindow = [[app windows] firstObject];
-                    });
-                }
-            });
+                });
 
-            UIView *keyView = [keyWindow hitTest:[rep location] withEvent:nil];
-            
-            UITouchPhase phase = UITouchPhaseCancelled;
-            if ([rep isTouchDown])
-                phase = UITouchPhaseBegan;
-            else if ([rep isMove])
-                phase = UITouchPhaseMoved;
-            else if ([rep isCancel])
-                phase = UITouchPhaseCancelled;
-            else if ([rep isLift] || [rep isInRange] || [rep isInRangeLift])
-                phase = UITouchPhaseEnded;
-            
-            NSInteger pointerId = [[[[rep handInfo] paths] firstObject] pathIdentity];
-            if (pointerId > 0)
-                [TSEventFetcher receiveAXEventID:MIN(MAX(pointerId, 1), 98) atGlobalCoordinate:[rep location] withTouchPhase:phase inWindow:keyWindow onView:keyView];
+                UIView *keyView = [keyWindow hitTest:[rep location] withEvent:nil];
+
+                UITouchPhase phase = UITouchPhaseEnded;
+                if ([rep isTouchDown])
+                    phase = UITouchPhaseBegan;
+                else if ([rep isMove])
+                    phase = UITouchPhaseMoved;
+                else if ([rep isCancel])
+                    phase = UITouchPhaseCancelled;
+                else if ([rep isLift] || [rep isInRange] || [rep isInRangeLift])
+                    phase = UITouchPhaseEnded;
+
+                NSInteger pointerId = [[[[rep handInfo] paths] firstObject] pathIdentity];
+                if (pointerId > 0)
+                    [TSEventFetcher receiveAXEventID:MIN(MAX(pointerId, 1), 98) atGlobalCoordinate:[rep location] withTouchPhase:phase inWindow:keyWindow onView:keyView];
+            });
         }
-    }
-    else {
-#if DEBUG
-        os_log_debug(OS_LOG_DEFAULT, "_HUDEventCallback => %{public}@", event);
-#endif
     }
 }
 
@@ -158,6 +164,34 @@ static NSString *GetPIDFilePath(void)
     return _hudPIDFilePath;
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#import "../helpers/private_headers/libproc.h"
+#import "../helpers/private_headers/kern_memorystatus.h"
+#ifdef __cplusplus
+}
+#endif
+
+__unused
+static inline
+void BypassJetsamByProcess(pid_t me, BOOL critical) {
+    int rc; memorystatus_priority_properties_t props = { JETSAM_PRIORITY_CRITICAL, 0 };
+    rc = memorystatus_control(MEMORYSTATUS_CMD_SET_PRIORITY_PROPERTIES, me, 0, &props, sizeof(props));
+    if (critical && rc < 0) { perror ("memorystatus_control"); exit(rc); }
+    rc = memorystatus_control(MEMORYSTATUS_CMD_SET_JETSAM_HIGH_WATER_MARK, me, -1, NULL, 0);
+    if (critical && rc < 0) { perror ("memorystatus_control"); exit(rc); }
+    rc = memorystatus_control(MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT, me, 0, NULL, 0);
+    if (critical && rc < 0) { perror ("memorystatus_control"); exit(rc); }
+    rc = memorystatus_control(MEMORYSTATUS_CMD_SET_PROCESS_IS_MANAGED, me, 0, NULL, 0);
+    if (critical && rc < 0) { perror ("memorystatus_control"); exit(rc); }
+    rc = memorystatus_control(MEMORYSTATUS_CMD_SET_PROCESS_IS_FREEZABLE, me, 0, NULL, 0);
+    if (critical && rc < 0) { perror ("memorystatus_control"); exit(rc); }
+    rc = proc_track_dirty(me, 0);
+    if (critical && rc != 0) { perror("proc_track_dirty"); exit(rc); }
+    os_log_debug(OS_LOG_DEFAULT, "Oh, My Jetsam: %d", me);
+}
+
 
 #pragma mark -
 
@@ -174,7 +208,13 @@ int main(int argc, char *argv[])
         
         if (strcmp(argv[1], "-hud") == 0)
         {
-            NSString *pidString = [NSString stringWithFormat:@"%d", getpid()];
+            pid_t pid = getpid();
+            pid_t pgid = getgid();
+            (void)pgid;
+#if DEBUG
+            os_log_debug(OS_LOG_DEFAULT, "HUD pid %d, pgid %d", pid, pgid);
+#endif
+            NSString *pidString = [NSString stringWithFormat:@"%d", pid];
             [pidString writeToFile:GetPIDFilePath()
                         atomically:YES
                           encoding:NSUTF8StringEncoding

@@ -7,7 +7,7 @@
 
 #import <notify.h>
 #import <UIKit/UIKit.h>
-#import "XXTAssistiveTouch-Swift.h"
+#import "Helium-Swift.h"
 
 
 #pragma mark - MainApplication

@@ -255,7 +255,7 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
  - Weather
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold)
 {
     NSString *widgetString;
     switch (parsedID) {
@@ -310,12 +310,12 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                 NSString stringWithFormat: @"%c%@",
                 getSeparator(mutableString),
                 widgetString
-            ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
+            ] attributes:@{NSFontAttributeName: textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
         ];
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -324,7 +324,7 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold);
             }
         } else {
             [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];

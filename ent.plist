@@ -4,8 +4,6 @@
 <dict>
 	<key>com.apple.AXMediaUtilitiesService-access</key>
 	<true/>
-	<key>com.apple.Contacts.database-allow</key>
-	<true/>
 	<key>com.apple.DragUI.accessibility</key>
 	<true/>
 	<key>com.apple.QuartzCore.displayable-context</key>
@@ -92,9 +90,9 @@
 	</array>
 	<key>com.apple.private.kernel.jetsam</key>
 	<true/>
-	<key>com.apple.private.security.no-sandbox</key>
+	<key>com.apple.private.memorystatus</key>
 	<true/>
-	<key>com.apple.private.persona-mgmt</key>
+	<key>com.apple.private.security.no-sandbox</key>
 	<true/>
 	<key>com.apple.private.sysdiagnose</key>
 	<true/>
@@ -126,13 +124,13 @@
 		<string>com.apple.fontservicesd</string>
 		<string>com.apple.PointerUI.pointeruid.service</string>
 	</array>
-	<key>com.apple.security.exception.mach-register.global-name</key>
-	<array>
-		<string>com.leemin.helium.gsEvents</string>
-	</array>
 	<key>com.apple.security.exception.mach-lookup.local-name</key>
 	<array>
 		<string>com.apple.AXMediaUtilitiesService</string>
+	</array>
+	<key>com.apple.security.exception.mach-register.global-name</key>
+	<array>
+		<string>com.leemin.helium.gsEvents</string>
 	</array>
 	<key>com.apple.security.exception.mach-register.local-name</key>
 	<array>
@@ -157,12 +155,6 @@
 	<array>
 		<string>systemgroup.com.apple.powerlog</string>
 	</array>
-	<key>com.apple.siri.VoiceShortcuts.xpc</key>
-	<true/>
-	<key>com.apple.siri.activation.service</key>
-	<true/>
-	<key>com.apple.siri.external_request</key>
-	<true/>
 	<key>com.apple.springboard-ui.client</key>
 	<true/>
 	<key>com.apple.springboard.CFUserNotification</key>
@@ -170,6 +162,8 @@
 	<key>com.apple.springboard.accessibility-window-hosting</key>
 	<true/>
 	<key>com.apple.springboard.activateassistant</key>
+	<true/>
+	<key>com.apple.springboard.appbackgroundstyle</key>
 	<true/>
 	<key>com.apple.springboard.launchapplications</key>
 	<true/>
