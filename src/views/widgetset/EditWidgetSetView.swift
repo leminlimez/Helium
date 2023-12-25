@@ -185,6 +185,17 @@ struct EditWidgetSetView: View {
                 }
                 
                 Section {
+                    // MARK: Bold Text
+                    HStack {
+                        Toggle(isOn: $textBold) {
+                            Text("Bold Text")
+                                .bold()
+                                .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: textBold) { _ in
+                            changesMade = true
+                        }
+                    }
                     // MARK: Text Alignment
                     HStack {
                         Text("Text Alignment").foregroundColor(.primary).bold()
