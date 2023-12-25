@@ -14,6 +14,7 @@
 #import <objc/runtime.h>
 #import "WidgetManager.h"
 #import <IOKit/IOKitLib.h>
+#import "../extensions/LunarDate.h"
 
 // Thanks to: https://github.com/lwlsw/NetworkSpeed13
 
@@ -62,7 +63,8 @@ static NSString* formattedDate(NSString *dateFormat)
         formatter.locale = [NSLocale localeWithLocaleIdentifier:@"zh_CN"];
     }
     NSDate *currentDate = [NSDate date];
-    [formatter setDateFormat:dateFormat];
+    NSString *newDateFormat = [LunarDate getChineseCalendarWithDate:currentDate format:dateFormat];
+    [formatter setDateFormat:newDateFormat];
     return [formatter stringFromDate:currentDate];
 }
 
