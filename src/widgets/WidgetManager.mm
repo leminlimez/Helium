@@ -24,13 +24,13 @@
 #define MEGABYTES (1 << 20)
 #define GIGABYTES (1 << 30)
 #define SHOW_ALWAYS 1
-#define INLINE_SEPARATOR "\t"
+// #define INLINE_SEPARATOR "\t"
 
-#pragma mark - Formatting Methods
-static unsigned char getSeparator(NSMutableAttributedString *currentAttributed)
-{
-    return [[currentAttributed string] isEqualToString:@""] ? *"" : *"\t";
-}
+// #pragma mark - Formatting Methods
+// static unsigned char getSeparator(NSMutableAttributedString *currentAttributed)
+// {
+//     return [[currentAttributed string] isEqualToString:@""] ? *"" : *"\t";
+// }
 
 #pragma mark - Widget-specific Variables
 // MARK: 0 - Date Widget
@@ -277,11 +277,11 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
         case 2:
             // Network Speed
-            [
-                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
-                    NSString stringWithFormat: @"%c", getSeparator(mutableString)
-                ] attributes:@{NSFontAttributeName: fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
-            ];
+            // [
+            //     mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
+            //         NSString stringWithFormat: @"%c", getSeparator(mutableString)
+            //     ] attributes:@{NSFontAttributeName: fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
+            // ];
             [
                 mutableString appendAttributedString: formattedAttributedSpeedString(
                     [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO,
@@ -310,20 +310,15 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                 [parsedInfo valueForKey:@"showPercentage"] ? [[parsedInfo valueForKey:@"showPercentage"] boolValue] : YES
             );
             break;
-        case 8:
-            widgetString = @"\n";
-            break;
         default:
             // do not add anything
             break;
     }
     if (widgetString) {
+        widgetString = [widgetString stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+        widgetString = [widgetString stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
         [
-            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: (parsedID != 6 && parsedID != 8 ? [
-                NSString stringWithFormat: @"%c%@",
-                getSeparator(mutableString),
-                widgetString
-            ] : widgetString) attributes:@{NSFontAttributeName: (fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]
+            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: widgetString attributes:@{NSFontAttributeName: (fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]
         ];
     }
 }

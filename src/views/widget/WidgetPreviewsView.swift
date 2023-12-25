@@ -90,9 +90,6 @@ struct WidgetPreviewsView: View {
         case .currentCapacity:
             text = "50\(widget.config["showPercentage"] as? Bool ?? true ? "%" : "")"
             break;
-        case .newLineWidget:
-            text = "New Line"
-            break;
         }
         widget.modified = false
     }
