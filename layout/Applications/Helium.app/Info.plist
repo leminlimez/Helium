@@ -23,6 +23,8 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>UIApplicationShowsViewsWhileLocked</key>
+	<false/>
+	<key>UIApplicationSystemWindowsSecureKey</key>
 	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
