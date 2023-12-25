@@ -77,7 +77,7 @@ struct WidgetSetStruct: Identifiable, Equatable {
     
     var colorDetails: ColorDetailsStruct = .init()
     
-    var textAlpha: Double
+    var textBold: Bool
     var textAlignment: Int
     var fontSize: Double
 }
@@ -151,7 +151,7 @@ class WidgetManager: ObservableObject {
                     
                     blurDetails: blurDetailsStruct,
                     
-                    textAlpha: s["textAlpha"] as? Double ?? 1.0,
+                    textBold: s["textBold"] as? Bool ?? false,
                     textAlignment: s["textAlignment"] as? Int ?? 1,
                     fontSize: s["fontSize"] as? Double ?? 10.0
                 )
@@ -200,7 +200,7 @@ class WidgetManager: ObservableObject {
             ]
             wSet["colorDetails"] = colorDetails
             
-            wSet["textAlpha"] = s.textAlpha
+            wSet["textBold"] = s.textBold
             wSet["textAlignment"] = s.textAlignment
             wSet["fontSize"] = s.fontSize
             
@@ -307,7 +307,7 @@ class WidgetManager: ObservableObject {
                 cornerRadius: 4
             ),
             
-            textAlpha: 1.0,
+            textBold: false,
             textAlignment: 1,
             fontSize: 10.0
         ), save: save)
@@ -329,7 +329,7 @@ class WidgetManager: ObservableObject {
                 
                 widgetSets[i].colorDetails = ns.colorDetails
                 
-                widgetSets[i].textAlpha = ns.textAlpha
+                widgetSets[i].textBold = ns.textBold
                 widgetSets[i].textAlignment = ns.textAlignment
                 widgetSets[i].fontSize = ns.fontSize
                 break

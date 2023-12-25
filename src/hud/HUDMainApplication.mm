@@ -749,7 +749,7 @@ Example format for properties:
             @"lightColor" : @([UIColor blackColor]),
             @"darkColor" : @([UIColor whiteColor])
         },
-        @"textAlpha" : @(1),
+        @"textBold" : @(NO),
         @"textAlignment" : @(1),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
         @"fontSize" : @(10)
     },
@@ -780,7 +780,7 @@ Example format for properties:
             @"dynamicColor" : @(NO),
             @"color" : @([UIColor whiteColor])
         },
-        @"textAlpha" : @(1),
+        @"textBold" : @(YES),
         @"textAlignment" : @(0),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
         @"fontSize" : @(10)
     },
@@ -830,16 +830,17 @@ Example format for properties:
             break;
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
         double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
-        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize];
+        bool textBold = [properties objectForKey: @"textBold"] ? [[properties objectForKey: @"textBold"] boolValue] : false;
+        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize textBold: textBold];
     }
 }
 
-- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize
+- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize textBold:(bool) textBold
 {
 #if DEBUG
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
-    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize);
+    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold);
     if (attributedText)
         [label setAttributedText: attributedText];
 }
@@ -992,7 +993,11 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         } else {
             labelView.textColor = [UIColor whiteColor];
         }
-        labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        if (getBoolFromDictKey(properties, @"textBold")) {
+            labelView.font = [UIFont boldSystemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        } else {
+            labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        }
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
         if (hasBlur) {
             [blurView.contentView addSubview:labelView];

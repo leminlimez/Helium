@@ -32,7 +32,7 @@ struct EditWidgetSetView: View {
     @State var usesCustomColor: Bool = false
     @State var customColor: Color = .white
     
-    @State var textAlpha: Double = 1.0
+    @State var textBold: Bool = false
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
     
@@ -185,18 +185,6 @@ struct EditWidgetSetView: View {
                 }
                 
                 Section {
-                    // MARK: Text Alpha
-                    VStack {
-                        HStack {
-                            Text("Text Alpha")
-                                .bold()
-                            Spacer()
-                        }
-                        BetterSlider(value: $textAlpha, bounds: 0...1, step: 0.01)
-                            .onChange(of: textAlpha) { _ in
-                                changesMade = true
-                            }
-                    }
                     // MARK: Text Alignment
                     HStack {
                         Text("Text Alignment").foregroundColor(.primary).bold()
@@ -310,7 +298,7 @@ struct EditWidgetSetView: View {
                 usesCustomColor = widgetSet.colorDetails.usesCustomColor
                 customColor = Color(widgetSet.colorDetails.color)
                 
-                textAlpha = widgetSet.textAlpha
+                textBold = widgetSet.textBold
                 textAlignment = widgetSet.textAlignment
                 fontSize = widgetSet.fontSize
                 
@@ -359,7 +347,7 @@ struct EditWidgetSetView: View {
                 color: UIColor(customColor)
             ),
             
-            textAlpha: textAlpha,
+            textBold: textBold,
             textAlignment: textAlignment,
             fontSize: fontSize
         ), save: save)
