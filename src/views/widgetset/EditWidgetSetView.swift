@@ -37,7 +37,6 @@ struct EditWidgetSetView: View {
     @State var textBold: Bool = false
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
-    @State var fontBold: Bool = false
     
     @State var changesMade: Bool = false
     
@@ -238,18 +237,6 @@ struct EditWidgetSetView: View {
                                 changesMade = true
                             }
                     }
-
-                    // MARK: Uses Custom Color
-                    HStack {
-                        Toggle(isOn: $fontBold) {
-                            Text("Font Bold")
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: fontBold) { _ in
-                            changesMade = true
-                        }
-                    }
                 } header: {
                     Text("Text Properties")
                 }
@@ -342,7 +329,6 @@ struct EditWidgetSetView: View {
                 textBold = widgetSet.textBold
                 textAlignment = widgetSet.textAlignment
                 fontSize = widgetSet.fontSize
-                fontBold = widgetSet.fontBold
                 
                 changesMade = false
             }
@@ -392,8 +378,7 @@ struct EditWidgetSetView: View {
             
             textBold: textBold,
             textAlignment: textAlignment,
-            fontSize: fontSize,
-            fontBold: fontBold
+            fontSize: fontSize
         ), save: save)
         let updatedSet = widgetManager.getUpdatedWidgetSet(widgetSet: widgetSet)
         if updatedSet != nil {

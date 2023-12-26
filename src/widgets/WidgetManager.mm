@@ -121,7 +121,7 @@ static NSString* formattedSpeed(uint64_t bytes)
     }
 }
 
-static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, BOOL isArrow, double fontSize, BOOL fontBold)
+static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, BOOL isArrow, double fontSize, BOOL textBold)
 {
     @autoreleasepool {
         if (!attributedUploadPrefix)
@@ -158,7 +158,7 @@ static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, BOOL isArro
         if (DATAUNIT == 1)
             diff *= 8;
         
-        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: (fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]];
+        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: (textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]];
         
         return [mutableString copy];
     }
@@ -282,13 +282,13 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             // [
             //     mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
             //         NSString stringWithFormat: @"%c", getSeparator(mutableString)
-            //     ] attributes:@{NSFontAttributeName: fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
+            //     ] attributes:@{NSFontAttributeName: textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
             // ];
             [
                 mutableString appendAttributedString: formattedAttributedSpeedString(
                     [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO,
                     [parsedInfo valueForKey:@"isArrow"] ? [[parsedInfo valueForKey:@"isArrow"] boolValue] : NO,
-                    fontSize, fontBold
+                    fontSize, textBold
                 )
             ];
             break;
@@ -337,7 +337,7 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
                 formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold);
             }
         } else {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: (fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]];
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: (textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]];
         }
         
         return [mutableString copy];
