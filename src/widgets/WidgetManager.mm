@@ -266,7 +266,7 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
  - Weather
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, BOOL fontBold)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold)
 {
     NSString *widgetString;
     switch (parsedID) {
@@ -320,12 +320,12 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
         widgetString = [widgetString stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
         widgetString = [widgetString stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
         [
-            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: widgetString attributes:@{NSFontAttributeName: (fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]
+            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: widgetString attributes:@{NSFontAttributeName: textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
         ];
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, BOOL fontBold)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -334,7 +334,7 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, fontBold);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold);
             }
         } else {
             [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: (fontBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]];

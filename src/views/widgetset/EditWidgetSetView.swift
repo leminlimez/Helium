@@ -34,7 +34,7 @@ struct EditWidgetSetView: View {
     @State var customColor: Color = .white
     @State var usesSystemColor: Bool = false
     
-    @State var textAlpha: Double = 1.0
+    @State var textBold: Bool = false
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
     @State var fontBold: Bool = false
@@ -202,17 +202,16 @@ struct EditWidgetSetView: View {
                 }
                 
                 Section {
-                    // MARK: Text Alpha
-                    VStack {
-                        HStack {
-                            Text("Text Alpha")
+                    // MARK: Bold Text
+                    HStack {
+                        Toggle(isOn: $textBold) {
+                            Text("Bold Text")
                                 .bold()
-                            Spacer()
+                                .minimumScaleFactor(0.5)
                         }
-                        BetterSlider(value: $textAlpha, bounds: 0...1, step: 0.01)
-                            .onChange(of: textAlpha) { _ in
-                                changesMade = true
-                            }
+                        .onChange(of: textBold) { _ in
+                            changesMade = true
+                        }
                     }
                     // MARK: Text Alignment
                     HStack {
@@ -340,7 +339,7 @@ struct EditWidgetSetView: View {
                 usesCustomColor = widgetSet.colorDetails.usesCustomColor
                 customColor = Color(widgetSet.colorDetails.color)
                 
-                textAlpha = widgetSet.textAlpha
+                textBold = widgetSet.textBold
                 textAlignment = widgetSet.textAlignment
                 fontSize = widgetSet.fontSize
                 fontBold = widgetSet.fontBold
@@ -391,7 +390,7 @@ struct EditWidgetSetView: View {
                 color: UIColor(customColor)
             ),
             
-            textAlpha: textAlpha,
+            textBold: textBold,
             textAlignment: textAlignment,
             fontSize: fontSize,
             fontBold: fontBold

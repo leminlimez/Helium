@@ -29,9 +29,6 @@ extern "C" int posix_spawnattr_set_persona_np(const posix_spawnattr_t* __restric
 extern "C" int posix_spawnattr_set_persona_uid_np(const posix_spawnattr_t* __restrict, uid_t);
 extern "C" int posix_spawnattr_set_persona_gid_np(const posix_spawnattr_t* __restrict, uid_t);
 
-OBJC_EXTERN double getSideWidgetSize(void);
-OBJC_EXTERN double getCenterWidgetSize(void);
-
 
 extern "C" BOOL IsHUDEnabled(void);
 BOOL IsHUDEnabled(void)
@@ -45,9 +42,9 @@ BOOL IsHUDEnabled(void)
     posix_spawnattr_t attr;
     posix_spawnattr_init(&attr);
 
-    posix_spawnattr_set_persona_np(&attr, 99, POSIX_SPAWN_PERSONA_FLAGS_OVERRIDE);
-    posix_spawnattr_set_persona_uid_np(&attr, 0);
-    posix_spawnattr_set_persona_gid_np(&attr, 0);
+    // posix_spawnattr_set_persona_np(&attr, 99, POSIX_SPAWN_PERSONA_FLAGS_OVERRIDE);
+    // posix_spawnattr_set_persona_uid_np(&attr, 0);
+    // posix_spawnattr_set_persona_gid_np(&attr, 0);
 
     pid_t task_pid;
     const char *args[] = { executablePath, "-check", NULL };
@@ -87,9 +84,9 @@ void SetHUDEnabled(BOOL isEnabled)
     posix_spawnattr_t attr;
     posix_spawnattr_init(&attr);
 
-    posix_spawnattr_set_persona_np(&attr, 99, POSIX_SPAWN_PERSONA_FLAGS_OVERRIDE);
-    posix_spawnattr_set_persona_uid_np(&attr, 0);
-    posix_spawnattr_set_persona_gid_np(&attr, 0);
+    // posix_spawnattr_set_persona_np(&attr, 99, POSIX_SPAWN_PERSONA_FLAGS_OVERRIDE);
+    // posix_spawnattr_set_persona_uid_np(&attr, 0);
+    // posix_spawnattr_set_persona_gid_np(&attr, 0);
 
     if (isEnabled)
     {
@@ -752,7 +749,7 @@ Example format for properties:
             @"lightColor" : @([UIColor blackColor]),
             @"darkColor" : @([UIColor whiteColor])
         },
-        @"textAlpha" : @(1),
+        @"textBold" : @(NO),
         @"textAlignment" : @(1),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
         @"fontSize" : @(10)
     },
@@ -783,7 +780,7 @@ Example format for properties:
             @"dynamicColor" : @(NO),
             @"color" : @([UIColor whiteColor])
         },
-        @"textAlpha" : @(1),
+        @"textBold" : @(YES),
         @"textAlignment" : @(0),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
         @"fontSize" : @(10)
     },
@@ -833,17 +830,17 @@ Example format for properties:
             break;
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
         double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
-        BOOL fontBold = [properties objectForKey: @"fontBold"] ? [[properties objectForKey: @"fontBold"] boolValue] : false;
-        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize fontBold: fontBold];
+        BOOL textBold = [properties objectForKey: @"textBold"] ? [[properties objectForKey: @"textBold"] boolValue] : false;
+        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize textBold: textBold];
     }
 }
 
-- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize fontBold:(BOOL) fontBold
+- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize textBold:(bool) textBold
 {
 #if DEBUG
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
-    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, fontBold);
+    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold);
     if (attributedText)
         [label setAttributedText: attributedText];
 }
@@ -998,10 +995,14 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         } else {
             labelView.textColor = [UIColor whiteColor];
         }
-        labelView.alpha = getDoubleFromDictKey(properties, @"textAlpha", 1.0);
-        BOOL fontBold = getBoolFromDictKey(properties, @"textBold");
-        if (!fontBold) {
+        if (getBoolFromDictKey(properties, @"textBold")) {
+            labelView.font = [UIFont boldSystemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        } else {
             labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        }
+        labelView.translatesAutoresizingMaskIntoConstraints = NO;
+        if (hasBlur) {
+            [blurView.contentView addSubview:labelView];
         } else {
             labelView.font = [UIFont boldSystemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
         }
