@@ -247,6 +247,16 @@ class WidgetManager: ObservableObject {
         }
         if save { saveWidgetSets(); }
     }
+
+    // move widgets
+    // move at index in list
+    public func moveWidget(widgetSet: WidgetSetStruct, source: IndexSet, destination: Int) {
+        for (i, wSet) in widgetSets.enumerated() {
+            if wSet == widgetSet {
+                widgetSets[i].widgetIDs.move(fromOffsets: source, toOffset: destination)
+            }
+        }
+    }
     
     // remove based on object
     public func removeWidget(widgetSet: WidgetSetStruct, id: WidgetIDStruct, save: Bool = true) {
