@@ -219,6 +219,7 @@ struct EditWidgetSetView: View {
                         Picker(selection: $textAlignment) {
                             Text("Left").tag(0)
                             Text("Center").tag(1)
+                            Text("Right").tag(2)
                         } label: {}
                         .pickerStyle(.menu)
                         .onChange(of: textAlignment) { _ in

@@ -973,9 +973,12 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         if (alignment == 0) {
             // align left
             labelView.textAlignment = NSTextAlignmentLeft;
-        } else {
+        } else if (alignment == 1) {
             // align center
             labelView.textAlignment = NSTextAlignmentCenter;
+        } else {
+            // align right
+            labelView.textAlignment = NSTextAlignmentRight;
         }
         // TODO: make functional
         /*NSDictionary *colorDetails = [properties valueForKey:@"colorDetails"] ? [properties valueForKey:@"colorDetails"] : [NSDictionary init];
