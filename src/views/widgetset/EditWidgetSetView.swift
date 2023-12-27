@@ -273,6 +273,9 @@ struct EditWidgetSetView: View {
 //                                    .foregroundColor(.red)
 //                            }
                             }
+                            .onDrag { // mean drag a row container
+                                return NSItemProvider()
+                            }
                         }
                     }
                     .onDelete { indexSet in
@@ -284,6 +287,7 @@ struct EditWidgetSetView: View {
                             }, noCancel: false)
                         }
                     }
+                    .onMove(perform: moveItem)
                 } header: {
                     Text(NSLocalizedString("Widgets", comment: ""))
                 }
@@ -351,6 +355,13 @@ struct EditWidgetSetView: View {
                 })
             })
         }
+    }
+
+    func moveItem(from source: IndexSet, to destination: Int) {
+        widgetManager.moveWidget(widgetSet: widgetSet, source: source, destination: destination)
+        // saveSet()
+        changesMade = true
+        widgetIDs.move(fromOffsets: source, toOffset: destination)
     }
     
     func saveSet(save: Bool = true) {
