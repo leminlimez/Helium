@@ -107,7 +107,6 @@ struct WidgetPreferencesView: View {
                         Text(NSLocalizedString("Charging Current", comment:"")).tag(1)
                         Text(NSLocalizedString("Amperage", comment:"")).tag(2)
                         Text(NSLocalizedString("Charge Cycles", comment:"")).tag(3)
-                        Text(NSLocalizedString("Current Capacity", comment:"")).tag(4)
                     } label: {}
                     .pickerStyle(.menu)
                     .onAppear {
