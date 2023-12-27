@@ -1004,12 +1004,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
         }
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
-        if (hasBlur) {
-            [blurView.contentView addSubview:labelView];
-        } else {
-            labelView.font = [UIFont boldSystemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
-        }
-        labelView.translatesAutoresizingMaskIntoConstraints = NO;
         [_contentView addSubview: labelView];
         [_labelViews addObject: labelView];
     }
