@@ -46,28 +46,28 @@ struct EditWidgetSetView: View {
                 // MARK: Title Field
                 Section {
                     HStack {
-                        Text("Widget Set Title")
+                        Text(NSLocalizedString("Widget Set Title", comment: ""))
                             .bold()
                         Spacer()
-                        TextField("Title", text: $nameInput)
+                        TextField(NSLocalizedString("Title", comment: ""), text: $nameInput)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .onChange(of: nameInput) { _ in
                                 changesMade = true
                             }
                     }
                 } header: {
-                    Text("Widget Set Details")
+                    Text(NSLocalizedString("Widget Set Details", comment: ""))
                 }
                 
                 Section {
                     // MARK: Anchor Side
                     HStack {
-                        Text("Anchor Side").foregroundColor(.primary).bold()
+                        Text(NSLocalizedString("Anchor Side", comment: "")).foregroundColor(.primary).bold()
                         Spacer()
                         Picker(selection: $anchorSelection) {
-                            Text("Left").tag(0)
-                            Text("Center").tag(1)
-                            Text("Right").tag(2)
+                            Text(NSLocalizedString("Left", comment: "")).tag(0)
+                            Text(NSLocalizedString("Center", comment: "")).tag(1)
+                            Text(NSLocalizedString("Right", comment: "")).tag(2)
                         } label: {}
                         .pickerStyle(.menu)
                         .onChange(of: anchorSelection) { _ in
@@ -77,7 +77,7 @@ struct EditWidgetSetView: View {
                     // MARK: Offset X
                     VStack {
                         HStack {
-                            Text("Offset X")
+                            Text(NSLocalizedString("Offset X", comment: ""))
                                 .bold()
                             Spacer()
                         }
@@ -89,7 +89,7 @@ struct EditWidgetSetView: View {
                     // MARK: Offset Y
                     VStack {
                         HStack {
-                            Text("Offset Y")
+                            Text(NSLocalizedString("Offset Y", comment: ""))
                                 .bold()
                             Spacer()
                         }
@@ -101,7 +101,7 @@ struct EditWidgetSetView: View {
                     // MARK: Auto Resizes
                     HStack {
                         Toggle(isOn: $autoResizes) {
-                            Text("Auto Resize")
+                            Text(NSLocalizedString("Auto Resize", comment: ""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -113,7 +113,7 @@ struct EditWidgetSetView: View {
                     if !autoResizes {
                         VStack {
                             HStack {
-                                Text("Width")
+                                Text(NSLocalizedString("Width", comment: ""))
                                     .bold()
                                 Spacer()
                             }
@@ -124,14 +124,14 @@ struct EditWidgetSetView: View {
                         }
                     }
                 } header: {
-                    Text("Constraints")
+                    Text(NSLocalizedString("Constraints", comment: ""))
                 }
                 
                 Section {
                     // MARK: Has Blur
                     HStack {
                         Toggle(isOn: $hasBlur) {
-                            Text("Background Blur")
+                            Text(NSLocalizedString("Background Blur", comment: ""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -143,7 +143,7 @@ struct EditWidgetSetView: View {
                     if hasBlur {
                         VStack {
                             HStack {
-                                Text("Blur Corner Radius")
+                                Text(NSLocalizedString("Blur Corner Radius", comment: ""))
                                     .bold()
                                 Spacer()
                             }
@@ -157,7 +157,7 @@ struct EditWidgetSetView: View {
                     if hasBlur {
                         VStack {
                             HStack {
-                                Text("Blur Alpha")
+                                Text(NSLocalizedString("Blur Alpha", comment: ""))
                                     .bold()
                                 Spacer()
                             }
@@ -168,14 +168,14 @@ struct EditWidgetSetView: View {
                         }
                     }
                 } header: {
-                    Text("Blur")
+                    Text(NSLocalizedString("Blur", comment: ""))
                 }
                 
                 Section {
                     // MARK: Uses Custom Color
                     HStack {
                         Toggle(isOn: $usesCustomColor) {
-                            Text("Custom Text Color")
+                            Text(NSLocalizedString("Custom Text Color", comment: ""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -186,10 +186,10 @@ struct EditWidgetSetView: View {
                     // MARK: Custom Text Color
                     if usesCustomColor {
                         HStack {
-                            Text("Text Color")
+                            Text(NSLocalizedString("Text Color", comment: ""))
                                 .bold()
                             Spacer()
-                            ColorPicker("Set Text Color", selection: $customColor)
+                            ColorPicker(NSLocalizedString("Set Text Color", comment: ""), selection: $customColor)
                                 .labelsHidden()
                                 .onChange(of: customColor) { _ in
                                     changesMade = true
@@ -197,14 +197,14 @@ struct EditWidgetSetView: View {
                         }
                     }
                 } header: {
-                    Text("Text Color")
+                    Text(NSLocalizedString("Text Color", comment: ""))
                 }
                 
                 Section {
                     // MARK: Bold Text
                     HStack {
                         Toggle(isOn: $textBold) {
-                            Text("Bold Text")
+                            Text(NSLocalizedString("Bold Text", comment: ""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -214,12 +214,12 @@ struct EditWidgetSetView: View {
                     }
                     // MARK: Text Alignment
                     HStack {
-                        Text("Text Alignment").foregroundColor(.primary).bold()
+                        Text(NSLocalizedString("Text Alignment", comment: "")).foregroundColor(.primary).bold()
                         Spacer()
                         Picker(selection: $textAlignment) {
-                            Text("Left").tag(0)
-                            Text("Center").tag(1)
-                            Text("Right").tag(2)
+                            Text(NSLocalizedString("Left", comment: "")).tag(0)
+                            Text(NSLocalizedString("Center", comment: "")).tag(1)
+                            Text(NSLocalizedString("Right", comment: "")).tag(2)
                         } label: {}
                         .pickerStyle(.menu)
                         .onChange(of: textAlignment) { _ in
@@ -229,7 +229,7 @@ struct EditWidgetSetView: View {
                     // MARK: Font Size
                     VStack {
                         HStack {
-                            Text("Font Size")
+                            Text(NSLocalizedString("Font Size", comment: ""))
                                 .bold()
                             Spacer()
                         }
@@ -239,7 +239,7 @@ struct EditWidgetSetView: View {
                             }
                     }
                 } header: {
-                    Text("Text Properties")
+                    Text(NSLocalizedString("Text Properties", comment: ""))
                 }
                 
                 Section {
@@ -247,7 +247,7 @@ struct EditWidgetSetView: View {
                     Button(action: {
                         showingAddView.toggle()
                     }) {
-                        Text("Add Widget")
+                        Text(NSLocalizedString("Add Widget", comment: ""))
                             .buttonStyle(TintedButton(color: .blue, fullWidth: true))
                     }
                     // MARK: Widget IDs
@@ -277,7 +277,7 @@ struct EditWidgetSetView: View {
                     }
                     .onDelete { indexSet in
                         indexSet.forEach { i in
-                            UIApplication.shared.confirmAlert(title: "Delete Widget", body: "Are you sure you want to delete this widget?", onOK: {
+                            UIApplication.shared.confirmAlert(title: NSLocalizedString("Delete Widget", comment: ""), body: NSLocalizedString("Are you sure you want to delete this widget?", comment: ""), onOK: {
                                 widgetManager.removeWidget(widgetSet: widgetSet, id: widgetIDs[i], save: false)
                                 saveSet()
                                 widgetIDs.remove(at: i)
@@ -285,7 +285,7 @@ struct EditWidgetSetView: View {
                         }
                     }
                 } header: {
-                    Text("Widgets")
+                    Text(NSLocalizedString("Widgets", comment: ""))
                 }
             }
             .toolbar {
@@ -301,7 +301,7 @@ struct EditWidgetSetView: View {
                     }
                 }
             }
-            .navigationTitle("Edit Widget")
+            .navigationTitle(NSLocalizedString("Edit Widget", comment: ""))
             .onAppear {
                 if currentWidgetSet == widgetSet {
                     return
@@ -338,7 +338,7 @@ struct EditWidgetSetView: View {
                     if UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH) {
                         saveSet()
                     } else {
-                        UIApplication.shared.confirmAlert(title: "Save Changes", body: "Would you like to save the changes to your current widget set?", onOK: {
+                        UIApplication.shared.confirmAlert(title: NSLocalizedString("Save Changes", comment: ""), body: NSLocalizedString("Would you like to save the changes to your current widget set?", comment: ""), onOK: {
                             saveSet()
                         }, noCancel: false)
                     }

@@ -60,7 +60,7 @@ static NSString* formattedDate(NSString *dateFormat)
 {
     if (!formatter) {
         formatter = [[NSDateFormatter alloc] init];
-        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"zh_CN"];
+        formatter.locale = [NSLocale localeWithLocaleIdentifier: NSLocalizedString(@"en_US", comment: @"")];
     }
     NSDate *currentDate = [NSDate date];
     NSString *newDateFormat = [LunarDate getChineseCalendarWithDate:currentDate format:dateFormat];
@@ -274,7 +274,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
         case 5:
             // Date/Time
             widgetString = formattedDate(
-                [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? @"E MMM dd" : @"hh:mm")
+                [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? NSLocalizedString(@"E MMM dd", comment: @"") : @"hh:mm")
             );
             break;
         case 2:

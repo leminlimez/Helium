@@ -15,19 +15,19 @@ struct RootView: View {
             // Home Page
             HomePageView()
                 .tabItem {
-                    Label("Home", systemImage: "house")
+                    Label(NSLocalizedString("Home", comment: ""), systemImage: "house")
                 }
             
             // Widget Customization
             WidgetCustomizationView()
                 .tabItem {
-                    Label("Customize", systemImage: "paintbrush")
+                    Label(NSLocalizedString("Customize", comment: ""), systemImage: "paintbrush")
                 }
             
             // Settings
             SettingsView()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label(NSLocalizedString("Settings", comment: ""), systemImage: "gear")
                 }
         }
         .onAppear {
@@ -44,13 +44,13 @@ struct RootView: View {
                 try FileManager.default.contentsOfDirectory(atPath: "/var/mobile")
                 // warn to turn on developer mode if iOS 16+
                 if #available(iOS 16.0, *), !UserDefaults.standard.bool(forKey: "hasWarnedOfDevMode", forPath: USER_DEFAULTS_PATH) {
-                    UIApplication.shared.confirmAlert(title: "Info", body: "Make sure you enable developer mode before using! This will not work otherwise.", onOK: {
+                    UIApplication.shared.confirmAlert(title: NSLocalizedString("Info", comment: ""), body: NSLocalizedString("Make sure you enable developer mode before using! This will not work otherwise.", comment: ""), onOK: {
                         UserDefaults.standard.setValue(true, forKey: "hasWarnedOfDevMode", forPath: USER_DEFAULTS_PATH)
                     }, noCancel: true)
                 }
                 return
             } catch {
-                UIApplication.shared.alert(title: "Not Supported", body: "This app must be installed with TrollStore.")
+                UIApplication.shared.alert(title: NSLocalizedString("Not Supported", comment: ""), body: NSLocalizedString("This app must be installed with TrollStore.", comment: ""))
             }
         }
     }

@@ -142,7 +142,7 @@ class WidgetManager: ObservableObject {
                 )
                 // create the object
                 var widgetSet: WidgetSetStruct = .init(
-                    title: s["title"] as? String ?? "Untitled",
+                    title: s["title"] as? String ?? NSLocalizedString("Untitled", comment: ""),
                     anchor: s["anchor"] as? Int ?? 0,
                     offsetX: s["offsetX"] as? Double ?? 10.0,
                     offsetY: s["offsetY"] as? Double ?? 0.0,
@@ -358,19 +358,19 @@ class WidgetDetails {
     static func getDetails(_ module: WidgetModule) -> (String, String) {
         switch (module) {
         case .dateWidget:
-            return ("Date", "Mon Oct 16")
+            return (NSLocalizedString("Date", comment: ""), NSLocalizedString("Mon Oct 16", comment: ""))
         case .network:
-            return ("Network", "▲ 0 KB/s")
+            return (NSLocalizedString("Network", comment: ""), "▲ 0 KB/s")
         case .temperature:
-            return ("Device Temperature", "29.34ºC")
+            return (NSLocalizedString("Device Temperature", comment: ""), "29.34ºC")
         case .battery:
-            return ("Battery Details", "25 W")
+            return (NSLocalizedString("Battery Details", comment: ""), "25 W")
         case .timeWidget:
-            return ("Time", "14:57:05")
+            return (NSLocalizedString("Time", comment: ""), "14:57:05")
         case .textWidget:
-            return ("Text Label", "Example")
+            return (NSLocalizedString("Text Label", comment: ""), NSLocalizedString("Example", comment: ""))
         case .currentCapacity:
-            return ("Battery Capacity", "50%")
+            return (NSLocalizedString("Battery Capacity", comment: ""), "50%")
         }
     }
     

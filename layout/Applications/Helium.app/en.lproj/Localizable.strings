@@ -1,0 +1,133 @@
+/* Alert++.swift */
+"Error" = "Error";
+"OK" = "OK";
+"Cancel" = "Cancel";
+"Text" = "Text";
+
+/* ViewExtensions.swift */
+"Enter Value" = "Enter Value";
+"Enter a value." = "Enter a value.";
+
+/* HomePageView.swift */
+"You can quit the app now.\nThe HUD will persist on your screen." = "You can quit the app now.\nThe HUD will persist on your screen.";
+"Stopped." = "Stopped.";
+"Disable HUD" = "Disable HUD";
+"Enable HUD" = "Enable HUD";
+"Helium" = "Helium";
+"Closing HUD" = "Closing HUD";
+"Opening HUD" = "Opening HUD";
+
+/* SettingsView.swift */
+"Version " = "Version ";
+"UNKNOWN" = "UNKNOWN";
+"Release" = "Release";
+"Update Interval (seconds)" = "Update Interval (seconds)";
+"Seconds" = "Seconds";
+"Show when Rotating" = "Show when Rotating";
+"Hide Save Confirmation Popup" = "Hide Save Confirmation Popup";
+"Ignore Safe Zone Changes" = "Ignore Safe Zone Changes";
+"Helium Data" = "Helium Data";
+"Successfully deleted user data!" = "Successfully deleted user data!";
+"Please restart the app to continue." = "Please restart the app to continue.";
+"Failed to delete user data!" = "Failed to delete user data!";
+"Reset Data" = "Reset Data";
+"Preferences" = "Preferences";
+"Side Widget Size" = "Side Widget Size";
+"Side Size" = "Side Size";
+"Center Widget Size" = "Center Widget Size";
+"Center Size" = "Center Size";
+"Debug Preferences" = "Debug Preferences";
+"Main Developer" = "Main Developer";
+"TrollSpeed & Assistive Touch Logic" = "TrollSpeed & Assistive Touch Logic";
+"Credits" = "Credits";
+
+/* WidgetCustomizationView.swift */
+"Delete " = "Delete ";
+"Are you sure you want to delete the widget set " = "Are you sure you want to delete the widget set ";
+"Enter Name" = "Enter Name";
+"Choose a name for the widget set." = "Choose a name for the widget set.";
+"Confirm" = "Confirm";
+"Name" = "Name";
+"Choose Side" = "Choose Side";
+"Choose a side for the widget set to anchor to. This can be changed later." = "Choose a side for the widget set to anchor to. This can be changed later.";
+"Left" = "Left";
+"Center" = "Center";
+"Right" = "Right";
+"Untitled" = "Untitled";
+
+/* WidgetPreferencesView.swift */
+"Date Format" = "Date Format";
+"E MMM dd" = "E MMM dd";
+"Network Type" = "Network Type";
+"Download" = "Download";
+"Upload" = "Upload";
+"Arrow Type" = "Arrow Type";
+"Triangle" = "Triangle";
+"Arrow" = "Arrow";
+"Battery Option" = "Battery Option";
+"Watts" = "Watts";
+"Charging Current" = "Charging Current";
+"Amperage" = "Amperage";
+"Charge Cycles" = "Charge Cycles";
+"Current Capacity" = "Current Capacity";
+"Time Format" = "Time Format";
+"Label Text" = "Label Text";
+"Example" = "Example";
+"Show Percent (%) Symbol" = "Show Percent (%) Symbol";
+"No Configurable Aspects" = "No Configurable Aspects";
+"Save Changes" = "Save Changes";
+"Would you like to save changes to the widget?" = "Would you like to save changes to the widget?";
+"en_US" = "en_US";
+
+/* WidgetPreviewsView.swift */
+"ERROR" = "ERROR";
+"Unknown" = "Unknown";
+
+/* EditWidgetSetView.swift */
+"Widget Set Title" = "Widget Set Title";
+"Title" = "Title";
+"Widget Set Details" = "Widget Set Details";
+"Anchor Side" = "Anchor Side";
+"Offset X" = "Offset X";
+"Offset Y" = "Offset Y";
+"Auto Resize" = "Auto Resize";
+"Width" = "Width";
+"Constraints" = "Constraints";
+"Background Blur" = "Background Blur";
+"Blur Corner Radius" = "Blur Corner Radius";
+"Blur Alpha" = "Blur Alpha";
+"Blur" = "Blur";
+"Custom Text Color" = "Custom Text Color";
+"Text Color" = "Text Color";
+"Set Text Color" = "Set Text Color";
+"Bold Text" = "Bold Text";
+"Text Alignment" = "Text Alignment";
+"Font Size" = "Font Size";
+"Text Properties" = "Text Properties";
+"Add Widget" = "Add Widget";
+"Delete Widget" = "Delete Widget";
+"Are you sure you want to delete this widget?" = "Are you sure you want to delete this widget?";
+"Widgets" = "Widgets";
+"Edit Widget" = "Edit Widget";
+"Would you like to save the changes to your current widget set?" = "Would you like to save the changes to your current widget set?";
+
+/* UIApplicationViews.swift */
+"Home" = "Home";
+"Customize" = "Customize";
+"Settings" = "Settings";
+"Info" = "Info";
+"Make sure you enable developer mode before using! This will not work otherwise." = "Make sure you enable developer mode before using! This will not work otherwise.";
+"Not Supported" = "Not Supported";
+"This app must be installed with TrollStore." = "This app must be installed with TrollStore.";
+
+/* WidgetManager.swift */
+"Untitled" = "Untitled";
+"Date" = "Date";
+"Mon Oct 16" = "Mon Oct 16";
+"Network" = "Network";
+"Device Temperature" = "Device Temperature";
+"Battery Details" = "Battery Details";
+"Time" = "Time";
+"Text Label" = "Text Label";
+"Example" = "Example";
+"Battery Capacity" = "Battery Capacity";

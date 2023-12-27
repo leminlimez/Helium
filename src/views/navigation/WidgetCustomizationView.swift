@@ -24,7 +24,7 @@ struct WidgetCustomizationView: View {
                     }
                     .onDelete { indexSet in
                         indexSet.forEach { i in
-                            UIApplication.shared.confirmAlert(title: "Delete \(widgetManager.widgetSets[i].title)", body: "Are you sure you want to delete the widget set \"\(widgetManager.widgetSets[i].title)\"?", onOK: {
+                            UIApplication.shared.confirmAlert(title: NSLocalizedString("Delete ", comment:"")+"\(widgetManager.widgetSets[i].title)", body: NSLocalizedString("Are you sure you want to delete the widget set ", comment:"") + "\"\(widgetManager.widgetSets[i].title)\"?", onOK: {
                                 widgetManager.removeWidgetSet(widgetSet: widgetManager.widgetSets[i])
                             }, noCancel: false)
                         }
@@ -34,25 +34,25 @@ struct WidgetCustomizationView: View {
                     HStack {
                         // create a new widget set
                         Button(action: {
-                            UIApplication.shared.inputAlert(title: "Enter Name", body: "Choose a name for the widget set.", confirmTitle: "Confirm", placeholder: "Name", onOK: { title in
+                            UIApplication.shared.inputAlert(title: NSLocalizedString("Enter Name", comment:""), body: NSLocalizedString("Choose a name for the widget set.", comment:""), confirmTitle: NSLocalizedString("Confirm", comment:""), placeholder: NSLocalizedString("Name", comment:""), onOK: { title in
                                 // make selection for anchor
-                                UIApplication.shared.optionsAlert(title: "Choose Side", body: "Choose a side for the widget set to anchor to. This can be changed later.", options: ["Left", "Center", "Right"]) { anchorSide in
+                                UIApplication.shared.optionsAlert(title: NSLocalizedString("Choose Side", comment:""), body: NSLocalizedString("Choose a side for the widget set to anchor to. This can be changed later.", comment:""), options: [NSLocalizedString("Left", comment:""), NSLocalizedString("Center", comment:""), NSLocalizedString("Right", comment:"")]) { anchorSide in
                                     var anchor: Int
                                     switch (anchorSide) {
-                                    case "Left":
+                                    case NSLocalizedString("Left", comment:""):
                                         anchor = 0
                                         break
-                                    case "Center":
+                                    case NSLocalizedString("Center", comment:""):
                                         anchor = 1
                                         break
-                                    case "Right":
+                                    case NSLocalizedString("Right", comment:""):
                                         anchor = 2
                                         break
                                     default:
                                         anchor = 0
                                         break
                                     }
-                                    widgetManager.createWidgetSet(title: title == "" ? "Untitled" : title, anchor: anchor)
+                                    widgetManager.createWidgetSet(title: title == "" ? NSLocalizedString("Untitled", comment:"") : title, anchor: anchor)
                                 }
                             }, noCancel: false)
                         }) {
@@ -61,7 +61,7 @@ struct WidgetCustomizationView: View {
                     }
                 }
             }
-            .navigationTitle("Customize")
+            .navigationTitle(NSLocalizedString("Customize", comment:""))
             .navigationViewStyle(.stack)
         }
     }

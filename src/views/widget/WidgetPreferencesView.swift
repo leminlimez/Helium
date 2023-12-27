@@ -46,18 +46,18 @@ struct WidgetPreferencesView: View {
             case .dateWidget:
                 // MARK: Date Format Textbox
                 HStack {
-                    Text("Date Format")
+                    Text(NSLocalizedString("Date Format", comment:""))
                         .foregroundColor(.primary)
                         .bold()
                     Spacer()
-                    TextField("E MMM dd", text: $text)
+                    TextField(NSLocalizedString("E MMM dd", comment:""), text: $text)
                         .frame(maxWidth: 120)
                         .multilineTextAlignment(.trailing)
                         .onAppear {
                             if let format = widgetID.config["dateFormat"] as? String {
                                 text = format
                             } else {
-                                text = "E MMM dd"
+                                text = NSLocalizedString("E MMM dd", comment:"")
                             }
                         }
                 }
@@ -65,11 +65,11 @@ struct WidgetPreferencesView: View {
                 // MARK: Network Choice
                 VStack {
                     HStack {
-                        Text("Network Type").foregroundColor(.primary).bold()
+                        Text(NSLocalizedString("Network Type", comment:"")).foregroundColor(.primary).bold()
                         Spacer()
                         Picker(selection: $intSelection) {
-                            Text("Down").tag(0)
-                            Text("Up").tag(1)
+                            Text(NSLocalizedString("Download", comment:"")).tag(0)
+                            Text(NSLocalizedString("Upload", comment:"")).tag(1)
                         } label: {}
                         .pickerStyle(.menu)
                         .onAppear {
@@ -81,11 +81,11 @@ struct WidgetPreferencesView: View {
                         }
                     }
                     HStack {
-                        Text("Arrow Type").foregroundColor(.primary).bold()
+                        Text(NSLocalizedString("Arrow Type", comment:"")).foregroundColor(.primary).bold()
                         Spacer()
                         Picker(selection: $intSelection_arrow) {
-                            Text("Triangle").tag(0)
-                            Text("Arrow").tag(1)
+                            Text(NSLocalizedString("Triangle", comment:"")).tag(0)
+                            Text(NSLocalizedString("Arrow", comment:"")).tag(1)
                         } label: {}
                         .pickerStyle(.menu)
                         .onAppear {
@@ -100,14 +100,14 @@ struct WidgetPreferencesView: View {
             case .battery:
                 // MARK: Battery Value Type
                 HStack {
-                    Text("Battery Option").foregroundColor(.primary).bold()
+                    Text(NSLocalizedString("Battery Option", comment:"")).foregroundColor(.primary).bold()
                     Spacer()
                     Picker(selection: $intSelection) {
-                        Text("Watts").tag(0)
-                        Text("Charging Current").tag(1)
-                        Text("Amperage").tag(2)
-                        Text("Charge Cycles").tag(3)
-                        Text("Current Capacity").tag(4)
+                        Text(NSLocalizedString("Watts", comment:"")).tag(0)
+                        Text(NSLocalizedString("Charging Current", comment:"")).tag(1)
+                        Text(NSLocalizedString("Amperage", comment:"")).tag(2)
+                        Text(NSLocalizedString("Charge Cycles", comment:"")).tag(3)
+                        Text(NSLocalizedString("Current Capacity", comment:"")).tag(4)
                     } label: {}
                     .pickerStyle(.menu)
                     .onAppear {
@@ -121,7 +121,7 @@ struct WidgetPreferencesView: View {
             case .timeWidget:
                 // MARK: Time Format Selector
                 HStack {
-                    Picker(selection: $intSelection, label: Text("Time Format").foregroundColor(.primary).bold()) {
+                    Picker(selection: $intSelection, label: Text(NSLocalizedString("Time Format", comment:"")).foregroundColor(.primary).bold()) {
                         ForEach(0..<timeFormats.count, id: \.self) { index in
                             Text("\(getFormattedDate(timeFormats[index]))\n(\(timeFormats[index]))").tag(index)
                         }
@@ -136,18 +136,18 @@ struct WidgetPreferencesView: View {
             case .textWidget:
                 // MARK: Custom Text Label Textbox
                 HStack {
-                    Text("Label Text")
+                    Text(NSLocalizedString("Label Text", comment:""))
                         .foregroundColor(.primary)
                         .bold()
                     Spacer()
-                    TextField("Example", text: $text)
+                    TextField(NSLocalizedString("Example", comment:""), text: $text)
                         .frame(maxWidth: 120)
                         .multilineTextAlignment(.trailing)
                         .onAppear {
                             if let format = widgetID.config["text"] as? String {
                                 text = format
                             } else {
-                                text = "Example"
+                                text = NSLocalizedString("Example", comment:"")
                             }
                         }
                 }
@@ -155,7 +155,7 @@ struct WidgetPreferencesView: View {
                 // MARK: Current Capacity Choice
                 HStack {
                     Toggle(isOn: $boolSelection) {
-                        Text("Show Percent (%) Symbol")
+                        Text(NSLocalizedString("Show Percent (%) Symbol", comment:""))
                             .foregroundColor(.primary)
                             .bold()
                     }
@@ -164,7 +164,7 @@ struct WidgetPreferencesView: View {
                     }
                 }
             default:
-                Text("No Configurable Aspects")
+                Text(NSLocalizedString("No Configurable Aspects", comment:""))
             }
         }
         .padding(.horizontal, 15)
@@ -183,7 +183,7 @@ struct WidgetPreferencesView: View {
         }
         .onDisappear {
             if modified {
-                UIApplication.shared.confirmAlert(title: "Save Changes", body: "Would you like to save changes to the widget?", onOK: {
+                UIApplication.shared.confirmAlert(title: NSLocalizedString("Save Changes", comment:""), body: NSLocalizedString("Would you like to save changes to the widget?", comment:""), onOK: {
                     saveChanges()
                 }, noCancel: false)
             }
@@ -204,7 +204,7 @@ struct WidgetPreferencesView: View {
     
     func getFormattedDate(_ format: String) -> String {
         dateFormatter.dateFormat = format
-        dateFormatter.locale = Locale(identifier: "zh_CN")
+        dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
         return dateFormatter.string(from: currentDate)
     }
     

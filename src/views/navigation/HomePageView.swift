@@ -19,13 +19,13 @@ struct HomePageView: View {
                 Spacer()
                 
                 // HUD Info Text
-                Text(isNowEnabled ? "You can quit the app now.\nThe HUD will persist on your screen." : "Stopped.")
+                Text(isNowEnabled ? NSLocalizedString("You can quit the app now.\nThe HUD will persist on your screen.", comment:"") : NSLocalizedString("Stopped.", comment:""))
                     .foregroundColor(isNowEnabled ? .blue : .red)
                     .padding(5)
                     .multilineTextAlignment(.center)
                 
                 // Activate HUD Button
-                Button(isNowEnabled ? "Disable HUD" : "Enable HUD") {
+                Button(isNowEnabled ? NSLocalizedString("Disable HUD", comment:"") : NSLocalizedString("Enable HUD", comment:"")) {
                     toggleHUD(!isNowEnabled)
                 }
                 .buttonStyle(TintedButton(color: .blue))
@@ -48,7 +48,7 @@ struct HomePageView: View {
                     toggleHUD(false)
                 }
             })
-            .navigationTitle("Helium")
+            .navigationTitle(NSLocalizedString("Helium", comment:""))
             .navigationViewStyle(.stack)
         }
     }
@@ -56,7 +56,7 @@ struct HomePageView: View {
     func toggleHUD(_ isActive: Bool) {
         Haptic.shared.play(.medium)
         if isNowEnabled == isActive { return; }
-        print(!isActive ? "Closing HUD" : "Opening HUD")
+        print(!isActive ? NSLocalizedString("Closing HUD", comment:"") : NSLocalizedString("Opening HUD", comment:""))
          SetHUDEnabledBridger(isActive);
         
         buttonDisabled = true

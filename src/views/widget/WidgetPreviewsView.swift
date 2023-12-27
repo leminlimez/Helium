@@ -46,15 +46,15 @@ struct WidgetPreviewsView: View {
     func updatePreview() {
         switch (widget.module) {
         case .dateWidget, .timeWidget:
-            let dateFormat: String = widget.config["dateFormat"] as? String ?? (widget.module == .dateWidget ? "E MMM dd" : "hh:mm")
+            let dateFormat: String = widget.config["dateFormat"] as? String ?? (widget.module == .dateWidget ? NSLocalizedString("E MMM dd", comment:"") : "hh:mm")
             let dateFormatter = DateFormatter()
             let newDateFormat = LunarDate.getChineseCalendar(with: Date(), format: dateFormat)
             dateFormatter.dateFormat = newDateFormat
-            dateFormatter.locale = Locale(identifier: "zh_CN")
+            dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
             text = dateFormatter.string(from: Date())
             // SAFEGUARD
             if (text == "") {
-                text = "ERROR"
+                text = NSLocalizedString("ERROR", comment:"")
             }
             break;
         case .network:
@@ -86,7 +86,7 @@ struct WidgetPreviewsView: View {
             }
             break;
         case .textWidget:
-            text = widget.config["text"] as? String ?? "Unknown"
+            text = widget.config["text"] as? String ?? NSLocalizedString("Unknown", comment:"")
             break;
         case .currentCapacity:
             text = "50\(widget.config["showPercentage"] as? Bool ?? true ? "%" : "")"

@@ -38,17 +38,17 @@ struct SettingsView: View {
                 Section {
                     
                 } header: {
-                    Label("Version \(Bundle.main.releaseVersionNumber ?? "UNKNOWN") (\(buildNumber != 0 ? "\(buildNumber)" : "Release"))", systemImage: "info")
+                    Label(NSLocalizedString("Version ", comment:"") + "\(Bundle.main.releaseVersionNumber ?? NSLocalizedString("UNKNOWN", comment:"")) (\(buildNumber != 0 ? "\(buildNumber)" : NSLocalizedString("Release", comment:"")))", systemImage: "info")
                 }
                 
                 // Preferences List
                 Section {
                     HStack {
-                        Text("Update Interval (seconds)")
+                        Text(NSLocalizedString("Update Interval (seconds)", comment:""))
                             .bold()
                         Spacer()
                         if #available(iOS 15, *) {
-                            TextField("Seconds", value: $updateInterval, formatter: formatter)
+                            TextField(NSLocalizedString("Seconds", comment:""), value: $updateInterval, formatter: formatter)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                             //                            .keyboardType(.decimalPad)
                                 .submitLabel(.done)
@@ -65,7 +65,7 @@ struct SettingsView: View {
                                     }
                                 }
                         } else {
-                            TextField("Seconds", value: $updateInterval, formatter: formatter)
+                            TextField(NSLocalizedString("Seconds", comment:""), value: $updateInterval, formatter: formatter)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .onChange(of: updateInterval) { nv in
                                     if updateInterval <= 0 {
@@ -84,7 +84,7 @@ struct SettingsView: View {
                     
                     HStack {
                         Toggle(isOn: $usesRotation) {
-                            Text("Show when Rotating")
+                            Text(NSLocalizedString("Show when Rotating", comment:""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -98,7 +98,7 @@ struct SettingsView: View {
                     
                     HStack {
                         Toggle(isOn: $hideSaveConfirmation) {
-                            Text("Hide Save Confirmation Popup")
+                            Text(NSLocalizedString("Hide Save Confirmation Popup", comment:""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -112,7 +112,7 @@ struct SettingsView: View {
                     
                     HStack {
                         Toggle(isOn: $ignoreSafeZone) {
-                            Text("Ignore Safe Zone Changes")
+                            Text(NSLocalizedString("Ignore Safe Zone Changes", comment:""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -125,33 +125,33 @@ struct SettingsView: View {
                     }
                     
                     HStack {
-                        Text("Helium Data")
+                        Text(NSLocalizedString("Helium Data", comment:""))
                             .bold()
                         Spacer()
                         Button(action: {
                             do {
                                 try UserDefaults.standard.deleteUserDefaults(forPath: USER_DEFAULTS_PATH)
-                                UIApplication.shared.alert(title: "Successfully deleted user data!", body: "Please restart the app to continue.")
+                                UIApplication.shared.alert(title: NSLocalizedString("Successfully deleted user data!", comment:""), body: NSLocalizedString("Please restart the app to continue.", comment:""))
                             } catch {
-                                UIApplication.shared.alert(title: "Failed to delete user data!", body: error.localizedDescription)
+                                UIApplication.shared.alert(title: NSLocalizedString("Failed to delete user data!", comment:""), body: error.localizedDescription)
                             }
                         }) {
-                            Text("Reset Data")
+                            Text(NSLocalizedString("Reset Data", comment:""))
                                 .foregroundColor(.red)
                         }
                     }
                 } header: {
-                    Label("Preferences", systemImage: "gear")
+                    Label(NSLocalizedString("Preferences", comment:""), systemImage: "gear")
                 }
                 
                 // Debug Settings
                 if #available(iOS 15, *), DEBUG_MODE_ENABLED {
                     Section {
                         HStack {
-                            Text("Side Widget Size")
+                            Text(NSLocalizedString("Side Widget Size", comment:""))
                                 .bold()
                             Spacer()
-                            TextField("Side Size", value: $sideWidgetSize, format: .number)
+                            TextField(NSLocalizedString("Side Size", comment:""), value: $sideWidgetSize, format: .number)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .keyboardType(.decimalPad)
                                 .submitLabel(.done)
@@ -164,10 +164,10 @@ struct SettingsView: View {
                         }
                         
                         HStack {
-                            Text("Center Widget Size")
+                            Text(NSLocalizedString("Center Widget Size", comment:""))
                                 .bold()
                             Spacer()
-                            TextField("Center Size", value: $centerWidgetSize, format: .number)
+                            TextField(NSLocalizedString("Center Size", comment:""), value: $centerWidgetSize, format: .number)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .keyboardType(.decimalPad)
                                 .submitLabel(.done)
@@ -179,7 +179,7 @@ struct SettingsView: View {
                                 }
                         }
                     } header: {
-                        Label("Debug Preferences", systemImage: "ladybug")
+                        Label(NSLocalizedString("Debug Preferences", comment:""), systemImage: "ladybug")
                     }
                 }
                 
@@ -188,10 +188,10 @@ struct SettingsView: View {
                     LinkCell(imageName: "leminlimez", url: "https://github.com/leminlimez", title: "LeminLimez", contribution: NSLocalizedString("Main Developer", comment: "leminlimez's contribution"), circle: true)
                     LinkCell(imageName: "lessica", url: "https://github.com/Lessica/TrollSpeed", title: "Lessica", contribution: NSLocalizedString("TrollSpeed & Assistive Touch Logic", comment: "lessica's contribution"), circle: true)
                 } header: {
-                    Label("Credits", systemImage: "wrench.and.screwdriver")
+                    Label(NSLocalizedString("Credits", comment:""), systemImage: "wrench.and.screwdriver")
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle(NSLocalizedString("Settings", comment:""))
             .navigationViewStyle(.stack)
         }
     }

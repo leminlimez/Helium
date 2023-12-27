@@ -1,0 +1,133 @@
+/* Alert++.swift */
+"Error" = "出错了";
+"OK" = "确定";
+"Cancel" = "取消";
+"Text" = "文字段";
+
+/* ViewExtensions.swift */
+"Enter Value" = "请输入值";
+"Enter a value." = "请输入一个值";
+
+/* HomePageView.swift */
+"You can quit the app now.\nThe HUD will persist on your screen." = "您现在可以退出应用。\nHUD 将持续显示在屏幕上。";
+"Stopped." = "已停止";
+"Disable HUD" = "关闭 HUD";
+"Enable HUD" = "启用 HUD";
+"Helium" = "氦气";
+"Closing HUD" = "正在关闭 HUD";
+"Opening HUD" = "正在打开 HUD";
+
+/* SettingsView.swift */
+"Version " = "版本 ";
+"UNKNOWN" = "未知";
+"Release" = "发布";
+"Update Interval (seconds)" = "更新间隔 (秒)";
+"Seconds" = "秒";
+"Show when Rotating" = "旋转屏幕时显示";
+"Hide Save Confirmation Popup" = "不显示保存确认弹窗";
+"Ignore Safe Zone Changes" = "忽略安全区域变化";
+"Helium Data" = "氦气数据";
+"Successfully deleted user data!" = "已成功删除用户数据！";
+"Please restart the app to continue." = "请重启应用以继续";
+"Failed to delete user data!" = "删除用户数据失败！";
+"Reset Data" = "重置数据";
+"Preferences" = "偏好设置";
+"Side Widget Size" = "侧边小部件大小";
+"Center Widget Size" = "中心小部件大小";
+"Center Size" = "中心尺寸";
+"Debug Preferences" = "调试设置";
+"Main Developer" = "主开发者";
+"TrollSpeed & Assistive Touch Logic" = "TrollSpeed & Assistive Touch Logic";
+"Credits" = "致谢";
+
+/* WidgetCustomizationView.swift */
+"Delete " = "删除 ";
+"Are you sure you want to delete the widget set " = "确认要删除小部件集 ";
+"Enter Name" = "输入名称";
+"Choose a name for the widget set." = "为小部件集选择一个名称";
+"Confirm" = "确认";
+"Name" = "名称";
+"Choose Side" = "选择显示位置";
+"Choose a side for the widget set to anchor to. This can be changed later." = "选择小部件集的显示位置。稍后可以更改";
+"Left" = "左";
+"Center" = "中";
+"Right" = "右";
+"Untitled" = "未命名";
+"Customize" = "自定义";
+
+/* WidgetPreferencesView.swift */
+"Date Format" = "日期格式";
+"E MMM dd" = "MM月dd E";
+"Network Type" = "网络类型";
+"Download" = "下载";
+"Upload" = "上传";
+"Arrow Type" = "箭头类型";
+"Triangle" = "三角形";
+"Arrow" = "箭头";
+"Battery Option" = "电池选项";
+"Watts" = "瓦特";
+"Charging Current" = "充电电流";
+"Amperage" = "使用电流";
+"Charge Cycles" = "充电周期";
+"Current Capacity" = "当前容量";
+"Time Format" = "时间格式";
+"Label Text" = "标签文本";
+"Example" = "示例";
+"Show Percent (%) Symbol" = "显示电量%";
+"No Configurable Aspects" = "无可配置项";
+"Save Changes" = "保存更改";
+"Would you like to save changes to the widget?" = "是否保存对小部件的更改？";
+"en_US" = "zh_CN";
+
+/* WidgetPreviewsView.swift */
+"ERROR" = "错误";
+"Unknown" = "未知";
+
+/* EditWidgetSetView.swift */
+"Widget Set Title" = "小部件集标题";
+"Title" = "标题";
+"Widget Set Details" = "小部件集详情";
+"Anchor Side" = "显示位置";
+"Offset X" = "X偏移";
+"Offset Y" = "Y偏移";
+"Auto Resize" = "自动调整大小";
+"Width" = "宽度";
+"Constraints" = "约束";
+"Background Blur" = "背景模糊";
+"Blur Corner Radius" = "模糊角半径";
+"Blur Alpha" = "模糊透明度";
+"Blur" = "模糊";
+"Custom Text Color" = "自定义文本颜色";
+"Text Color" = "文本颜色";
+"Set Text Color" = "设置文本颜色";
+"Bold Text" = "粗体文本";
+"Text Alignment" = "文本对齐";
+"Font Size" = "字体大小";
+"Text Properties" = "文本属性";
+"Add Widget" = "添加小部件";
+"Delete Widget" = "删除小部件";
+"Are you sure you want to delete this widget?" = "确认删除此小部件？";
+"Widgets" = "小部件";
+"Edit Widget" = "编辑小部件";
+"Save Changes" = "保存更改";
+"Would you like to save the changes to your current widget set?" = "是否保存当前小部件集的更改？";
+
+/* UIApplicationViews.swift */
+"Home" = "首页";
+"Settings" = "设置";
+"Info" = "信息";
+"Make sure you enable developer mode before using! This will not work otherwise." = "使用前，请确保已启用开发者模式！否则无法正常工作";
+"Not Supported" = "不支持";
+"This app must be installed with TrollStore." = "此应用必须通过 TrollStore 安装";
+
+/* WidgetManager.swift */
+"Untitled" = "未命名";
+"Date" = "日期";
+"Mon Oct 16" = "10月16 周一";
+"Network" = "网速";
+"Device Temperature" = "设备温度";
+"Battery Details" = "电池详情";
+"Time" = "时间";
+"Text Label" = "文本标签";
+"Example" = "示例";
+"Battery Capacity" = "电池容量";
