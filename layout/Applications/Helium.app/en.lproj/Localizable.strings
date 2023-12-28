@@ -77,7 +77,6 @@
 "No Configurable Aspects" = "No Configurable Aspects";
 "Save Changes" = "Save Changes";
 "Would you like to save changes to the widget?" = "Would you like to save changes to the widget?";
-"en_US" = "en_US";
 
 /* WidgetPreviewsView.swift */
 "ERROR" = "ERROR";
@@ -100,7 +99,9 @@
 "Custom Text Color" = "Custom Text Color";
 "Text Color" = "Text Color";
 "Set Text Color" = "Set Text Color";
+"Text Font" = "Text Font";
 "Bold Text" = "Bold Text";
+"Italic Text" = "Italic Text";
 "Text Alignment" = "Text Alignment";
 "Font Size" = "Font Size";
 "Text Properties" = "Text Properties";

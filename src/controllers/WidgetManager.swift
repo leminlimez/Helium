@@ -78,7 +78,9 @@ struct WidgetSetStruct: Identifiable, Equatable {
     
     var colorDetails: ColorDetailsStruct = .init()
     
+    var fontName: String
     var textBold: Bool
+    var textItalic: Bool
     var textAlignment: Int
     var fontSize: Double
 }
@@ -153,7 +155,9 @@ class WidgetManager: ObservableObject {
                     
                     blurDetails: blurDetailsStruct,
                     
+                    fontName: s["fontName"] as? String ?? "Default Font",
                     textBold: s["textBold"] as? Bool ?? false,
+                    textItalic: s["textItalic"] as? Bool ?? false,
                     textAlignment: s["textAlignment"] as? Int ?? 1,
                     fontSize: s["fontSize"] as? Double ?? 10.0
                 )
@@ -203,7 +207,9 @@ class WidgetManager: ObservableObject {
             ]
             wSet["colorDetails"] = colorDetails
             
+            wSet["fontName"] = s.fontName
             wSet["textBold"] = s.textBold
+            wSet["textItalic"] = s.textItalic
             wSet["textAlignment"] = s.textAlignment
             wSet["fontSize"] = s.fontSize
             
@@ -321,7 +327,9 @@ class WidgetManager: ObservableObject {
                 blurAlpha: 1.0
             ),
             
+            fontName: "Default Font",
             textBold: false,
+            textItalic: false,
             textAlignment: 1,
             fontSize: 10.0
         ), save: save)
@@ -343,7 +351,9 @@ class WidgetManager: ObservableObject {
                 
                 widgetSets[i].colorDetails = ns.colorDetails
                 
+                widgetSets[i].fontName = ns.fontName
                 widgetSets[i].textBold = ns.textBold
+                widgetSets[i].textItalic = ns.textItalic
                 widgetSets[i].textAlignment = ns.textAlignment
                 widgetSets[i].fontSize = ns.fontSize
                 break

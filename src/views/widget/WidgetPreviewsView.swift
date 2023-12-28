@@ -50,7 +50,7 @@ struct WidgetPreviewsView: View {
             let dateFormatter = DateFormatter()
             let newDateFormat = LunarDate.getChineseCalendar(with: Date(), format: dateFormat)
             dateFormatter.dateFormat = newDateFormat
-            dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
+            // dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
             text = dateFormatter.string(from: Date())
             // SAFEGUARD
             if (text == "") {

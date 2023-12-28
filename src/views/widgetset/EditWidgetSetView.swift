@@ -35,10 +35,14 @@ struct EditWidgetSetView: View {
     @State var usesSystemColor: Bool = false
     
     @State var textBold: Bool = false
+    @State var textItalic: Bool = false
+    @State var fontName: String = "Default Font"
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
     
     @State var changesMade: Bool = false
+
+    private let fonts: [String] = FontUtils.allFontNames()
     
     var body: some View {
         VStack {
@@ -201,6 +205,20 @@ struct EditWidgetSetView: View {
                 }
                 
                 Section {
+                    // MARK: Text Font
+                    HStack {
+                        Text(NSLocalizedString("Text Font", comment: "")).foregroundColor(.primary).font(Font.custom(fontName, size: UIFont.labelFontSize)).bold()
+                        Spacer()
+                        Picker(selection: $fontName) {
+                            ForEach(fonts, id: \.self) { _fontName in
+                                Text(_fontName).font(Font.custom(_fontName, size: UIFont.systemFontSize))
+                            }
+                        } label: {}
+                        .pickerStyle(.menu)
+                        .onChange(of: fontName) { _ in
+                            changesMade = true
+                        }
+                    }
                     // MARK: Bold Text
                     HStack {
                         Toggle(isOn: $textBold) {
@@ -209,6 +227,17 @@ struct EditWidgetSetView: View {
                                 .minimumScaleFactor(0.5)
                         }
                         .onChange(of: textBold) { _ in
+                            changesMade = true
+                        }
+                    }
+                    // MARK: Italic Text
+                    HStack {
+                        Toggle(isOn: $textItalic) {
+                            Text(NSLocalizedString("Italic Text", comment: ""))
+                                .bold()
+                                .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: textItalic) { _ in
                             changesMade = true
                         }
                     }
@@ -331,7 +360,9 @@ struct EditWidgetSetView: View {
                 usesCustomColor = widgetSet.colorDetails.usesCustomColor
                 customColor = Color(widgetSet.colorDetails.color)
                 
+                fontName = widgetSet.fontName
                 textBold = widgetSet.textBold
+                textItalic = widgetSet.textItalic
                 textAlignment = widgetSet.textAlignment
                 fontSize = widgetSet.fontSize
                 
@@ -388,7 +419,9 @@ struct EditWidgetSetView: View {
                 color: UIColor(customColor)
             ),
             
+            fontName: fontName,
             textBold: textBold,
+            textItalic: textItalic,
             textAlignment: textAlignment,
             fontSize: fontSize
         ), save: save)

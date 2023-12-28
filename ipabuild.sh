@@ -19,8 +19,9 @@ if [ -d ".theos/obj/debug/Helium.app" ]; then
 	cp -r "$APP_BUILD_FILES/icon.png" "$BUILD_LOCATION/icon.png"
 	cp -r "$APP_BUILD_FILES/Info.plist" "$BUILD_LOCATION/Info.plist"
 	cp -r "$APP_BUILD_FILES/Assets.car" "$BUILD_LOCATION/Assets.car"
-	cp -r "$APP_BUILD_FILES/en.lproj" "$BUILD_LOCATION/en.lproj"
-	cp -r "$APP_BUILD_FILES/zh-Hans.lproj" "$BUILD_LOCATION/zh-Hans.lproj"
+	cp -r "$APP_BUILD_FILES/en.lproj" "$BUILD_LOCATION/"
+	cp -r "$APP_BUILD_FILES/zh-Hans.lproj" "$BUILD_LOCATION/"
+	cp -r "$APP_BUILD_FILES/fonts" "$BUILD_LOCATION/"
 	
 	# Create payload
 	echo "Creating payload"

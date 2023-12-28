@@ -20,6 +20,7 @@
 #import <objc/runtime.h>
 #include "../widgets/WidgetManager.h"
 #include "../extensions/UsefulFunctions.h"
+#include "../extensions/FontUtils.h"
 
 
 extern "C" char **environ;
@@ -750,6 +751,7 @@ Example format for properties:
             @"darkColor" : @([UIColor whiteColor])
         },
         @"textBold" : @(NO),
+        @"textItalic" : @(NO),
         @"textAlignment" : @(1),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
         @"fontSize" : @(10)
     },
@@ -781,6 +783,7 @@ Example format for properties:
             @"color" : @([UIColor whiteColor])
         },
         @"textBold" : @(YES),
+        @"textItalic" : @(YES),
         @"textAlignment" : @(0),        // 0 = left, 1 = center, 2 = right, DEFAULT = 1
         @"fontSize" : @(10)
     },
@@ -829,18 +832,25 @@ Example format for properties:
         if (!labelView || !properties)
             break;
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
-        double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
-        BOOL textBold = [properties objectForKey: @"textBold"] ? [[properties objectForKey: @"textBold"] boolValue] : false;
-        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize textBold: textBold];
+        // double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
+        // BOOL textBold = [properties objectForKey: @"textBold"] ? [[properties objectForKey: @"textBold"] boolValue] : false;
+        // NSString *fontName = getStringFromDictKey(properties, @"fontName", "Default Font");
+        // [self updateLabel: labelView identifiers: identifiers fontName: fontName fontSize: fontSize textBold: textBold];
+        if ([identifiers count] > 0) {
+            [[_blurViews objectAtIndex:i] setHidden: NO];
+            [self updateLabel: labelView identifiers: identifiers];
+        } else {
+            [[_blurViews objectAtIndex:i] setHidden: YES];
+        }
     }
 }
 
-- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize textBold:(bool) textBold
+- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers
 {
 #if DEBUG
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
-    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold);
+    NSAttributedString *attributedText = formattedAttributedString(identifiers);
     if (attributedText)
         [label setAttributedText: attributedText];
 }
@@ -851,6 +861,11 @@ Example format for properties:
 {
     self = [super init];
     if (self) {
+        // load fonts from app
+        [FontUtils loadFontsFromFolder:[NSString stringWithFormat:@"%@%@", [[NSBundle mainBundle] resourcePath],  @"/fonts"]];
+        // load fonts from documents
+        [FontUtils loadFontsFromFolder:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject]];
+        
         _constraints = [NSMutableArray array];
         _blurViews = [NSMutableArray array];
         _labelViews = [NSMutableArray array];
@@ -998,11 +1013,13 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         } else {
             labelView.textColor = [UIColor whiteColor];
         }
-        if (getBoolFromDictKey(properties, @"textBold")) {
-            labelView.font = [UIFont boldSystemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
-        } else {
-            labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
-        }
+        // if (getBoolFromDictKey(properties, @"textBold")) {
+        //     labelView.font = [UIFont boldSystemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        // } else {
+        //     labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
+        // }
+        NSString *fontName = getStringFromDictKey(properties, @"fontName", @"Default Font");
+        labelView.font = [FontUtils loadFontWithName:fontName size: getDoubleFromDictKey(properties, @"fontSize", 10) bold: getBoolFromDictKey(properties, @"textBold") italic: getBoolFromDictKey(properties, @"textItalic")];
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
         [_contentView addSubview: labelView];
         [_labelViews addObject: labelView];

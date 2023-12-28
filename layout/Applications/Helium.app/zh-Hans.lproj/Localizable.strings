@@ -77,7 +77,6 @@
 "No Configurable Aspects" = "无可配置项";
 "Save Changes" = "保存更改";
 "Would you like to save changes to the widget?" = "是否保存对小部件的更改？";
-"en_US" = "zh_CN";
 
 /* WidgetPreviewsView.swift */
 "ERROR" = "错误";
@@ -100,7 +99,9 @@
 "Custom Text Color" = "自定义文本颜色";
 "Text Color" = "文本颜色";
 "Set Text Color" = "设置文本颜色";
+"Text Font" = "文本字体";
 "Bold Text" = "粗体文本";
+"Italic Text" = "斜体文本";
 "Text Alignment" = "文本对齐";
 "Font Size" = "字体大小";
 "Text Properties" = "文本属性";

@@ -15,6 +15,7 @@
 #import "WidgetManager.h"
 #import <IOKit/IOKitLib.h>
 #import "../extensions/LunarDate.h"
+#import "../extensions/FontUtils.h"
 
 // Thanks to: https://github.com/lwlsw/NetworkSpeed13
 
@@ -60,7 +61,7 @@ static NSString* formattedDate(NSString *dateFormat)
 {
     if (!formatter) {
         formatter = [[NSDateFormatter alloc] init];
-        formatter.locale = [NSLocale localeWithLocaleIdentifier: NSLocalizedString(@"en_US", comment: @"")];
+        // formatter.locale = [NSLocale localeWithLocaleIdentifier: NSLocalizedString(@"en_US", comment: @"")];
     }
     NSDate *currentDate = [NSDate date];
     NSString *newDateFormat = [LunarDate getChineseCalendarWithDate:currentDate format:dateFormat];
@@ -121,17 +122,17 @@ static NSString* formattedSpeed(uint64_t bytes)
     }
 }
 
-static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, BOOL isArrow, double fontSize, BOOL textBold)
+static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, BOOL isArrow)
 {
     @autoreleasepool {
         if (!attributedUploadPrefix)
-            attributedUploadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
+            attributedUploadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_PREFIX] stringByAppendingString:@" "]];
         if (!attributedDownloadPrefix)
-            attributedDownloadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
+            attributedDownloadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_PREFIX] stringByAppendingString:@" "]];
         if (!attributedUploadArrowPrefix)
-            attributedUploadArrowPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_ARROW_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
+            attributedUploadArrowPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_ARROW_PREFIX] stringByAppendingString:@" "]];
         if (!attributedDownloadArrowPrefix)
-            attributedDownloadArrowPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_ARROW_PREFIX] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
+            attributedDownloadArrowPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_ARROW_PREFIX] stringByAppendingString:@" "]];
         
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
         
@@ -158,7 +159,7 @@ static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, BOOL isArro
         if (DATAUNIT == 1)
             diff *= 8;
         
-        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff) attributes:@{NSFontAttributeName: (textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]];
+        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff)]];
         
         return [mutableString copy];
     }
@@ -266,7 +267,7 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
  - Weather
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString)
 {
     NSString *widgetString;
     switch (parsedID) {
@@ -287,8 +288,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             [
                 mutableString appendAttributedString: formattedAttributedSpeedString(
                     [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO,
-                    [parsedInfo valueForKey:@"isArrow"] ? [[parsedInfo valueForKey:@"isArrow"] boolValue] : NO,
-                    fontSize, textBold
+                    [parsedInfo valueForKey:@"isArrow"] ? [[parsedInfo valueForKey:@"isArrow"] boolValue] : NO
                 )
             ];
             break;
@@ -320,12 +320,12 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
         widgetString = [widgetString stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
         widgetString = [widgetString stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
         [
-            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: widgetString attributes:@{NSFontAttributeName: textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
+            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: widgetString]
         ];
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold)
+NSAttributedString* formattedAttributedString(NSArray *identifiers)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -334,10 +334,10 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold);
+                formatParsedInfo(parsedInfo, parsedID, mutableString);
             }
         } else {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: (textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize])}]];
+            return nil;
         }
         
         return [mutableString copy];

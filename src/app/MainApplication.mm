@@ -8,6 +8,7 @@
 #import <notify.h>
 #import <UIKit/UIKit.h>
 #import "Helium-Swift.h"
+#include "../extensions/FontUtils.h"
 
 
 #pragma mark - MainApplication
@@ -57,6 +58,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary <UIApplicationLaunchOptionsKey, id> *)launchOptions {
     os_log_debug(OS_LOG_DEFAULT, "- [MainApplicationDelegate application:%{public}@ didFinishLaunchingWithOptions:%{public}@]", application, launchOptions);
+
+    // load fonts from app
+    [FontUtils loadFontsFromFolder:[NSString stringWithFormat:@"%@%@", [[NSBundle mainBundle] resourcePath],  @"/fonts"]];
+    // load fonts from documents
+    [FontUtils loadFontsFromFolder:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject]];
+    [FontUtils loadAllFonts];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window setRootViewController:[[[ContentInterface alloc] init] createUI]];

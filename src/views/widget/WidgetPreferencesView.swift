@@ -203,7 +203,7 @@ struct WidgetPreferencesView: View {
     
     func getFormattedDate(_ format: String) -> String {
         dateFormatter.dateFormat = format
-        dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
+        // dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
         return dateFormatter.string(from: currentDate)
     }
     
