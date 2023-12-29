@@ -48,6 +48,10 @@
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>com.leemin.helium</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>helium</string>
+			</array>
 		</dict>
 	</array>
 	<key>LSApplicationCategoryType</key>
