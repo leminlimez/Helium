@@ -21,6 +21,7 @@
 #include "../widgets/WidgetManager.h"
 #include "../extensions/UsefulFunctions.h"
 #include "../extensions/FontUtils.h"
+#include "../extensions/EZTimer.h"
 
 
 extern "C" char **environ;
@@ -158,12 +159,6 @@ void waitForNotification(void (^onFinish)(), BOOL isEnabled) {
    }
 }
 
-
-#pragma mark -
-
-static double UPDATE_INTERVAL = 1.0;
-
-
 #pragma mark -
 
 @interface UIApplication (Private)
@@ -221,7 +216,8 @@ static double UPDATE_INTERVAL = 1.0;
 @interface HUDRootViewController: UIApplicationRotationFollowingControllerNoTouches
 + (BOOL)passthroughMode;
 - (void)resetLoopTimer;
-- (void)stopLoopTimer;
+- (void)pauseLoopTimer;
+- (void)resumeLoopTimer;
 @end
 
 @interface HUDMainWindow : UIAutoRotatingWindow
@@ -277,7 +273,7 @@ static void SpringBoardLockStatusChanged
     NSString *lockState = (__bridge NSString *)name;
     if ([lockState isEqualToString:@NOTIFY_UI_LOCKCOMPLETE])
     {
-        [rootViewController stopLoopTimer];
+        [rootViewController pauseLoopTimer];
         [rootViewController.view setHidden:YES];
     }
     else if ([lockState isEqualToString:@NOTIFY_UI_LOCKSTATE])
@@ -294,11 +290,11 @@ static void SpringBoardLockStatusChanged
         if (!isLocked)
         {
             [rootViewController.view setHidden:NO];
-            [rootViewController resetLoopTimer];
+            [rootViewController resumeLoopTimer];
         }
         else
         {
-            [rootViewController stopLoopTimer];
+            [rootViewController pauseLoopTimer];
             [rootViewController.view setHidden:YES];
         }
     }
@@ -625,7 +621,6 @@ static void DumpThreads(void)
     
     UIView *_contentView;
     
-    NSTimer *_timer;
     UIInterfaceOrientation _orientation;
 }
 
@@ -679,11 +674,6 @@ static void DumpThreads(void)
 - (void) reloadUserDefaults
 {
     [self loadUserDefaults: YES];
-
-    double updateInterval = [self updateInterval];
-
-    UPDATE_INTERVAL = updateInterval;
-    
     [self updateViewConstraints];
 }
 
@@ -818,41 +808,6 @@ Example format for properties:
     [self loadUserDefaults: NO];
     NSArray *properties = [_userDefaults objectForKey: @"widgetProperties"];
     return properties;
-}
-
-#pragma mark - Label Updating
-
-- (void) updateAllLabels
-{
-    // TODO: THIS NEEDS OPTIMIZATION (is updated frequently)
-    NSArray *widgetProps = [self widgetProperties];
-    for (int i = 0; i < [widgetProps count]; i++) {
-        UILabel *labelView = [_labelViews objectAtIndex:i];
-        NSDictionary *properties = [widgetProps objectAtIndex:i];
-        if (!labelView || !properties)
-            break;
-        NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
-        // double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
-        // BOOL textBold = [properties objectForKey: @"textBold"] ? [[properties objectForKey: @"textBold"] boolValue] : false;
-        // NSString *fontName = getStringFromDictKey(properties, @"fontName", "Default Font");
-        // [self updateLabel: labelView identifiers: identifiers fontName: fontName fontSize: fontSize textBold: textBold];
-        if ([identifiers count] > 0) {
-            [[_blurViews objectAtIndex:i] setHidden: NO];
-            [self updateLabel: labelView identifiers: identifiers];
-        } else {
-            [[_blurViews objectAtIndex:i] setHidden: YES];
-        }
-    }
-}
-
-- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers
-{
-#if DEBUG
-    os_log_debug(OS_LOG_DEFAULT, "updateLabel");
-#endif
-    NSAttributedString *attributedText = formattedAttributedString(identifiers);
-    if (attributedText)
-        [label setAttributedText: attributedText];
 }
 
 #pragma mark - Initialization and Deallocation
@@ -1034,14 +989,41 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
 
 - (void)resetLoopTimer
 {
-    [_timer invalidate];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:UPDATE_INTERVAL target:self selector:@selector(updateAllLabels) userInfo:nil repeats:YES];
+    NSArray *widgetProps = [self widgetProperties];
+    for (int i = 0; i < [widgetProps count]; i++) {
+        UILabel *labelView = [_labelViews objectAtIndex:i];
+        NSDictionary *properties = [widgetProps objectAtIndex:i];
+        if (!labelView || !properties)
+            break;
+        NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
+        double updateInterval = getDoubleFromDictKey(properties, @"updateInterval", 1.0);
+        [[EZTimer shareInstance] timer:[NSString stringWithFormat:@"labelview%d", i] timerInterval:updateInterval leeway:0.1 resumeType:EZTimerResumeTypeNow queue:EZTimerQueueTypeConcurrent queueName:@"update" repeats:YES action:^(NSString *timerName) {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+            #if DEBUG
+                os_log_debug(OS_LOG_DEFAULT, "updateLabel");
+            #endif
+                NSAttributedString *attributedText = formattedAttributedString(identifiers);
+                if (attributedText)
+                    [labelView setAttributedText: attributedText];
+            });
+        }];
+    }
 }
 
-- (void)stopLoopTimer
+- (void)pauseLoopTimer
 {
-    [_timer invalidate];
-    _timer = nil;
+    NSArray *widgetProps = [self widgetProperties];
+    for (int i = 0; i < [widgetProps count]; i++) {
+        [[EZTimer shareInstance] pause:[NSString stringWithFormat:@"labelview%d", i]];
+    }
+}
+
+- (void)resumeLoopTimer
+{
+    NSArray *widgetProps = [self widgetProperties];
+    for (int i = 0; i < [widgetProps count]; i++) {
+        [[EZTimer shareInstance] resume:[NSString stringWithFormat:@"labelview%d", i]];
+    }
 }
 
 - (void)viewSafeAreaInsetsDidChange

@@ -65,6 +65,7 @@ struct WidgetSetStruct: Identifiable, Equatable {
     var id = UUID()
     
     var title: String
+    var updateInterval: Double
     
     var anchor: Int
     var offsetX: Double
@@ -145,6 +146,7 @@ class WidgetManager: ObservableObject {
                 // create the object
                 var widgetSet: WidgetSetStruct = .init(
                     title: s["title"] as? String ?? NSLocalizedString("Untitled", comment: ""),
+                    updateInterval: s["updateInterval"] as? Double ?? 1.0,
                     anchor: s["anchor"] as? Int ?? 0,
                     offsetX: s["offsetX"] as? Double ?? 10.0,
                     offsetY: s["offsetY"] as? Double ?? 0.0,
@@ -177,6 +179,7 @@ class WidgetManager: ObservableObject {
         for s in widgetSets {
             var wSet: [String: Any] = [:]
             wSet["title"] = s.title
+            wSet["updateInterval"] = s.updateInterval
             wSet["anchor"] = s.anchor
             wSet["offsetX"] = s.offsetX
             wSet["offsetY"] = s.offsetY
@@ -312,6 +315,7 @@ class WidgetManager: ObservableObject {
         // create a widget set with the default values
         addWidgetSet(widgetSet: .init(
             title: title,
+            updateInterval: 1.0,
             
             anchor: anchor,
             offsetX: anchor == 1 ? 0.0 : 10.0,
@@ -340,6 +344,7 @@ class WidgetManager: ObservableObject {
         for (i, wSet) in widgetSets.enumerated() {
             if wSet == widgetSet {
                 widgetSets[i].title = ns.title
+                widgetSets[i].updateInterval = ns.updateInterval
                 
                 widgetSets[i].anchor = ns.anchor
                 widgetSets[i].offsetX = ns.offsetX

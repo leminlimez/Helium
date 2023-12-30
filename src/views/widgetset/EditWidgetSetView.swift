@@ -16,6 +16,7 @@ struct EditWidgetSetView: View {
     @State var showingAddView: Bool = false
     
     @State var nameInput: String = ""
+    @State var updateInterval: Double = 1.0
     
     @State var anchorSelection: Int = 0
     @State var offsetX: Double = 10.0
@@ -56,6 +57,19 @@ struct EditWidgetSetView: View {
                         TextField(NSLocalizedString("Title", comment: ""), text: $nameInput)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .onChange(of: nameInput) { _ in
+                                changesMade = true
+                            }
+                    }
+
+                    // MARK: Offset X
+                    VStack {
+                        HStack {
+                            Text(NSLocalizedString("Update Interval (seconds)", comment: ""))
+                                .bold()
+                            Spacer()
+                        }
+                        BetterSlider(value: $updateInterval, bounds: 1...86400)
+                            .onChange(of: updateInterval) { _ in
                                 changesMade = true
                             }
                     }
@@ -341,6 +355,7 @@ struct EditWidgetSetView: View {
                 }
                 currentWidgetSet = widgetSet
                 nameInput = widgetSet.title
+                updateInterval = widgetSet.updateInterval
                 
                 anchorSelection = widgetSet.anchor
                 offsetX = widgetSet.offsetX
@@ -399,6 +414,7 @@ struct EditWidgetSetView: View {
         changesMade = false
         widgetManager.editWidgetSet(widgetSet: widgetSet, newSetDetails: .init(
             title: nameInput,
+            updateInterval: updateInterval,
             
             anchor: anchorSelection,
             offsetX: offsetX,

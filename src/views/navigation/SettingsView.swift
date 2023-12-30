@@ -43,6 +43,7 @@ struct SettingsView: View {
                 
                 // Preferences List
                 Section {
+                    /*
                     HStack {
                         Text(NSLocalizedString("Update Interval (seconds)", comment:""))
                             .bold()
@@ -80,7 +81,7 @@ struct SettingsView: View {
                                     }
                                 }
                         }
-                    }
+                    }*/
                     
                     HStack {
                         Toggle(isOn: $usesRotation) {
