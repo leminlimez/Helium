@@ -162,6 +162,24 @@ struct WidgetPreferencesView: View {
                         boolSelection = widgetID.config["showPercentage"] as? Bool ?? true
                     }
                 }
+            case .weather:
+                // MARK: Custom Text Label Textbox
+                HStack {
+                    Text(NSLocalizedString("Location", comment:""))
+                        .foregroundColor(.primary)
+                        .bold()
+                    Spacer()
+                    TextField(NSLocalizedString("Beijing", comment:""), text: $text)
+                        .frame(maxWidth: 120)
+                        .multilineTextAlignment(.trailing)
+                        .onAppear {
+                            if let format = widgetID.config["location"] as? String {
+                                text = format
+                            } else {
+                                text = NSLocalizedString("Beijing", comment:"")
+                            }
+                        }
+                }
             default:
                 Text(NSLocalizedString("No Configurable Aspects", comment:""))
             }
@@ -248,6 +266,15 @@ struct WidgetPreferencesView: View {
         case .currentCapacity:
             // MARK: Current Capacity Handling
             widgetStruct.config["showPercentage"] = boolSelection
+            break;
+
+        case .weather:
+            // MARK: Weather Handling
+            if text == "" {
+                widgetStruct.config["location"] = nil
+            } else {
+                widgetStruct.config["location"] = text
+            }
             break;
         default:
             break;

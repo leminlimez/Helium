@@ -19,6 +19,7 @@ enum WidgetModule: Int, CaseIterable {
     case temperature = 3
     
     case textWidget = 6
+    case weather = 8
 }
 
 struct WidgetIDStruct: Identifiable, Equatable {
@@ -391,6 +392,8 @@ class WidgetDetails {
             return (NSLocalizedString("Text Label", comment: ""), NSLocalizedString("Example", comment: ""))
         case .currentCapacity:
             return (NSLocalizedString("Battery Capacity", comment: ""), "50%")
+        case .weather:
+            return (NSLocalizedString("Weather", comment: ""), "🌤 20℃")
         }
     }
     

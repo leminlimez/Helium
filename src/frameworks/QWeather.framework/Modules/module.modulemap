@@ -1,0 +1,6 @@
+framework module QWeather {
+  umbrella header "QWeather.h"
+
+  export *
+  module * { export * }
+}

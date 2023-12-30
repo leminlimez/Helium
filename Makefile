@@ -1,5 +1,5 @@
-ARCHS := arm64 arm64e
-TARGET := iphone:clang:15.0:14.0
+ARCHS := arm64
+TARGET := iphone:clang:16.5:14.0
 INSTALL_TARGET_PROCESSES := Helium
 ENT_PLIST := $(PWD)/ent.plist
 
@@ -55,6 +55,9 @@ $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_LAUNCHED_HUD=\"com.leemin.notification.h
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_DISMISSAL_HUD=\"com.leemin.notification.hud.dismissal\"
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_RELOAD_HUD=\"com.leemin.notification.hud.reload\"
 $(APPLICATION_NAME)_CCFLAGS += -DSPAWN_AS_ROOT
+
+$(APPLICATION_NAME)_CFLAGS += -F./src/Frameworks
+$(APPLICATION_NAME)_LDFLAGS += -F./src/Frameworks -framework QWeather
 
 $(APPLICATION_NAME)_FRAMEWORKS += CoreGraphics QuartzCore UIKit Foundation
 $(APPLICATION_NAME)_PRIVATE_FRAMEWORKS += BackBoardServices GraphicsServices IOKit SpringBoardServices
