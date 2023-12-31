@@ -22,6 +22,7 @@
 #include "../extensions/UsefulFunctions.h"
 #include "../extensions/FontUtils.h"
 #include "../extensions/EZTimer.h"
+#include "../extensions/WeatherUtils.h"
 
 
 extern "C" char **environ;
@@ -820,7 +821,6 @@ Example format for properties:
         [FontUtils loadFontsFromFolder:[NSString stringWithFormat:@"%@%@", [[NSBundle mainBundle] resourcePath],  @"/fonts"]];
         // load fonts from documents
         [FontUtils loadFontsFromFolder:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject]];
-        
         _constraints = [NSMutableArray array];
         _blurViews = [NSMutableArray array];
         _labelViews = [NSMutableArray array];
@@ -981,7 +981,11 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     }
     
     [self reloadUserDefaults];
-    
+
+    NSString *publicID = [_userDefaults objectForKey: @"publicID"];
+    NSString *apiKey = [_userDefaults objectForKey: @"apiKey"];
+    NSLog(@"userid %@,%@", publicID, apiKey);
+    // [WeatherUtils setIDKey:publicID apiKey:apiKey];
     [self resetLoopTimer];
 }
 
@@ -996,6 +1000,12 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         if (!labelView || !properties)
             break;
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
+        if ([identifiers count] > 0) {
+            [[_blurViews objectAtIndex:i] setHidden: NO];
+        } else {
+            [[_blurViews objectAtIndex:i] setHidden: YES];
+            continue;
+        }
         double updateInterval = getDoubleFromDictKey(properties, @"updateInterval", 1.0);
         [[EZTimer shareInstance] timer:[NSString stringWithFormat:@"labelview%d", i] timerInterval:updateInterval leeway:0.1 resumeType:EZTimerResumeTypeNow queue:EZTimerQueueTypeConcurrent queueName:@"update" repeats:YES action:^(NSString *timerName) {
             dispatch_sync(dispatch_get_main_queue(), ^{

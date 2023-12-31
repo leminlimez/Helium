@@ -169,14 +169,14 @@ struct WidgetPreferencesView: View {
                         .foregroundColor(.primary)
                         .bold()
                     Spacer()
-                    TextField(NSLocalizedString("Beijing", comment:""), text: $text)
+                    TextField(NSLocalizedString("101010100", comment:""), text: $text)
                         .frame(maxWidth: 120)
                         .multilineTextAlignment(.trailing)
                         .onAppear {
                             if let format = widgetID.config["location"] as? String {
                                 text = format
                             } else {
-                                text = NSLocalizedString("Beijing", comment:"")
+                                text = NSLocalizedString("101010100", comment:"")
                             }
                         }
                 }

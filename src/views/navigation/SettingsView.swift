@@ -20,7 +20,6 @@ struct SettingsView: View {
     @State var centerWidgetSize: Int = 100
     
     // Preference Variables
-    @State var updateInterval: Double = 1.0
     @State var usesRotation: Bool = false
     @State var hideSaveConfirmation: Bool = false
     @State var ignoreSafeZone: Bool = false
@@ -43,46 +42,6 @@ struct SettingsView: View {
                 
                 // Preferences List
                 Section {
-                    /*
-                    HStack {
-                        Text(NSLocalizedString("Update Interval (seconds)", comment:""))
-                            .bold()
-                        Spacer()
-                        if #available(iOS 15, *) {
-                            TextField(NSLocalizedString("Seconds", comment:""), value: $updateInterval, formatter: formatter)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                            //                            .keyboardType(.decimalPad)
-                                .submitLabel(.done)
-                                .onSubmit {
-                                    if updateInterval <= 0 {
-                                        updateInterval = 1
-                                    }
-                                    UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    updateInterval = UserDefaults.standard.double(forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                                    if updateInterval <= 0 {
-                                        updateInterval = 1
-                                    }
-                                }
-                        } else {
-                            TextField(NSLocalizedString("Seconds", comment:""), value: $updateInterval, formatter: formatter)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .onChange(of: updateInterval) { nv in
-                                    if updateInterval <= 0 {
-                                        updateInterval = 1
-                                    }
-                                    UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    updateInterval = UserDefaults.standard.double(forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                                    if updateInterval <= 0 {
-                                        updateInterval = 1
-                                    }
-                                }
-                        }
-                    }*/
-                    
                     HStack {
                         Toggle(isOn: $usesRotation) {
                             Text(NSLocalizedString("Show when Rotating", comment:""))

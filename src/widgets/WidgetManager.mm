@@ -16,6 +16,7 @@
 #import <IOKit/IOKitLib.h>
 #import "../extensions/LunarDate.h"
 #import "../extensions/FontUtils.h"
+#include "../extensions/WeatherUtils.h"
 
 // Thanks to: https://github.com/lwlsw/NetworkSpeed13
 
@@ -311,6 +312,23 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             widgetString = formattedCurrentCapacity(
                 [parsedInfo valueForKey:@"showPercentage"] ? [[parsedInfo valueForKey:@"showPercentage"] boolValue] : YES
             );
+            break;
+        case 8:
+            {
+                NSString *location = [parsedInfo valueForKey:@"location"];
+                NSDictionary *responseObject = [WeatherUtils fetchCurrentWeatherForLocation: location];
+                if(responseObject) {
+                    if([responseObject[@"code"] isEqual:@"200"]) {
+                        widgetString = [
+                            NSString stringWithFormat: @"%@%@ %@℃", [WeatherUtils getWeatherIcon: responseObject[@"now"][@"text"]], responseObject[@"now"][@"text"], responseObject[@"now"][@"temp"]
+                        ];
+                    } else {
+                        widgetString = NSLocalizedString(@"error", comment:@"");
+                    }
+                } else {
+                    widgetString = NSLocalizedString(@"error", comment:@"");
+                }
+            }
             break;
         default:
             // do not add anything

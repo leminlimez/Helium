@@ -73,6 +73,7 @@
 "Time Format" = "Time Format";
 "Label Text" = "Label Text";
 "Example" = "Example";
+"Location" = "Location";
 "Show Percent (%) Symbol" = "Show Percent (%) Symbol";
 "No Configurable Aspects" = "No Configurable Aspects";
 "Save Changes" = "Save Changes";
@@ -81,6 +82,7 @@
 /* WidgetPreviewsView.swift */
 "ERROR" = "ERROR";
 "Unknown" = "Unknown";
+"🌤 Sun 20℃" = "🌤 Sun 20℃";
 
 /* EditWidgetSetView.swift */
 "Widget Set Title" = "Widget Set Title";
@@ -132,3 +134,6 @@
 "Text Label" = "Text Label";
 "Example" = "Example";
 "Battery Capacity" = "Battery Capacity";
+
+/* WidgetManager.mm */
+"error" = "error";

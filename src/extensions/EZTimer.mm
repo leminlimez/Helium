@@ -17,11 +17,11 @@
 #define EZTIMERSTATUSKEY_RESUME @"EZTIMERSTATUSKEY_RESUME"
 #define EZTIMERSTATUSKEY_PAUSE  @"EZTIMERSTATUSKEY_PAUSE"
 
-#ifdef DEBUG
-    #define EZLog(...) NSLog(__VA_ARGS__)
-#else
+// #ifdef DEBUG
+//     #define EZLog(...) NSLog(__VA_ARGS__)
+// #else
     #define EZLog(...)
-#endif
+// #endif
 
 @interface EZTimer()
 

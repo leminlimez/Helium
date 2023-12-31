@@ -73,6 +73,7 @@
 "Time Format" = "时间格式";
 "Label Text" = "标签文本";
 "Example" = "示例";
+"Location" = "地区的ID";
 "Show Percent (%) Symbol" = "显示电量%";
 "No Configurable Aspects" = "无可配置项";
 "Save Changes" = "保存更改";
@@ -81,6 +82,7 @@
 /* WidgetPreviewsView.swift */
 "ERROR" = "错误";
 "Unknown" = "未知";
+"🌤 Sun 20℃" = "🌤晴 20℃";
 
 /* EditWidgetSetView.swift */
 "Widget Set Title" = "小部件集标题";
@@ -132,3 +134,6 @@
 "Text Label" = "文本标签";
 "Example" = "示例";
 "Battery Capacity" = "电池容量";
+
+/* WidgetManager.mm */
+"error" = "出错了";

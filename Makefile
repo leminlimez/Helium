@@ -56,9 +56,6 @@ $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_DISMISSAL_HUD=\"com.leemin.notification.
 $(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_RELOAD_HUD=\"com.leemin.notification.hud.reload\"
 $(APPLICATION_NAME)_CCFLAGS += -DSPAWN_AS_ROOT
 
-$(APPLICATION_NAME)_CFLAGS += -F./src/Frameworks
-$(APPLICATION_NAME)_LDFLAGS += -F./src/Frameworks -framework QWeather
-
 $(APPLICATION_NAME)_FRAMEWORKS += CoreGraphics QuartzCore UIKit Foundation
 $(APPLICATION_NAME)_PRIVATE_FRAMEWORKS += BackBoardServices GraphicsServices IOKit SpringBoardServices
 
