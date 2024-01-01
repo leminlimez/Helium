@@ -1,4 +1,4 @@
-ARCHS := arm64
+ARCHS := arm64 arm64e
 TARGET := iphone:clang:16.5:14.0
 INSTALL_TARGET_PROCESSES := Helium
 ENT_PLIST := $(PWD)/ent.plist
