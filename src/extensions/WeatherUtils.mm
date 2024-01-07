@@ -28,16 +28,57 @@ static NSString *apiKey = @"";
 }
 
 + (NSDictionary *)fetchCurrentWeatherForLocation:(NSString *)location {
-    NSString *res = [self getDataFrom:[NSString stringWithFormat:@"https://devapi.qweather.com/v7/weather/now?location=%@&key=%@", location, apiKey]];
+    NSString *res = [self getDataFrom:[NSString stringWithFormat:@"https://restapi.amap.com/v3/weather/weatherInfo?city=%@&key=%@&extensions=base", location, apiKey]];
     NSData *data = [res dataUsingEncoding:NSUTF8StringEncoding];
     NSError *erro = nil;
     if (data!=nil) {
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&erro ];
-        if ([json[@"code"] isEqualToString: @"200"]) {
-            return json;
-        }
+        return json;
     }
     return nil;
+}
+
++ (NSDictionary *)fetchTodayWeatherForLocation:(NSString *)location {
+    NSString *res = [self getDataFrom:[NSString stringWithFormat:@"https://restapi.amap.com/v3/weather/weatherInfo?city=%@&key=%@&extensions=all", location, apiKey]];
+    NSData *data = [res dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *erro = nil;
+    if (data!=nil) {
+        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&erro ];
+        return json;
+    }
+    return nil;
+}
+
++ (NSString *)formatCurrentResult:(NSDictionary *)data format:(NSString *)format {
+    if(data) {
+        format = [format stringByReplacingOccurrencesOfString:@"{icon}" withString:[WeatherUtils getWeatherIcon: data[@"lives"][0][@"weather"]]];
+        format = [format stringByReplacingOccurrencesOfString:@"{text}" withString:data[@"lives"][0][@"weather"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{temp}" withString:data[@"lives"][0][@"temperature"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{humidity}" withString:data[@"lives"][0][@"humidity"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{wind}" withString:data[@"lives"][0][@"winddirection"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{windpower}" withString:data[@"lives"][0][@"windpower"]];
+    } else {
+        format = NSLocalizedString(@"error", comment:@"");
+    }
+    return format;
+}
+
++ (NSString *)formatTodayResult:(NSDictionary *)data format:(NSString *)format {
+    if(data) {
+        format = [format stringByReplacingOccurrencesOfString:@"{dayicon}" withString:[WeatherUtils getWeatherIcon: data[@"forecasts"][0][@"casts"][0][@"dayweather"]]];
+        format = [format stringByReplacingOccurrencesOfString:@"{daytext}" withString:data[@"forecasts"][0][@"casts"][0][@"dayweather"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{nighticon}" withString:[WeatherUtils getWeatherIcon: data[@"forecasts"][0][@"casts"][0][@"nightweather"]]];
+        format = [format stringByReplacingOccurrencesOfString:@"{nighttext}" withString:data[@"forecasts"][0][@"casts"][0][@"nightweather"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{daytemp}" withString:data[@"forecasts"][0][@"casts"][0][@"daytemp"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{nighttemp}" withString:data[@"forecasts"][0][@"casts"][0][@"nighttemp"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{daywind}" withString:data[@"forecasts"][0][@"casts"][0][@"daywind"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{nightwind}" withString:data[@"forecasts"][0][@"casts"][0][@"nightwind"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{daypower}" withString:data[@"forecasts"][0][@"casts"][0][@"daypower"]];
+        format = [format stringByReplacingOccurrencesOfString:@"{nightpower}" withString:data[@"forecasts"][0][@"casts"][0][@"nightpower"]];
+    } else {
+        format = NSLocalizedString(@"error", comment:@"");
+    }
+    return format;
 }
 
 + (NSString *)getDataFrom:(NSString *)url{

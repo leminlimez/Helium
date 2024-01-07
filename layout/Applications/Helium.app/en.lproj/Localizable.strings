@@ -78,11 +78,13 @@
 "No Configurable Aspects" = "No Configurable Aspects";
 "Save Changes" = "Save Changes";
 "Would you like to save changes to the widget?" = "Would you like to save changes to the widget?";
+"Weather Format" = "Weather Format Explanation:\n{icon} Weather Icon\t{text} Weather Text\n{temp} Current Temperature\t{humidity} Humidity\n{wind} Wind Direction\t{windpower} Wind Power\n{dayicon} Daytime Weather Icon\n{daytext} Daytime Weather Text\n{nighticon} Nighttime Weather Icon\n{nighttext} Nighttime Weather Text\n{daytemp} Daytime Temperature\n{nighttemp} Nighttime Temperature\n{daywind} Daytime Wind Direction\n{nightwind} Nighttime Wind Direction\n{daypower} Daytime Wind Power\n{nightpower} Nighttime Wind Power";
+"Format" = "Format";
 
 /* WidgetPreviewsView.swift */
 "ERROR" = "ERROR";
 "Unknown" = "Unknown";
-"🌤 Sun 20℃" = "🌤 Sun 20℃";
+"🌤 Sun 20℃ 💧54%" = "🌤 Sun 20℃ 💧54%";
 
 /* EditWidgetSetView.swift */
 "Widget Set Title" = "Widget Set Title";

@@ -315,19 +315,13 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
         case 8:
             {
+                // Weather
                 NSString *location = [parsedInfo valueForKey:@"location"];
-                NSDictionary *responseObject = [WeatherUtils fetchCurrentWeatherForLocation: location];
-                if(responseObject) {
-                    if([responseObject[@"code"] isEqual:@"200"]) {
-                        widgetString = [
-                            NSString stringWithFormat: @"%@%@ %@℃", [WeatherUtils getWeatherIcon: responseObject[@"now"][@"text"]], responseObject[@"now"][@"text"], responseObject[@"now"][@"temp"]
-                        ];
-                    } else {
-                        widgetString = NSLocalizedString(@"error", comment:@"");
-                    }
-                } else {
-                    widgetString = NSLocalizedString(@"error", comment:@"");
-                }
+                NSString *format = [parsedInfo valueForKey:@"format"];
+                NSDictionary *current = [WeatherUtils fetchCurrentWeatherForLocation: location];
+                widgetString = [WeatherUtils formatCurrentResult:current format:format];
+                NSDictionary *today = [WeatherUtils fetchTodayWeatherForLocation: location];
+                widgetString = [WeatherUtils formatTodayResult:today format:widgetString];
             }
             break;
         default:

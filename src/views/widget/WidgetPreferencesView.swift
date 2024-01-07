@@ -14,6 +14,7 @@ struct WidgetPreferencesView: View {
     @Binding var widgetID: WidgetIDStruct
     
     @State var text: String = ""
+    @State var weatherFormat: String = ""
     @State var intSelection: Int = 0
     @State var intSelection_arrow: Int = 0
     @State var boolSelection: Bool = false
@@ -163,22 +164,42 @@ struct WidgetPreferencesView: View {
                     }
                 }
             case .weather:
-                // MARK: Custom Text Label Textbox
-                HStack {
-                    Text(NSLocalizedString("Location", comment:""))
-                        .foregroundColor(.primary)
-                        .bold()
-                    Spacer()
-                    TextField(NSLocalizedString("101010100", comment:""), text: $text)
-                        .frame(maxWidth: 120)
-                        .multilineTextAlignment(.trailing)
-                        .onAppear {
-                            if let format = widgetID.config["location"] as? String {
-                                text = format
-                            } else {
-                                text = NSLocalizedString("101010100", comment:"")
+                VStack {
+                    HStack {
+                        Text(NSLocalizedString("Location", comment:""))
+                            .foregroundColor(.primary)
+                            .bold()
+                        Spacer()
+                        TextField(NSLocalizedString("110000", comment:""), text: $text)
+                            .frame(maxWidth: 120)
+                            .multilineTextAlignment(.trailing)
+                            .onAppear {
+                                if let format = widgetID.config["location"] as? String {
+                                    text = format
+                                } else {
+                                    text = NSLocalizedString("110000", comment:"")
+                                }
                             }
-                        }
+                    }
+
+                    HStack {
+                        Text(NSLocalizedString("Format", comment:""))
+                            .foregroundColor(.primary)
+                            .bold()
+                        Spacer()
+                        TextField("{icon}{text} {temp}℃ 💧{humidity}%", text: $weatherFormat)
+                            .frame(maxWidth: 220)
+                            .multilineTextAlignment(.trailing)
+                            .onAppear {
+                                if let format = widgetID.config["format"] as? String {
+                                    weatherFormat = format
+                                } else {
+                                    weatherFormat = "{icon}{text} {temp}℃ 💧{humidity}%"
+                                }
+                            }
+                    }
+                    
+                    Text(NSLocalizedString("Weather Format", comment:""))
                 }
             default:
                 Text(NSLocalizedString("No Configurable Aspects", comment:""))
@@ -206,6 +227,9 @@ struct WidgetPreferencesView: View {
             }
         }
         .onChange(of: text) { _ in
+            modified = true
+        }
+        .onChange(of: weatherFormat) { _ in
             modified = true
         }
         .onChange(of: intSelection) { _ in
@@ -274,6 +298,11 @@ struct WidgetPreferencesView: View {
                 widgetStruct.config["location"] = nil
             } else {
                 widgetStruct.config["location"] = text
+            }
+            if weatherFormat == "" {
+                widgetStruct.config["format"] = nil
+            } else {
+                widgetStruct.config["format"] = weatherFormat
             }
             break;
         default:
