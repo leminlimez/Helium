@@ -162,6 +162,18 @@ struct WidgetPreferencesView: View {
                         boolSelection = widgetID.config["showPercentage"] as? Bool ?? true
                     }
                 }
+            case .chargeSymbol:
+                // MARK: Charge Symbol Fill Option
+                HStack {
+                    Toggle(isOn: $boolSelection) {
+                        Text("Fill Symbol")
+                            .foregroundColor(.primary)
+                            .bold()
+                    }
+                    .onAppear {
+                        boolSelection = widgetID.config["filled"] as? Bool ?? true
+                    }
+                }
             default:
                 Text("No Configurable Aspects")
             }
@@ -241,6 +253,11 @@ struct WidgetPreferencesView: View {
         case .currentCapacity:
             // MARK: Current Capacity Handling
             widgetStruct.config["showPercentage"] = boolSelection
+        case .chargeSymbol:
+            // MARK: Charge Symbol Fill Handling
+            widgetStruct.config["filled"] = boolSelection
+        default:
+            return;
         }
         
         widgetManager.updateWidgetConfig(widgetSet: widgetSet, id: widgetID, newID: widgetStruct)

@@ -243,6 +243,22 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
     return @"??%";
 }
 
+#pragma mark - Charging Symbol Widget
+static NSString* formattedChargingSymbol(BOOL filled)
+{
+    NSDictionary *batteryInfo = getBatteryInfo();
+    if (batteryInfo) {
+        if ([batteryInfo[@"IsCharging"] boolValue]) {
+            if (filled) {
+                return @"􀋦";
+            } else {
+                return @"􀋥";
+            }
+        }
+    }
+    return @"";
+}
+
 
 #pragma mark - Main Widget Functions
 /*
@@ -255,6 +271,7 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
  5 = Time
  6 = Text
  7 = Battery Percentage
+ 8 = Charging Symbol
 
  TODO:
  - Weather
@@ -305,6 +322,12 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             // Current Capacity
             widgetString = formattedCurrentCapacity(
                 [parsedInfo valueForKey:@"showPercentage"] ? [[parsedInfo valueForKey:@"showPercentage"] boolValue] : YES
+            );
+            break;
+        case 8:
+            // Charging Symbol
+            widgetString = formattedChargingSymbol(
+                [parsedInfo valueForKey:@"filled"] ? [[parsedInfo valueForKey:@"filled"] boolValue] : YES
             );
             break;
         default:

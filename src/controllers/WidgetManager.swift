@@ -16,6 +16,7 @@ enum WidgetModule: Int, CaseIterable {
     
     case battery = 4
     case currentCapacity = 7
+    case chargeSymbol = 8
     case temperature = 3
     
     case textWidget = 6
@@ -384,6 +385,8 @@ class WidgetDetails {
             return ("Text Label", "Example")
         case .currentCapacity:
             return ("Battery Capacity", "50%")
+        case .chargeSymbol:
+            return ("Charging Symbol", "􀋦")
         }
     }
     
