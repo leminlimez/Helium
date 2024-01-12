@@ -1050,7 +1050,10 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [_contentView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:(!ignoreSZ && layoutGuide.layoutFrame.origin.y > 1) ? -20 : -4],
         ]];
 
-        [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:(isPad ? 30 : 10)]];
+        [_constraints addObjectsFromArray:@[
+            [_contentView.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:(isPad ? 30 : 10)],
+            [_contentView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
+        ]];
     }
     else
     {
@@ -1074,10 +1077,17 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         NSDictionary *properties = [widgetProps objectAtIndex:i];
         if (!blurView || !labelView || !properties)
             break;
-        double offsetY = getDoubleFromDictKey(properties, @"offsetY");
-        [_constraints addObject:[labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY]];
-        NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
         double offsetX = getDoubleFromDictKey(properties, @"offsetX", 10);
+        double offsetY = getDoubleFromDictKey(properties, @"offsetY");
+        NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
+        NSInteger anchorYSide = getIntFromDictKey(properties, @"anchorY");
+        // set the vertical anchor
+        if (anchorYSide == 1)
+            [_constraints addObject:[labelView.centerYAnchor constraintEqualToAnchor:_contentView.centerYAnchor constant: offsetY]];
+        else if (anchorYSide == 0)
+            [_constraints addObject:[labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY]];
+        else
+            [_constraints addObject:[labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: offsetY]];
         // set the horizontal anchor
         if (anchorSide == 1)
             [_constraints addObject:[labelView.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor constant: offsetX]];

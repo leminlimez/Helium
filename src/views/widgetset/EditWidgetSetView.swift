@@ -18,8 +18,10 @@ struct EditWidgetSetView: View {
     @State var nameInput: String = ""
     
     @State var anchorSelection: Int = 0
+    @State var anchorYSelection: Int = 0
     @State var offsetX: Double = 10.0
     @State var offsetY: Double = 0.0
+    
     @State var autoResizes: Bool = true
     @State var scale: Double = 100.0
     @State var scaleY: Double = 12.0
@@ -59,19 +61,32 @@ struct EditWidgetSetView: View {
                 }
                 
                 Section {
-                    // MARK: Anchor Side
+                    // MARK: Anchor Sides
                     HStack {
-                        Text("Anchor Side").foregroundColor(.primary).bold()
+                        Text("Horizontal Anchor Side").foregroundColor(.primary).bold()
                         Spacer()
                         Picker(selection: $anchorSelection) {
                             Text("Left").tag(0)
                             Text("Center").tag(1)
                             Text("Right").tag(2)
                         } label: {}
-                        .pickerStyle(.menu)
-                        .onChange(of: anchorSelection) { _ in
-                            changesMade = true
-                        }
+                            .pickerStyle(.menu)
+                            .onChange(of: anchorSelection) { _ in
+                                changesMade = true
+                            }
+                    }
+                    HStack {
+                        Text("Vertical Anchor Side").foregroundColor(.primary).bold()
+                        Spacer()
+                        Picker(selection: $anchorYSelection) {
+                            Text("Top").tag(0)
+                            Text("Center").tag(1)
+                            Text("Bottom").tag(2)
+                        } label: {}
+                            .pickerStyle(.menu)
+                            .onChange(of: anchorYSelection) { _ in
+                                changesMade = true
+                            }
                     }
                     // MARK: Offset X
                     VStack {
@@ -97,6 +112,11 @@ struct EditWidgetSetView: View {
                                 changesMade = true
                             }
                     }
+                } header: {
+                    Text("Positioning")
+                }
+                
+                Section {
                     // MARK: Auto Resizes
                     HStack {
                         Toggle(isOn: $autoResizes) {
@@ -108,7 +128,7 @@ struct EditWidgetSetView: View {
                             changesMade = true
                         }
                     }
-                    // MARK: Width
+                    // MARK: Width and Height
                     if !autoResizes {
                         VStack {
                             HStack {
@@ -134,7 +154,7 @@ struct EditWidgetSetView: View {
                         }
                     }
                 } header: {
-                    Text("Constraints")
+                    Text("Size Constraints")
                 }
                 
                 Section {
@@ -305,8 +325,10 @@ struct EditWidgetSetView: View {
                 nameInput = widgetSet.title
                 
                 anchorSelection = widgetSet.anchor
+                anchorYSelection = widgetSet.anchorY
                 offsetX = widgetSet.offsetX
                 offsetY = widgetSet.offsetY
+                
                 autoResizes = widgetSet.autoResizes
                 scale = widgetSet.scale
                 scaleY = widgetSet.scaleY
@@ -354,8 +376,10 @@ struct EditWidgetSetView: View {
             title: nameInput,
             
             anchor: anchorSelection,
+            anchorY: anchorYSelection,
             offsetX: offsetX,
             offsetY: offsetY,
+            
             autoResizes: autoResizes,
             scale: scale,
             scaleY: scaleY,
