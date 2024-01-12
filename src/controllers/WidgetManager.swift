@@ -70,6 +70,7 @@ struct WidgetSetStruct: Identifiable, Equatable {
     var offsetY: Double
     var autoResizes: Bool
     var scale: Double
+    var scaleY: Double
     
     var widgetIDs: [WidgetIDStruct]
     
@@ -146,6 +147,7 @@ class WidgetManager: ObservableObject {
                     offsetY: s["offsetY"] as? Double ?? 0.0,
                     autoResizes: s["autoResizes"] as? Bool ?? false,
                     scale: s["scale"] as? Double ?? 100.0,
+                    scaleY: s["scaleY"] as? Double ?? 12.0,
                     
                     widgetIDs: widgetIDs,
                     
@@ -176,6 +178,7 @@ class WidgetManager: ObservableObject {
             wSet["offsetY"] = s.offsetY
             wSet["autoResizes"] = s.autoResizes
             wSet["scale"] = s.scale
+            wSet["scaleY"] = s.scaleY
             
             var widgetIDs: [[String: Any]] = []
             for w in s.widgetIDs {
@@ -299,6 +302,7 @@ class WidgetManager: ObservableObject {
             offsetY: 0.0,
             autoResizes: true,
             scale: 100.0,
+            scaleY: 12.0,
             
             widgetIDs: [],
             
@@ -324,6 +328,7 @@ class WidgetManager: ObservableObject {
                 widgetSets[i].offsetY = ns.offsetY
                 widgetSets[i].autoResizes = ns.autoResizes
                 widgetSets[i].scale = ns.scale
+                widgetSets[i].scaleY = ns.scaleY
                 
                 widgetSets[i].blurDetails = ns.blurDetails
                 
