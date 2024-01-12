@@ -250,9 +250,9 @@ static NSString* formattedChargingSymbol(BOOL filled)
     if (batteryInfo) {
         if ([batteryInfo[@"IsCharging"] boolValue]) {
             if (filled) {
-                return @"􀋦";
+                return @"bolt.fill";
             } else {
-                return @"􀋥";
+                return @"bolt";
             }
         }
     }
@@ -277,9 +277,11 @@ static NSString* formattedChargingSymbol(BOOL filled)
  - Weather
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold, UIColor *textColor)
 {
     NSString *widgetString;
+    NSString *sfSymbolName;
+    NSTextAttachment *imageAttachment;
     switch (parsedID) {
         case 1:
         case 5:
@@ -326,9 +328,14 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
         case 8:
             // Charging Symbol
-            widgetString = formattedChargingSymbol(
+            sfSymbolName = formattedChargingSymbol(
                 [parsedInfo valueForKey:@"filled"] ? [[parsedInfo valueForKey:@"filled"] boolValue] : YES
             );
+            if (![sfSymbolName isEqualToString:@""]) {
+                imageAttachment = [[NSTextAttachment alloc] init];
+                imageAttachment.image = [[UIImage systemImageNamed:sfSymbolName] imageWithTintColor:textColor];
+                [mutableString appendAttributedString:[NSAttributedString attributedStringWithAttachment:imageAttachment]];
+            }
             break;
         default:
             // do not add anything
@@ -345,7 +352,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold, UIColor *textColor)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -354,7 +361,7 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold, textColor);
             }
         } else {
             [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
