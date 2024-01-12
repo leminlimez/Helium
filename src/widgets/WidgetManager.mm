@@ -165,14 +165,19 @@ NSDictionary* getBatteryInfo()
     return dict;
 }
 
-static NSString* formattedTemp()
+static NSString* formattedTemp(BOOL useFahrenheit)
 {
     NSDictionary *batteryInfo = getBatteryInfo();
     if (batteryInfo) {
         // AdapterDetails.Watts.Description.Temperature
         double temp = [batteryInfo[@"Temperature"] doubleValue] / 100.0;
         if (temp) {
-            return [NSString stringWithFormat: @"%.2fºC", temp];
+            if (useFahrenheit) {
+                temp = (temp * 9.0/5.0) + 32;
+                return [NSString stringWithFormat: @"%.2fºF", temp];
+            } else {
+                return [NSString stringWithFormat: @"%.2fºC", temp];
+            }
         }
     }
     return @"??ºC";
@@ -282,7 +287,9 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
         case 3:
             // Device Temp
-            widgetString = formattedTemp();
+            widgetString = formattedTemp(
+                [parsedInfo valueForKey:@"useFahrenheit"] ? [[parsedInfo valueForKey:@"useFahrenheit"] boolValue] : NO
+            );
             break;
         case 4:
             // Battery Stats
