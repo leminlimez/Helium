@@ -66,8 +66,10 @@ struct WidgetSetStruct: Identifiable, Equatable {
     var title: String
     
     var anchor: Int
+    var anchorY: Int
     var offsetX: Double
     var offsetY: Double
+    
     var autoResizes: Bool
     var scale: Double
     var scaleY: Double
@@ -142,9 +144,12 @@ class WidgetManager: ObservableObject {
                 // create the object
                 var widgetSet: WidgetSetStruct = .init(
                     title: s["title"] as? String ?? "Untitled",
+                    
                     anchor: s["anchor"] as? Int ?? 0,
+                    anchorY: s["anchorY"] as? Int ?? 0,
                     offsetX: s["offsetX"] as? Double ?? 10.0,
                     offsetY: s["offsetY"] as? Double ?? 0.0,
+                    
                     autoResizes: s["autoResizes"] as? Bool ?? false,
                     scale: s["scale"] as? Double ?? 100.0,
                     scaleY: s["scaleY"] as? Double ?? 12.0,
@@ -173,9 +178,12 @@ class WidgetManager: ObservableObject {
         for s in widgetSets {
             var wSet: [String: Any] = [:]
             wSet["title"] = s.title
+            
             wSet["anchor"] = s.anchor
+            wSet["anchorY"] = s.anchorY
             wSet["offsetX"] = s.offsetX
             wSet["offsetY"] = s.offsetY
+            
             wSet["autoResizes"] = s.autoResizes
             wSet["scale"] = s.scale
             wSet["scaleY"] = s.scaleY
@@ -298,8 +306,10 @@ class WidgetManager: ObservableObject {
             title: title,
             
             anchor: anchor,
+            anchorY: 0,
             offsetX: anchor == 1 ? 0.0 : 10.0,
             offsetY: 0.0,
+            
             autoResizes: true,
             scale: 100.0,
             scaleY: 12.0,
@@ -324,8 +334,10 @@ class WidgetManager: ObservableObject {
                 widgetSets[i].title = ns.title
                 
                 widgetSets[i].anchor = ns.anchor
+                widgetSets[i].anchorY = ns.anchorY
                 widgetSets[i].offsetX = ns.offsetX
                 widgetSets[i].offsetY = ns.offsetY
+                
                 widgetSets[i].autoResizes = ns.autoResizes
                 widgetSets[i].scale = ns.scale
                 widgetSets[i].scaleY = ns.scaleY
