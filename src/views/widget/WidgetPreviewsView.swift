@@ -60,7 +60,7 @@ struct WidgetPreviewsView: View {
             text = "\(isUp ? "▲" : "▼") 0 KB/s"
             break;
         case .temperature:
-            text = "26.02ºC"
+            text = widget.config["useFahrenheit"] as? Bool ?? false ? "78.84ºF" : "26.02ºC"
             break;
         case .battery:
             let batteryValue: Int = widget.config["batteryValueType"] as? Int ?? 0
