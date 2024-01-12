@@ -31,6 +31,8 @@ struct EditWidgetSetView: View {
     
     @State var hasBlur: Bool = false
     @State var cornerRadius: Double = 4
+    @State var blurStyle: Int = 1
+    @State var blurAlpha: Double = 1.0
     
     @State var usesCustomColor: Bool = false
     @State var customColor: Color = .white
@@ -169,8 +171,21 @@ struct EditWidgetSetView: View {
                             changesMade = true
                         }
                     }
-                    // MARK: Blur Corner Radius
                     if hasBlur {
+                        // MARK: Blur Style
+                        HStack {
+                            Text("Blur Style").foregroundColor(.primary).bold()
+                            Spacer()
+                            Picker(selection: $blurStyle) {
+                                Text("Light").tag(0)
+                                Text("Dark").tag(1)
+                            } label: {}
+                                .pickerStyle(.menu)
+                                .onChange(of: blurStyle) { _ in
+                                    changesMade = true
+                                }
+                        }
+                        // MARK: Blur Corner Radius
                         VStack {
                             HStack {
                                 Text("Blur Corner Radius")
@@ -179,6 +194,18 @@ struct EditWidgetSetView: View {
                             }
                             BetterSlider(value: $cornerRadius, bounds: 0...30, step: 1)
                                 .onChange(of: cornerRadius) { _ in
+                                    changesMade = true
+                                }
+                        }
+                        // MARK: Blur Alpha
+                        VStack {
+                            HStack {
+                                Text("Blur Alpha")
+                                    .bold()
+                                Spacer()
+                            }
+                            BetterSlider(value: $blurAlpha, bounds: 0...1)
+                                .onChange(of: blurAlpha) { _ in
                                     changesMade = true
                                 }
                         }
@@ -340,6 +367,8 @@ struct EditWidgetSetView: View {
                 
                 hasBlur = widgetSet.blurDetails.hasBlur
                 cornerRadius = widgetSet.blurDetails.cornerRadius
+                blurStyle = widgetSet.blurDetails.styleDark ? 1 : 0
+                blurAlpha = widgetSet.blurDetails.alpha
                 
                 usesCustomColor = widgetSet.colorDetails.usesCustomColor
                 customColor = Color(widgetSet.colorDetails.color)
@@ -388,7 +417,9 @@ struct EditWidgetSetView: View {
             
             blurDetails: .init(
                 hasBlur: hasBlur,
-                cornerRadius: cornerRadius
+                cornerRadius: cornerRadius,
+                styleDark: blurStyle == 1 ? true : false,
+                alpha: blurAlpha
             ),
             
             colorDetails: .init(
