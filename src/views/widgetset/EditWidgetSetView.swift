@@ -40,6 +40,7 @@ struct EditWidgetSetView: View {
     @State var textBold: Bool = false
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
+    @State var textAlpha: Double = 1.0
     
     @State var changesMade: Bool = false
     
@@ -204,7 +205,7 @@ struct EditWidgetSetView: View {
                                     .bold()
                                 Spacer()
                             }
-                            BetterSlider(value: $blurAlpha, bounds: 0...1)
+                            BetterSlider(value: $blurAlpha, bounds: 0.0...1.0)
                                 .onChange(of: blurAlpha) { _ in
                                     changesMade = true
                                 }
@@ -277,6 +278,18 @@ struct EditWidgetSetView: View {
                         }
                         BetterSlider(value: $fontSize, bounds: 5...50, step: 0.5)
                             .onChange(of: fontSize) { _ in
+                                changesMade = true
+                            }
+                    }
+                    // MARK: Text Alpha
+                    VStack {
+                        HStack {
+                            Text("Text Alpha")
+                                .bold()
+                            Spacer()
+                        }
+                        BetterSlider(value: $textAlpha, bounds: 0.0...1.0)
+                            .onChange(of: textAlpha) { _ in
                                 changesMade = true
                             }
                     }
@@ -376,6 +389,7 @@ struct EditWidgetSetView: View {
                 textBold = widgetSet.textBold
                 textAlignment = widgetSet.textAlignment
                 fontSize = widgetSet.fontSize
+                textAlpha = widgetSet.textAlpha
                 
                 changesMade = false
             }
@@ -429,7 +443,8 @@ struct EditWidgetSetView: View {
             
             textBold: textBold,
             textAlignment: textAlignment,
-            fontSize: fontSize
+            fontSize: fontSize,
+            textAlpha: textAlpha
         ), save: save)
         let updatedSet = widgetManager.getUpdatedWidgetSet(widgetSet: widgetSet)
         if updatedSet != nil {
