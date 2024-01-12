@@ -69,10 +69,10 @@ struct WidgetPreviewsView: View {
                 text = "0 W"
                 break;
             case 1:
-                text = "0 mAh"
+                text = "0 mA"
                 break;
             case 2:
-                text = "0 mAh"
+                text = "0 mA"
                 break;
             case 3:
                 text = "25"

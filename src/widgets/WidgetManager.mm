@@ -202,17 +202,17 @@ static NSString* formattedBattery(NSInteger valueType)
             // Charging Current
             double current = [batteryInfo[@"AdapterDetails"][@"Current"] doubleValue];
             if (current) {
-                return [NSString stringWithFormat: @"%.0f mAh", current];
+                return [NSString stringWithFormat: @"%.0f mA", current];
             } else {
-                return @"0 mAh";
+                return @"0 mA";
             }
         } else if (valueType == 2) {
             // Regular Amperage
             double amps = [batteryInfo[@"Amperage"] doubleValue];
             if (amps) {
-                return [NSString stringWithFormat: @"%.0f mAh", amps];
+                return [NSString stringWithFormat: @"%.0f mA", amps];
             } else {
-                return @"0 mAh";
+                return @"0 mA";
             }
         } else if (valueType == 3) {
             // Charge Cycles
