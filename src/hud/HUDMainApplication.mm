@@ -1075,10 +1075,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         if (!blurView || !labelView || !properties)
             break;
         double offsetY = getDoubleFromDictKey(properties, @"offsetY");
-        [_constraints addObjectsFromArray:@[
-            [labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY],
-            [labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: offsetY],
-        ]];
+        [_constraints addObject:[labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY]];
         NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
         double offsetX = getDoubleFromDictKey(properties, @"offsetX", 10);
         // set the horizontal anchor
