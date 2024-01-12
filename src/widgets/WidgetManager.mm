@@ -333,7 +333,13 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             );
             if (![sfSymbolName isEqualToString:@""]) {
                 imageAttachment = [[NSTextAttachment alloc] init];
-                imageAttachment.image = [[UIImage systemImageNamed:sfSymbolName] imageWithTintColor:textColor];
+                imageAttachment.image = [
+                    [
+                        UIImage systemImageNamed:sfSymbolName
+                        withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:fontSize]
+                    ]
+                    imageWithTintColor:textColor
+                ];
                 [mutableString appendAttributedString:[NSAttributedString attributedStringWithAttachment:imageAttachment]];
             }
             break;
