@@ -1066,6 +1066,8 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:-10]];
         else
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:(isPad ? 30 : 20)]];
+
+        [_constraints addObject:[_contentView.bottomAnchor constraintEqualToAnchor:layoutGuide.bottomAnchor]];
     }
 
     // MARK: Set Label Constraints
