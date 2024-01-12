@@ -22,6 +22,7 @@ struct EditWidgetSetView: View {
     @State var offsetY: Double = 0.0
     @State var autoResizes: Bool = true
     @State var scale: Double = 100.0
+    @State var scaleY: Double = 12.0
     
     @State var widgetIDs: [WidgetIDStruct] = []
     @State var updatedWidgetIDs: Bool = false
@@ -117,6 +118,17 @@ struct EditWidgetSetView: View {
                             }
                             BetterSlider(value: $scale, bounds: 10...500)
                                 .onChange(of: scale) { _ in
+                                    changesMade = true
+                                }
+                        }
+                        VStack {
+                            HStack {
+                                Text("Height")
+                                    .bold()
+                                Spacer()
+                            }
+                            BetterSlider(value: $scaleY, bounds: 5...500)
+                                .onChange(of: scaleY) { _ in
                                     changesMade = true
                                 }
                         }
@@ -297,6 +309,7 @@ struct EditWidgetSetView: View {
                 offsetY = widgetSet.offsetY
                 autoResizes = widgetSet.autoResizes
                 scale = widgetSet.scale
+                scaleY = widgetSet.scaleY
                 
                 if !updatedWidgetIDs {
                     widgetIDs = widgetSet.widgetIDs
@@ -345,6 +358,7 @@ struct EditWidgetSetView: View {
             offsetY: offsetY,
             autoResizes: autoResizes,
             scale: scale,
+            scaleY: scaleY,
             
             widgetIDs: [],
             

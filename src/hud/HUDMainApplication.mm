@@ -1091,6 +1091,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         // set the width
         if (!getBoolFromDictKey(properties, @"autoResizes")) {
             [_constraints addObject:[labelView.widthAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scale", 50.0)]];
+            [_constraints addObject:[labelView.heightAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scaleY", 12.0)]];
         }
         
         [_constraints addObjectsFromArray:@[
