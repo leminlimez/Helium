@@ -953,13 +953,17 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         NSDictionary *properties = propID;
         // create the blur
         NSDictionary *blurDetails = [properties valueForKey:@"blurDetails"] ? [properties valueForKey:@"blurDetails"] : @{@"hasBlur" : @(NO)};
-        UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterialDark]];
+        UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:[
+            UIBlurEffect effectWithStyle: getBoolFromDictKey(blurDetails, @"styleDark", true) ? UIBlurEffectStyleSystemMaterialDark : UIBlurEffectStyleSystemMaterialLight
+        ]];
         blurView.layer.cornerRadius = getIntFromDictKey(blurDetails, @"cornerRadius", 4);
         blurView.layer.masksToBounds = YES;
         blurView.translatesAutoresizingMaskIntoConstraints = NO;
         BOOL hasBlur = getBoolFromDictKey(blurDetails, @"hasBlur");
         if (!hasBlur) {
             blurView.alpha = 0.0;
+        } else {
+            blurView.alpha = getDoubleFromDictKey(blurDetails, @"alpha", 1.0);
         }
         [_contentView addSubview:blurView];
         [_blurViews addObject:blurView];

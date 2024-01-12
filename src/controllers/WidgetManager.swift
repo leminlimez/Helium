@@ -43,6 +43,8 @@ struct BlurDetailsStruct: Identifiable, Equatable {
     
     var hasBlur: Bool
     var cornerRadius: Double // Int when saving, Double for runtime convenience
+    var styleDark: Bool
+    var alpha: Double
 }
 
 struct ColorDetailsStruct: Identifiable, Equatable {
@@ -134,7 +136,9 @@ class WidgetManager: ObservableObject {
                 let blurDetails: [String: Any] = s["blurDetails"] as? [String: Any] ?? [:]
                 let blurDetailsStruct: BlurDetailsStruct = .init(
                     hasBlur: blurDetails["hasBlur"] as? Bool ?? false,
-                    cornerRadius: blurDetails["cornerRadius"] as? Double ?? 4
+                    cornerRadius: blurDetails["cornerRadius"] as? Double ?? 4,
+                    styleDark: blurDetails["styleDark"] as? Bool ?? true,
+                    alpha: blurDetails["alpha"] as? Double ?? 1.0
                 )
                 let colorDetails: [String: Any] = s["colorDetails"] as? [String: Any] ?? [:]
                 let selectedColor: UIColor = UIColor.getColorFromData(data: colorDetails["color"] as? Data) ?? UIColor.white
@@ -202,7 +206,9 @@ class WidgetManager: ObservableObject {
             
             let blurDetails: [String: Any] = [
                 "hasBlur": s.blurDetails.hasBlur,
-                "cornerRadius": Int(s.blurDetails.cornerRadius)
+                "cornerRadius": Int(s.blurDetails.cornerRadius),
+                "styleDark": s.blurDetails.styleDark,
+                "alpha": s.blurDetails.alpha
             ]
             wSet["blurDetails"] = blurDetails
             
@@ -319,7 +325,9 @@ class WidgetManager: ObservableObject {
             
             blurDetails: .init(
                 hasBlur: false,
-                cornerRadius: 4
+                cornerRadius: 4,
+                styleDark: true,
+                alpha: 1.0
             ),
             
             textBold: false,
