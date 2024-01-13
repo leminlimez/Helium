@@ -1206,12 +1206,15 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         }
 
         if ([self adaptiveColors]) {
-            [_constraints addObjectsFromArray:@[
-                [blurView.topAnchor constraintEqualToAnchor:_backdropView.topAnchor],
-                [blurView.leadingAnchor constraintEqualToAnchor:_backdropView.leadingAnchor],
-                [blurView.trailingAnchor constraintEqualToAnchor:_backdropView.trailingAnchor],
-                [blurView.bottomAnchor constraintEqualToAnchor:_backdropView.bottomAnchor],
-            ]];
+            NSDictionary *colorDetails = [properties valueForKey:@"colorDetails"] ? [properties valueForKey:@"colorDetails"] : @{@"dynamicColor" : @(YES)};
+            if (getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
+                [_constraints addObjectsFromArray:@[
+                    [blurView.topAnchor constraintEqualToAnchor:_backdropView.topAnchor],
+                    [blurView.leadingAnchor constraintEqualToAnchor:_backdropView.leadingAnchor],
+                    [blurView.trailingAnchor constraintEqualToAnchor:_backdropView.trailingAnchor],
+                    [blurView.bottomAnchor constraintEqualToAnchor:_backdropView.bottomAnchor],
+                ]];
+            }
         }
         
         [_constraints addObjectsFromArray:@[
