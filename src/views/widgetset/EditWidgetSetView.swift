@@ -12,6 +12,7 @@ struct EditWidgetSetView: View {
     @StateObject var widgetManager: WidgetManager
     @State var widgetSet: WidgetSetStruct
     @State var currentWidgetSet: WidgetSetStruct? = nil
+    @State var usesAdaptiveColor: Bool = false
     
     @State var showingAddView: Bool = false
     
@@ -36,6 +37,7 @@ struct EditWidgetSetView: View {
     
     @State var usesCustomColor: Bool = false
     @State var customColor: Color = .white
+    @State var dynamicColor: Bool = true
     
     @State var textBold: Bool = false
     @State var textAlignment: Int = 1
@@ -160,84 +162,99 @@ struct EditWidgetSetView: View {
                     Text("Size Constraints")
                 }
                 
-                Section {
-                    // MARK: Has Blur
-                    HStack {
-                        Toggle(isOn: $hasBlur) {
-                            Text("Background Blur")
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: hasBlur) { _ in
-                            changesMade = true
-                        }
-                    }
-                    if hasBlur {
-                        // MARK: Blur Style
+                if !usesAdaptiveColor || !dynamicColor {
+                    Section {
+                        // MARK: Has Blur
                         HStack {
-                            Text("Blur Style").foregroundColor(.primary).bold()
-                            Spacer()
-                            Picker(selection: $blurStyle) {
-                                Text("Light").tag(0)
-                                Text("Dark").tag(1)
-                            } label: {}
-                                .pickerStyle(.menu)
-                                .onChange(of: blurStyle) { _ in
-                                    changesMade = true
-                                }
-                        }
-                        // MARK: Blur Corner Radius
-                        VStack {
-                            HStack {
-                                Text("Blur Corner Radius")
+                            Toggle(isOn: $hasBlur) {
+                                Text("Background Blur")
                                     .bold()
-                                Spacer()
+                                    .minimumScaleFactor(0.5)
                             }
-                            BetterSlider(value: $cornerRadius, bounds: 0...30, step: 1)
-                                .onChange(of: cornerRadius) { _ in
-                                    changesMade = true
-                                }
+                            .onChange(of: hasBlur) { _ in
+                                changesMade = true
+                            }
                         }
-                        // MARK: Blur Alpha
-                        VStack {
+                        if hasBlur {
+                            // MARK: Blur Style
                             HStack {
-                                Text("Blur Alpha")
-                                    .bold()
+                                Text("Blur Style").foregroundColor(.primary).bold()
                                 Spacer()
+                                Picker(selection: $blurStyle) {
+                                    Text("Light").tag(0)
+                                    Text("Dark").tag(1)
+                                } label: {}
+                                    .pickerStyle(.menu)
+                                    .onChange(of: blurStyle) { _ in
+                                        changesMade = true
+                                    }
                             }
-                            BetterSlider(value: $blurAlpha, bounds: 0.0...1.0)
-                                .onChange(of: blurAlpha) { _ in
-                                    changesMade = true
+                            // MARK: Blur Corner Radius
+                            VStack {
+                                HStack {
+                                    Text("Blur Corner Radius")
+                                        .bold()
+                                    Spacer()
                                 }
+                                BetterSlider(value: $cornerRadius, bounds: 0...30, step: 1)
+                                    .onChange(of: cornerRadius) { _ in
+                                        changesMade = true
+                                    }
+                            }
+                            // MARK: Blur Alpha
+                            VStack {
+                                HStack {
+                                    Text("Blur Alpha")
+                                        .bold()
+                                    Spacer()
+                                }
+                                BetterSlider(value: $blurAlpha, bounds: 0.0...1.0)
+                                    .onChange(of: blurAlpha) { _ in
+                                        changesMade = true
+                                    }
+                            }
                         }
+                    } header: {
+                        Text("Blur")
                     }
-                } header: {
-                    Text("Blur")
                 }
                 
                 Section {
-                    // MARK: Uses Custom Color
-                    HStack {
-                        Toggle(isOn: $usesCustomColor) {
-                            Text("Custom Text Color")
+                    if !usesAdaptiveColor || !dynamicColor {
+                        // MARK: Uses Custom Color
+                        HStack {
+                            Toggle(isOn: $usesCustomColor) {
+                                Text("Custom Text Color")
+                                    .bold()
+                                    .minimumScaleFactor(0.5)
+                            }
+                            .onChange(of: usesCustomColor) { _ in
+                                changesMade = true
+                            }
+                        }
+                        // MARK: Custom Text Color
+                        if usesCustomColor {
+                            HStack {
+                                Text("Text Color")
+                                    .bold()
+                                Spacer()
+                                ColorPicker("Set Text Color", selection: $customColor)
+                                    .labelsHidden()
+                                    .onChange(of: customColor) { _ in
+                                        changesMade = true
+                                    }
+                            }
+                        }
+                    }
+                    // MARK: Dynamic Color
+                    if usesAdaptiveColor {
+                        Toggle(isOn: $dynamicColor) {
+                            Text("Adaptive Color")
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
-                        .onChange(of: usesCustomColor) { _ in
+                        .onChange(of: dynamicColor) { _ in
                             changesMade = true
-                        }
-                    }
-                    // MARK: Custom Text Color
-                    if usesCustomColor {
-                        HStack {
-                            Text("Text Color")
-                                .bold()
-                            Spacer()
-                            ColorPicker("Set Text Color", selection: $customColor)
-                                .labelsHidden()
-                                .onChange(of: customColor) { _ in
-                                    changesMade = true
-                                }
                         }
                     }
                 } header: {
@@ -361,6 +378,7 @@ struct EditWidgetSetView: View {
                 if currentWidgetSet == widgetSet {
                     return
                 }
+                usesAdaptiveColor = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
                 currentWidgetSet = widgetSet
                 nameInput = widgetSet.title
                 
@@ -385,6 +403,7 @@ struct EditWidgetSetView: View {
                 
                 usesCustomColor = widgetSet.colorDetails.usesCustomColor
                 customColor = Color(widgetSet.colorDetails.color)
+                dynamicColor = widgetSet.colorDetails.dynamicColor
                 
                 textBold = widgetSet.textBold
                 textAlignment = widgetSet.textAlignment
@@ -438,7 +457,8 @@ struct EditWidgetSetView: View {
             
             colorDetails: .init(
                 usesCustomColor: usesCustomColor,
-                color: UIColor(customColor)
+                color: UIColor(customColor),
+                dynamicColor: dynamicColor
             ),
             
             textBold: textBold,
