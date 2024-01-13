@@ -26,6 +26,7 @@
 "Show when Rotating" = "旋转屏幕时显示";
 "Hide Save Confirmation Popup" = "不显示保存确认弹窗";
 "Ignore Safe Zone Changes" = "忽略安全区域变化";
+"Use Adaptive Colors" = "使用自适应颜色";
 "Helium Data" = "氦气数据";
 "Successfully deleted user data!" = "已成功删除用户数据！";
 "Please restart the app to continue." = "请重启应用以继续";
