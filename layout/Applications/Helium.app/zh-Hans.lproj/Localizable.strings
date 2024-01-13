@@ -63,9 +63,9 @@
 "Network Type" = "网络类型";
 "Download" = "下载";
 "Upload" = "上传";
-"Arrow Type" = "箭头类型";
-"Triangle" = "三角形";
-"Arrow" = "箭头";
+"Speed Icon" = "网速图标";
+"Minimum Unit" = "最小单位";
+"Hide Speed When 0" = "网速为0时隐藏";
 "Temperature Unit" = "温度单位";
 "Celcius" = "摄氏度";
 "Fahrenheit" = "华氏度";

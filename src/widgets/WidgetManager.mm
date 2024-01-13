@@ -41,10 +41,6 @@ static NSDateFormatter *formatter = nil;
 
 // MARK: Net Speed Widget
 static uint8_t DATAUNIT = 0;
-static const char *UPLOAD_PREFIX = "▲";
-static const char *DOWNLOAD_PREFIX = "▼";
-static const char *UPLOAD_ARROW_PREFIX = "↑";
-static const char *DOWNLOAD_ARROW_PREFIX = "↓";
 
 typedef struct {
     uint64_t inputBytes;
@@ -54,15 +50,15 @@ typedef struct {
 static uint64_t prevOutputBytes = 0, prevInputBytes = 0;
 static NSAttributedString *attributedUploadPrefix = nil;
 static NSAttributedString *attributedDownloadPrefix = nil;
-static NSAttributedString *attributedUploadArrowPrefix = nil;
-static NSAttributedString *attributedDownloadArrowPrefix = nil;
+static NSAttributedString *attributedUploadPrefix2 = nil;
+static NSAttributedString *attributedDownloadPrefix2 = nil;
 
 #pragma mark - Date Widget
 static NSString* formattedDate(NSString *dateFormat)
 {
     if (!formatter) {
         formatter = [[NSDateFormatter alloc] init];
-        // formatter.locale = [NSLocale localeWithLocaleIdentifier: NSLocalizedString(@"en_US", comment: @"")];
+        formatter.locale = [NSLocale currentLocale];
     }
     NSDate *currentDate = [NSDate date];
     NSString *newDateFormat = [LunarDate getChineseCalendarWithDate:currentDate format:dateFormat];
@@ -108,32 +104,42 @@ static UpDownBytes getUpDownBytes()
     return upDownBytes;
 }
 
-static NSString* formattedSpeed(uint64_t bytes)
+static NSString* formattedSpeed(uint64_t bytes, NSInteger minUnit)
 {
     if (0 == DATAUNIT) {
-        if (bytes < KILOBYTES) return @"0 KB/s";
+        // Get min units first
+        if (minUnit == 1 && bytes < KILOBYTES) return @"0 KB/s";
+        else if (minUnit == 2 && bytes < MEGABYTES) return @"0 MB/s";
+        else if (minUnit == 3 && bytes < GIGABYTES) return @"0 GB/s";
+
+        if (bytes < KILOBYTES) return [NSString stringWithFormat:@"%.0f B/s", (double)bytes];
         else if (bytes < MEGABYTES) return [NSString stringWithFormat:@"%.0f KB/s", (double)bytes / KILOBYTES];
         else if (bytes < GIGABYTES) return [NSString stringWithFormat:@"%.2f MB/s", (double)bytes / MEGABYTES];
-        else return [NSString stringWithFormat:@"%.2f GB", (double)bytes / GIGABYTES];
+        else return [NSString stringWithFormat:@"%.2f GB/s", (double)bytes / GIGABYTES];
     } else {
-        if (bytes < KILOBITS) return @"0 Kb/s";
+        // Get min units first
+        if (minUnit == 1 && bytes < KILOBITS) return @"0 Kb/s";
+        else if (minUnit == 2 && bytes < MEGABITS) return @"0 Mb/s";
+        else if (minUnit == 3 && bytes < GIGABITS) return @"0 Gb/s";
+
+        if (bytes < KILOBITS) return [NSString stringWithFormat:@"%.0f b/s", (double)bytes];
         else if (bytes < MEGABITS) return [NSString stringWithFormat:@"%.0f Kb/s", (double)bytes / KILOBITS];
         else if (bytes < GIGABITS) return [NSString stringWithFormat:@"%.2f Mb/s", (double)bytes / MEGABITS];
-        else return [NSString stringWithFormat:@"%.2f Gb", (double)bytes / GIGABITS];
+        else return [NSString stringWithFormat:@"%.2f Gb/s", (double)bytes / GIGABITS];
     }
 }
 
-static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, BOOL isArrow)
+static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, NSInteger speedIcon, NSInteger minUnit, BOOL hideWhenZero, double fontSize)
 {
     @autoreleasepool {
         if (!attributedUploadPrefix)
-            attributedUploadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_PREFIX] stringByAppendingString:@" "]];
+            attributedUploadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:"▲"] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
         if (!attributedDownloadPrefix)
-            attributedDownloadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_PREFIX] stringByAppendingString:@" "]];
-        if (!attributedUploadArrowPrefix)
-            attributedUploadArrowPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:UPLOAD_ARROW_PREFIX] stringByAppendingString:@" "]];
-        if (!attributedDownloadArrowPrefix)
-            attributedDownloadArrowPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:DOWNLOAD_ARROW_PREFIX] stringByAppendingString:@" "]];
+            attributedDownloadPrefix = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:"▼"] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
+        if (!attributedUploadPrefix2)
+            attributedUploadPrefix2 = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:"↑"] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
+        if (!attributedDownloadPrefix2)
+            attributedDownloadPrefix2 = [[NSAttributedString alloc] initWithString:[[NSString stringWithUTF8String:"↓"] stringByAppendingString:@" "] attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize]}];
         
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
         
@@ -147,20 +153,25 @@ static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, BOOL isArro
             else
                 diff = 0;
             prevOutputBytes = upDownBytes.outputBytes;
-            [mutableString appendAttributedString:(isArrow ? attributedUploadArrowPrefix : attributedUploadPrefix)];
         } else {
             if (upDownBytes.inputBytes > prevInputBytes)
                 diff = upDownBytes.inputBytes - prevInputBytes;
             else
                 diff = 0;
             prevInputBytes = upDownBytes.inputBytes;
-            [mutableString appendAttributedString:(isArrow ? attributedDownloadArrowPrefix : attributedDownloadPrefix)];
         }
         
         if (DATAUNIT == 1)
             diff *= 8;
         
-        [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:formattedSpeed(diff)]];
+        NSString *speedString = formattedSpeed(diff, minUnit);
+        if (!hideWhenZero || ![speedString hasPrefix:@"0"]) {
+            if (isUp)
+                [mutableString appendAttributedString:(speedIcon == 0 ? attributedUploadPrefix : attributedUploadPrefix2)];
+            else
+                [mutableString appendAttributedString:(speedIcon == 0 ? attributedDownloadPrefix : attributedDownloadPrefix2)];
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:speedString attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
+        }
         
         return [mutableString copy];
     }
@@ -311,7 +322,10 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             [
                 mutableString appendAttributedString: formattedAttributedSpeedString(
                     [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO,
-                    [parsedInfo valueForKey:@"isArrow"] ? [[parsedInfo valueForKey:@"isArrow"] boolValue] : NO
+                    [parsedInfo valueForKey:@"speedIcon"] ? [[parsedInfo valueForKey:@"speedIcon"] intValue] : 0,
+                    [parsedInfo valueForKey:@"minUnit"] ? [[parsedInfo valueForKey:@"minUnit"] intValue] : 1,
+                    [parsedInfo valueForKey:@"hideSpeedWhenZero"] ? [[parsedInfo valueForKey:@"hideSpeedWhenZero"] boolValue] : NO,
+                    fontSize
                 )
             ];
             break;

@@ -63,9 +63,9 @@
 "Network Type" = "Network Type";
 "Download" = "Download";
 "Upload" = "Upload";
-"Arrow Type" = "Arrow Type";
-"Triangle" = "Triangle";
-"Arrow" = "Arrow";
+"Speed Icon" = "Speed Icon";
+"Minimum Unit" = "Minimum Unit";
+"Hide Speed When 0" = "Hide Speed When 0";
 "Temperature Unit" = "Temperature Unit";
 "Celcius" = "Celcius";
 "Fahrenheit" = "Fahrenheit";
