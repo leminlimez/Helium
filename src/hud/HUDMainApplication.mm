@@ -1069,10 +1069,16 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         labelView.alpha = getIntFromDictKey(properties, @"textAlpha", 1.0);
         labelView.font = textFont;
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
-        if (hasBlur) {
-            [blurView.contentView addSubview:labelView];
-        } else {
+        if (adaptive) {
+            [labelView setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
+            blurView.hidden = YES;
             [_contentView addSubview: labelView];
+        } else {
+            if (hasBlur) {
+                [blurView.contentView addSubview:labelView];
+            } else {
+                [_contentView addSubview: labelView];
+            }
         }
         [_labelViews addObject: labelView];
 
@@ -1196,6 +1202,15 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         if (!getBoolFromDictKey(properties, @"autoResizes")) {
             [_constraints addObject:[labelView.widthAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scale", 50.0)]];
             [_constraints addObject:[labelView.heightAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scaleY", 12.0)]];
+        }
+
+        if ([self adaptiveColors]) {
+            [_constraints addObjectsFromArray:@[
+                [blurView.topAnchor constraintEqualToAnchor:_backdropView.topAnchor],
+                [blurView.leadingAnchor constraintEqualToAnchor:_backdropView.leadingAnchor],
+                [blurView.trailingAnchor constraintEqualToAnchor:_backdropView.trailingAnchor],
+                [blurView.bottomAnchor constraintEqualToAnchor:_backdropView.bottomAnchor],
+            ]];
         }
         
         [_constraints addObjectsFromArray:@[
