@@ -162,59 +162,61 @@ struct EditWidgetSetView: View {
                     Text("Size Constraints")
                 }
                 
-                Section {
-                    // MARK: Has Blur
-                    HStack {
-                        Toggle(isOn: $hasBlur) {
-                            Text("Background Blur")
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: hasBlur) { _ in
-                            changesMade = true
-                        }
-                    }
-                    if hasBlur {
-                        // MARK: Blur Style
+                if !usesAdaptiveColor || !dynamicColor {
+                    Section {
+                        // MARK: Has Blur
                         HStack {
-                            Text("Blur Style").foregroundColor(.primary).bold()
-                            Spacer()
-                            Picker(selection: $blurStyle) {
-                                Text("Light").tag(0)
-                                Text("Dark").tag(1)
-                            } label: {}
-                                .pickerStyle(.menu)
-                                .onChange(of: blurStyle) { _ in
-                                    changesMade = true
-                                }
-                        }
-                        // MARK: Blur Corner Radius
-                        VStack {
-                            HStack {
-                                Text("Blur Corner Radius")
+                            Toggle(isOn: $hasBlur) {
+                                Text("Background Blur")
                                     .bold()
-                                Spacer()
+                                    .minimumScaleFactor(0.5)
                             }
-                            BetterSlider(value: $cornerRadius, bounds: 0...30, step: 1)
-                                .onChange(of: cornerRadius) { _ in
-                                    changesMade = true
-                                }
+                            .onChange(of: hasBlur) { _ in
+                                changesMade = true
+                            }
                         }
-                        // MARK: Blur Alpha
-                        VStack {
+                        if hasBlur {
+                            // MARK: Blur Style
                             HStack {
-                                Text("Blur Alpha")
-                                    .bold()
+                                Text("Blur Style").foregroundColor(.primary).bold()
                                 Spacer()
+                                Picker(selection: $blurStyle) {
+                                    Text("Light").tag(0)
+                                    Text("Dark").tag(1)
+                                } label: {}
+                                    .pickerStyle(.menu)
+                                    .onChange(of: blurStyle) { _ in
+                                        changesMade = true
+                                    }
                             }
-                            BetterSlider(value: $blurAlpha, bounds: 0.0...1.0)
-                                .onChange(of: blurAlpha) { _ in
-                                    changesMade = true
+                            // MARK: Blur Corner Radius
+                            VStack {
+                                HStack {
+                                    Text("Blur Corner Radius")
+                                        .bold()
+                                    Spacer()
                                 }
+                                BetterSlider(value: $cornerRadius, bounds: 0...30, step: 1)
+                                    .onChange(of: cornerRadius) { _ in
+                                        changesMade = true
+                                    }
+                            }
+                            // MARK: Blur Alpha
+                            VStack {
+                                HStack {
+                                    Text("Blur Alpha")
+                                        .bold()
+                                    Spacer()
+                                }
+                                BetterSlider(value: $blurAlpha, bounds: 0.0...1.0)
+                                    .onChange(of: blurAlpha) { _ in
+                                        changesMade = true
+                                    }
+                            }
                         }
+                    } header: {
+                        Text("Blur")
                     }
-                } header: {
-                    Text("Blur")
                 }
                 
                 Section {
