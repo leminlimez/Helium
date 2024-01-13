@@ -862,8 +862,8 @@ Example format for properties:
 #if DEBUG
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
-    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold);
-    if (attributedText) {
+    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold, label.textColor);
+    if (attributedText)
         [label setAttributedText: attributedText];
         if (maskLabel) {
             [maskLabel setAttributedText: attributedText];
@@ -1004,13 +1004,17 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         NSDictionary *properties = propID;
         // create the blur
         NSDictionary *blurDetails = [properties valueForKey:@"blurDetails"] ? [properties valueForKey:@"blurDetails"] : @{@"hasBlur" : @(NO)};
-        UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterialDark]];
+        UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:[
+            UIBlurEffect effectWithStyle: getBoolFromDictKey(blurDetails, @"styleDark", true) ? UIBlurEffectStyleSystemMaterialDark : UIBlurEffectStyleSystemMaterialLight
+        ]];
         blurView.layer.cornerRadius = getIntFromDictKey(blurDetails, @"cornerRadius", 4);
         blurView.layer.masksToBounds = YES;
         blurView.translatesAutoresizingMaskIntoConstraints = NO;
         BOOL hasBlur = getBoolFromDictKey(blurDetails, @"hasBlur");
         if (!hasBlur) {
             blurView.alpha = 0.0;
+        } else {
+            blurView.alpha = getDoubleFromDictKey(blurDetails, @"alpha", 1.0);
         }
         [_contentView addSubview:blurView];
         [_blurViews addObject:blurView];
@@ -1045,6 +1049,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         } else {
             textFont = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
         }
+        labelView.alpha = getIntFromDictKey(properties, @"textAlpha", 1.0);
         labelView.font = textFont;
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
         if (hasBlur) {
@@ -1123,7 +1128,10 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [_contentView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:(!ignoreSZ && layoutGuide.layoutFrame.origin.y > 1) ? -20 : -4],
         ]];
 
-        [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:(isPad ? 30 : 10)]];
+        [_constraints addObjectsFromArray:@[
+            [_contentView.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:(isPad ? 30 : 10)],
+            [_contentView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
+        ]];
     }
     else
     {
@@ -1136,6 +1144,8 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:-10]];
         else
             [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:(isPad ? 30 : 20)]];
+
+        [_constraints addObject:[_contentView.bottomAnchor constraintEqualToAnchor:layoutGuide.bottomAnchor]];
     }
 
     // MARK: Set Label Constraints
@@ -1147,13 +1157,17 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         NSDictionary *properties = [widgetProps objectAtIndex:i];
         if (!blurView || !labelView || !properties)
             break;
-        double offsetY = getDoubleFromDictKey(properties, @"offsetY");
-        [_constraints addObjectsFromArray:@[
-            [labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY],
-            [labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: offsetY],
-        ]];
-        NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
         double offsetX = getDoubleFromDictKey(properties, @"offsetX", 10);
+        double offsetY = getDoubleFromDictKey(properties, @"offsetY");
+        NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
+        NSInteger anchorYSide = getIntFromDictKey(properties, @"anchorY");
+        // set the vertical anchor
+        if (anchorYSide == 1)
+            [_constraints addObject:[labelView.centerYAnchor constraintEqualToAnchor:_contentView.centerYAnchor constant: offsetY]];
+        else if (anchorYSide == 0)
+            [_constraints addObject:[labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY]];
+        else
+            [_constraints addObject:[labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: offsetY]];
         // set the horizontal anchor
         if (anchorSide == 1)
             [_constraints addObject:[labelView.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor constant: offsetX]];
@@ -1164,6 +1178,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         // set the width
         if (!getBoolFromDictKey(properties, @"autoResizes")) {
             [_constraints addObject:[labelView.widthAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scale", 50.0)]];
+            [_constraints addObject:[labelView.heightAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scaleY", 12.0)]];
         }
         
         [_constraints addObjectsFromArray:@[

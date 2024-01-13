@@ -5,6 +5,7 @@
 //  Created by lemin on 12/8/23.
 //
 
+BOOL getBoolFromDictKey(NSDictionary *dict, NSString *key, BOOL defaultValue);
 BOOL getBoolFromDictKey(NSDictionary *dict, NSString *key);
 
 NSInteger getIntFromDictKey(NSDictionary *dict, NSString *key, NSInteger defaultValue);

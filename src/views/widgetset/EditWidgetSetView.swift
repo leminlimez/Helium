@@ -18,16 +18,21 @@ struct EditWidgetSetView: View {
     @State var nameInput: String = ""
     
     @State var anchorSelection: Int = 0
+    @State var anchorYSelection: Int = 0
     @State var offsetX: Double = 10.0
     @State var offsetY: Double = 0.0
+    
     @State var autoResizes: Bool = true
     @State var scale: Double = 100.0
+    @State var scaleY: Double = 12.0
     
     @State var widgetIDs: [WidgetIDStruct] = []
     @State var updatedWidgetIDs: Bool = false
     
     @State var hasBlur: Bool = false
     @State var cornerRadius: Double = 4
+    @State var blurStyle: Int = 1
+    @State var blurAlpha: Double = 1.0
     
     @State var usesCustomColor: Bool = false
     @State var customColor: Color = .white
@@ -35,6 +40,7 @@ struct EditWidgetSetView: View {
     @State var textBold: Bool = false
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
+    @State var textAlpha: Double = 1.0
     
     @State var changesMade: Bool = false
     
@@ -58,19 +64,32 @@ struct EditWidgetSetView: View {
                 }
                 
                 Section {
-                    // MARK: Anchor Side
+                    // MARK: Anchor Sides
                     HStack {
-                        Text("Anchor Side").foregroundColor(.primary).bold()
+                        Text("Horizontal Anchor Side").foregroundColor(.primary).bold()
                         Spacer()
                         Picker(selection: $anchorSelection) {
                             Text("Left").tag(0)
                             Text("Center").tag(1)
                             Text("Right").tag(2)
                         } label: {}
-                        .pickerStyle(.menu)
-                        .onChange(of: anchorSelection) { _ in
-                            changesMade = true
-                        }
+                            .pickerStyle(.menu)
+                            .onChange(of: anchorSelection) { _ in
+                                changesMade = true
+                            }
+                    }
+                    HStack {
+                        Text("Vertical Anchor Side").foregroundColor(.primary).bold()
+                        Spacer()
+                        Picker(selection: $anchorYSelection) {
+                            Text("Top").tag(0)
+                            Text("Center").tag(1)
+                            Text("Bottom").tag(2)
+                        } label: {}
+                            .pickerStyle(.menu)
+                            .onChange(of: anchorYSelection) { _ in
+                                changesMade = true
+                            }
                     }
                     // MARK: Offset X
                     VStack {
@@ -96,6 +115,11 @@ struct EditWidgetSetView: View {
                                 changesMade = true
                             }
                     }
+                } header: {
+                    Text("Positioning")
+                }
+                
+                Section {
                     // MARK: Auto Resizes
                     HStack {
                         Toggle(isOn: $autoResizes) {
@@ -107,7 +131,7 @@ struct EditWidgetSetView: View {
                             changesMade = true
                         }
                     }
-                    // MARK: Width
+                    // MARK: Width and Height
                     if !autoResizes {
                         VStack {
                             HStack {
@@ -120,9 +144,20 @@ struct EditWidgetSetView: View {
                                     changesMade = true
                                 }
                         }
+                        VStack {
+                            HStack {
+                                Text("Height")
+                                    .bold()
+                                Spacer()
+                            }
+                            BetterSlider(value: $scaleY, bounds: 5...500)
+                                .onChange(of: scaleY) { _ in
+                                    changesMade = true
+                                }
+                        }
                     }
                 } header: {
-                    Text("Constraints")
+                    Text("Size Constraints")
                 }
                 
                 Section {
@@ -137,8 +172,21 @@ struct EditWidgetSetView: View {
                             changesMade = true
                         }
                     }
-                    // MARK: Blur Corner Radius
                     if hasBlur {
+                        // MARK: Blur Style
+                        HStack {
+                            Text("Blur Style").foregroundColor(.primary).bold()
+                            Spacer()
+                            Picker(selection: $blurStyle) {
+                                Text("Light").tag(0)
+                                Text("Dark").tag(1)
+                            } label: {}
+                                .pickerStyle(.menu)
+                                .onChange(of: blurStyle) { _ in
+                                    changesMade = true
+                                }
+                        }
+                        // MARK: Blur Corner Radius
                         VStack {
                             HStack {
                                 Text("Blur Corner Radius")
@@ -147,6 +195,18 @@ struct EditWidgetSetView: View {
                             }
                             BetterSlider(value: $cornerRadius, bounds: 0...30, step: 1)
                                 .onChange(of: cornerRadius) { _ in
+                                    changesMade = true
+                                }
+                        }
+                        // MARK: Blur Alpha
+                        VStack {
+                            HStack {
+                                Text("Blur Alpha")
+                                    .bold()
+                                Spacer()
+                            }
+                            BetterSlider(value: $blurAlpha, bounds: 0.0...1.0)
+                                .onChange(of: blurAlpha) { _ in
                                     changesMade = true
                                 }
                         }
@@ -218,6 +278,18 @@ struct EditWidgetSetView: View {
                         }
                         BetterSlider(value: $fontSize, bounds: 5...50, step: 0.5)
                             .onChange(of: fontSize) { _ in
+                                changesMade = true
+                            }
+                    }
+                    // MARK: Text Alpha
+                    VStack {
+                        HStack {
+                            Text("Text Alpha")
+                                .bold()
+                            Spacer()
+                        }
+                        BetterSlider(value: $textAlpha, bounds: 0.0...1.0)
+                            .onChange(of: textAlpha) { _ in
                                 changesMade = true
                             }
                     }
@@ -293,10 +365,13 @@ struct EditWidgetSetView: View {
                 nameInput = widgetSet.title
                 
                 anchorSelection = widgetSet.anchor
+                anchorYSelection = widgetSet.anchorY
                 offsetX = widgetSet.offsetX
                 offsetY = widgetSet.offsetY
+                
                 autoResizes = widgetSet.autoResizes
                 scale = widgetSet.scale
+                scaleY = widgetSet.scaleY
                 
                 if !updatedWidgetIDs {
                     widgetIDs = widgetSet.widgetIDs
@@ -305,6 +380,8 @@ struct EditWidgetSetView: View {
                 
                 hasBlur = widgetSet.blurDetails.hasBlur
                 cornerRadius = widgetSet.blurDetails.cornerRadius
+                blurStyle = widgetSet.blurDetails.styleDark ? 1 : 0
+                blurAlpha = widgetSet.blurDetails.alpha
                 
                 usesCustomColor = widgetSet.colorDetails.usesCustomColor
                 customColor = Color(widgetSet.colorDetails.color)
@@ -312,6 +389,7 @@ struct EditWidgetSetView: View {
                 textBold = widgetSet.textBold
                 textAlignment = widgetSet.textAlignment
                 fontSize = widgetSet.fontSize
+                textAlpha = widgetSet.textAlpha
                 
                 changesMade = false
             }
@@ -341,16 +419,21 @@ struct EditWidgetSetView: View {
             title: nameInput,
             
             anchor: anchorSelection,
+            anchorY: anchorYSelection,
             offsetX: offsetX,
             offsetY: offsetY,
+            
             autoResizes: autoResizes,
             scale: scale,
+            scaleY: scaleY,
             
             widgetIDs: [],
             
             blurDetails: .init(
                 hasBlur: hasBlur,
-                cornerRadius: cornerRadius
+                cornerRadius: cornerRadius,
+                styleDark: blurStyle == 1 ? true : false,
+                alpha: blurAlpha
             ),
             
             colorDetails: .init(
@@ -360,7 +443,8 @@ struct EditWidgetSetView: View {
             
             textBold: textBold,
             textAlignment: textAlignment,
-            fontSize: fontSize
+            fontSize: fontSize,
+            textAlpha: textAlpha
         ), save: save)
         let updatedSet = widgetManager.getUpdatedWidgetSet(widgetSet: widgetSet)
         if updatedSet != nil {
