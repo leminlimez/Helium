@@ -15,6 +15,8 @@ struct WidgetPreferencesView: View {
     
     @State var text: String = ""
     @State var intSelection: Int = 0
+    @State var intSelection2: Int = 0
+    @State var intSelection3: Int = 1
     @State var boolSelection: Bool = false
     
     @State var modified: Bool = false
@@ -61,7 +63,7 @@ struct WidgetPreferencesView: View {
                         }
                 }
             case .network:
-                // MARK: Network Choice
+                // MARK: Network Type Choice
                 HStack {
                     Text("Network Type").foregroundColor(.primary).bold()
                     Spacer()
@@ -77,6 +79,51 @@ struct WidgetPreferencesView: View {
                             intSelection = 0
                         }
                     }
+                }
+                // MARK: Speed Icon Choice
+                HStack {
+                    Text("Speed Icon").foregroundColor(.primary).bold()
+                    Spacer()
+                    Picker(selection: $intSelection2) {
+                        Text(intSelection == 0 ? "▼" : "▲").tag(0)
+                        Text(intSelection == 0 ? "↓" : "↑").tag(1)
+                    } label: {}
+                    .pickerStyle(.menu)
+                    .onAppear {
+                        if let speedIcon = widgetID.config["speedIcon"] as? Int {
+                            intSelection2 = speedIcon
+                        } else {
+                            intSelection2 = 0
+                        }
+                    }
+                }
+                // MARK: Minimum Unit Choice
+                HStack {
+                    Text("Minimum Unit").foregroundColor(.primary).bold()
+                    Spacer()
+                    Picker(selection: $intSelection3) {
+                        Text("b").tag(0)
+                        Text("Kb").tag(1)
+                        Text("Mb").tag(2)
+                        Text("Gb").tag(3)
+                    } label: {}
+                    .pickerStyle(.menu)
+                    .onAppear {
+                        if let minUnit = widgetID.config["minUnit"] as? Int {
+                            intSelection3 = minUnit
+                        } else {
+                            intSelection3 = 1
+                        }
+                    }
+                }
+                // MARK: Hide Speed When Zero
+                Toggle(isOn: $boolSelection) {
+                    Text("Hide Speed When 0")
+                        .foregroundColor(.primary)
+                        .bold()
+                }
+                .onAppear {
+                    boolSelection = widgetID.config["hideSpeedWhenZero"] as? Bool ?? false
                 }
             case .temperature:
                 // MARK: Battery Temperature Value
@@ -205,6 +252,12 @@ struct WidgetPreferencesView: View {
         .onChange(of: intSelection) { _ in
             modified = true
         }
+        .onChange(of: intSelection2) { _ in
+            modified = true
+        }
+        .onChange(of: intSelection3) { _ in
+            modified = true
+        }
         .onChange(of: boolSelection) { _ in
             modified = true
         }
@@ -238,8 +291,11 @@ struct WidgetPreferencesView: View {
         
         // MARK: Changing Integer
         case .network:
-            // MARK: Network Choice Handling
+            // MARK: Network Choices Handling
             widgetStruct.config["isUp"] = intSelection == 1 ? true : false
+            widgetStruct.config["speedIcon"] = intSelection2
+            widgetStruct.config["minUnit"] = intSelection3
+            widgetStruct.config["hideSpeedWhenZero"] = boolSelection
         case .temperature:
             // MARK: Temperature Unit Handling
             widgetStruct.config["useFahrenheit"] = intSelection == 1 ? true : false
