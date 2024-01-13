@@ -165,14 +165,19 @@ NSDictionary* getBatteryInfo()
     return dict;
 }
 
-static NSString* formattedTemp()
+static NSString* formattedTemp(BOOL useFahrenheit)
 {
     NSDictionary *batteryInfo = getBatteryInfo();
     if (batteryInfo) {
         // AdapterDetails.Watts.Description.Temperature
         double temp = [batteryInfo[@"Temperature"] doubleValue] / 100.0;
         if (temp) {
-            return [NSString stringWithFormat: @"%.2fºC", temp];
+            if (useFahrenheit) {
+                temp = (temp * 9.0/5.0) + 32;
+                return [NSString stringWithFormat: @"%.2fºF", temp];
+            } else {
+                return [NSString stringWithFormat: @"%.2fºC", temp];
+            }
         }
     }
     return @"??ºC";
@@ -202,17 +207,17 @@ static NSString* formattedBattery(NSInteger valueType)
             // Charging Current
             double current = [batteryInfo[@"AdapterDetails"][@"Current"] doubleValue];
             if (current) {
-                return [NSString stringWithFormat: @"%.0f mAh", current];
+                return [NSString stringWithFormat: @"%.0f mA", current];
             } else {
-                return @"0 mAh";
+                return @"0 mA";
             }
         } else if (valueType == 2) {
             // Regular Amperage
             double amps = [batteryInfo[@"Amperage"] doubleValue];
             if (amps) {
-                return [NSString stringWithFormat: @"%.0f mAh", amps];
+                return [NSString stringWithFormat: @"%.0f mA", amps];
             } else {
-                return @"0 mAh";
+                return @"0 mA";
             }
         } else if (valueType == 3) {
             // Charge Cycles
@@ -238,6 +243,20 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
     return @"??%";
 }
 
+#pragma mark - Charging Symbol Widget
+static NSString* formattedChargingSymbol(BOOL filled)
+{
+    [[UIDevice currentDevice] setBatteryMonitoringEnabled: YES];
+    if ([[UIDevice currentDevice] batteryState] != UIDeviceBatteryStateUnplugged) {
+        if (filled) {
+            return @"bolt.fill";
+        } else {
+            return @"bolt";
+        }
+    }
+    return @"";
+}
+
 
 #pragma mark - Main Widget Functions
 /*
@@ -250,14 +269,17 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
  5 = Time
  6 = Text
  7 = Battery Percentage
+ 8 = Charging Symbol
 
  TODO:
  - Weather
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold, UIColor *textColor)
 {
     NSString *widgetString;
+    NSString *sfSymbolName;
+    NSTextAttachment *imageAttachment;
     switch (parsedID) {
         case 1:
         case 5:
@@ -282,7 +304,9 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
         case 3:
             // Device Temp
-            widgetString = formattedTemp();
+            widgetString = formattedTemp(
+                [parsedInfo valueForKey:@"useFahrenheit"] ? [[parsedInfo valueForKey:@"useFahrenheit"] boolValue] : NO
+            );
             break;
         case 4:
             // Battery Stats
@@ -300,6 +324,23 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                 [parsedInfo valueForKey:@"showPercentage"] ? [[parsedInfo valueForKey:@"showPercentage"] boolValue] : YES
             );
             break;
+        case 8:
+            // Charging Symbol
+            sfSymbolName = formattedChargingSymbol(
+                [parsedInfo valueForKey:@"filled"] ? [[parsedInfo valueForKey:@"filled"] boolValue] : YES
+            );
+            if (![sfSymbolName isEqualToString:@""]) {
+                imageAttachment = [[NSTextAttachment alloc] init];
+                imageAttachment.image = [
+                    [
+                        UIImage systemImageNamed:sfSymbolName
+                        withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:fontSize]
+                    ]
+                    imageWithTintColor:textColor
+                ];
+                [mutableString appendAttributedString:[NSAttributedString attributedStringWithAttachment:imageAttachment]];
+            }
+            break;
         default:
             // do not add anything
             break;
@@ -315,7 +356,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold, UIColor *textColor)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -324,7 +365,7 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold, textColor);
             }
         } else {
             [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];

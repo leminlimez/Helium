@@ -78,6 +78,24 @@ struct WidgetPreferencesView: View {
                         }
                     }
                 }
+            case .temperature:
+                // MARK: Battery Temperature Value
+                HStack {
+                    Text("Temperature Unit").foregroundColor(.primary).bold()
+                    Spacer()
+                    Picker(selection: $intSelection) {
+                        Text("Celcius").tag(0)
+                        Text("Fahrenheit").tag(1)
+                    } label: {}
+                        .pickerStyle(.menu)
+                        .onAppear {
+                            if widgetID.config["useFahrenheit"] as? Bool ?? false == true {
+                                intSelection = 1
+                            } else {
+                                intSelection = 0
+                            }
+                        }
+                }
             case .battery:
                 // MARK: Battery Value Type
                 HStack {
@@ -144,6 +162,18 @@ struct WidgetPreferencesView: View {
                         boolSelection = widgetID.config["showPercentage"] as? Bool ?? true
                     }
                 }
+            case .chargeSymbol:
+                // MARK: Charge Symbol Fill Option
+                HStack {
+                    Toggle(isOn: $boolSelection) {
+                        Text("Fill Symbol")
+                            .foregroundColor(.primary)
+                            .bold()
+                    }
+                    .onAppear {
+                        boolSelection = widgetID.config["filled"] as? Bool ?? true
+                    }
+                }
             default:
                 Text("No Configurable Aspects")
             }
@@ -197,7 +227,6 @@ struct WidgetPreferencesView: View {
             } else {
                 widgetStruct.config["dateFormat"] = text
             }
-            break;
         case .textWidget:
             // MARK: Custom Text Handling
             if text == "" {
@@ -205,29 +234,30 @@ struct WidgetPreferencesView: View {
             } else {
                 widgetStruct.config["text"] = text
             }
-            break;
         
         // MARK: Changing Integer
         case .network:
             // MARK: Network Choice Handling
             widgetStruct.config["isUp"] = intSelection == 1 ? true : false
-            break;
+        case .temperature:
+            // MARK: Temperature Unit Handling
+            widgetStruct.config["useFahrenheit"] = intSelection == 1 ? true : false
         case .battery:
             // MARK: Battery Value Type Handling
             widgetStruct.config["batteryValueType"] = intSelection
-            break;
         case .timeWidget:
             // MARK: Time Format Handling
             widgetStruct.config["dateFormat"] = timeFormats[intSelection]
-            break;
         
         // MARK: Changing Boolean
         case .currentCapacity:
             // MARK: Current Capacity Handling
             widgetStruct.config["showPercentage"] = boolSelection
-            break;
+        case .chargeSymbol:
+            // MARK: Charge Symbol Fill Handling
+            widgetStruct.config["filled"] = boolSelection
         default:
-            break;
+            return;
         }
         
         widgetManager.updateWidgetConfig(widgetSet: widgetSet, id: widgetID, newID: widgetStruct)
