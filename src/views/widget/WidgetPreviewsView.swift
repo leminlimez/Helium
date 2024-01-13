@@ -48,6 +48,7 @@ struct WidgetPreviewsView: View {
         case .dateWidget, .timeWidget:
             let dateFormat: String = widget.config["dateFormat"] as? String ?? (widget.module == .dateWidget ? NSLocalizedString("E MMM dd", comment:"") : "hh:mm")
             let dateFormatter = DateFormatter()
+            dateFormatter.locale = Locale.current
             let newDateFormat = LunarDate.getChineseCalendar(with: Date(), format: dateFormat)
             dateFormatter.dateFormat = newDateFormat
             // dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
@@ -58,8 +59,8 @@ struct WidgetPreviewsView: View {
             }
         case .network:
             let isUp: Bool = widget.config["isUp"] as? Bool ?? false
-            let isArrow: Bool = widget.config["isArrow"] as? Bool ?? false
-            text = "\(!isArrow ? (isUp ? "▲" : "▼") : (isUp ? "↑" : "↓")) 0 KB/s"
+            let speedIcon: Int = widget.config["speedIcon"] as? Int ?? 0
+            text = "\(isUp ? (speedIcon == 0 ? "▲" : "↑") : (speedIcon == 0 ? "▼" : "↓")) 30 KB/s"
         case .temperature:
             text = widget.config["useFahrenheit"] as? Bool ?? false ? "78.84ºF" : "26.02ºC"
         case .battery:

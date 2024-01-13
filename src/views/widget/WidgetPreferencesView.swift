@@ -15,7 +15,8 @@ struct WidgetPreferencesView: View {
     
     @State var text: String = ""
     @State var intSelection: Int = 0
-    @State var intSelection_arrow: Int = 0
+    @State var intSelection2: Int = 0
+    @State var intSelection3: Int = 1
     @State var boolSelection: Bool = false
     
     @State var modified: Bool = false
@@ -62,7 +63,7 @@ struct WidgetPreferencesView: View {
                         }
                 }
             case .network:
-                // MARK: Network Choice
+                // MARK: Network Type Choice
                 VStack {
                     HStack {
                         Text(NSLocalizedString("Network Type", comment:"")).foregroundColor(.primary).bold()
@@ -80,22 +81,51 @@ struct WidgetPreferencesView: View {
                             }
                         }
                     }
+                    // MARK: Speed Icon Choice
                     HStack {
-                        Text(NSLocalizedString("Arrow Type", comment:"")).foregroundColor(.primary).bold()
+                        Text(NSLocalizedString("Speed Icon", comment:"")).foregroundColor(.primary).bold()
                         Spacer()
-                        Picker(selection: $intSelection_arrow) {
-                            Text(NSLocalizedString("Triangle", comment:"")).tag(0)
-                            Text(NSLocalizedString("Arrow", comment:"")).tag(1)
+                        Picker(selection: $intSelection2) {
+                            Text(intSelection == 0 ? "▼" : "▲").tag(0)
+                            Text(intSelection == 0 ? "↓" : "↑").tag(1)
                         } label: {}
                         .pickerStyle(.menu)
                         .onAppear {
-                            if let arrow = widgetID.config["isArrow"] as? Bool {
-                                intSelection_arrow = arrow ? 1 : 0
+                            if let speedIcon = widgetID.config["speedIcon"] as? Int {
+                                intSelection2 = speedIcon
                             } else {
-                                intSelection_arrow = 0
+                                intSelection2 = 0
                             }
                         }
                     }
+                    // MARK: Minimum Unit Choice
+                    HStack {
+                        Text(NSLocalizedString("Minimum Unit", comment:"")).foregroundColor(.primary).bold()
+                        Spacer()
+                        Picker(selection: $intSelection3) {
+                            Text("b").tag(0)
+                            Text("Kb").tag(1)
+                            Text("Mb").tag(2)
+                            Text("Gb").tag(3)
+                        } label: {}
+                        .pickerStyle(.menu)
+                        .onAppear {
+                            if let minUnit = widgetID.config["minUnit"] as? Int {
+                                intSelection3 = minUnit
+                            } else {
+                                intSelection3 = 1
+                            }
+                        }
+                    }
+                    // MARK: Hide Speed When Zero
+                    Toggle(isOn: $boolSelection) {
+                        Text(NSLocalizedString("Hide Speed When 0", comment:""))
+                            .foregroundColor(.primary)
+                            .bold()
+                    }
+                }
+                .onAppear {
+                    boolSelection = widgetID.config["hideSpeedWhenZero"] as? Bool ?? false
                 }
             case .temperature:
                 // MARK: Battery Temperature Value
@@ -223,7 +253,10 @@ struct WidgetPreferencesView: View {
         .onChange(of: intSelection) { _ in
             modified = true
         }
-        .onChange(of: intSelection_arrow) { _ in
+        .onChange(of: intSelection2) { _ in
+            modified = true
+        }
+        .onChange(of: intSelection3) { _ in
             modified = true
         }
         .onChange(of: boolSelection) { _ in
@@ -232,6 +265,7 @@ struct WidgetPreferencesView: View {
     }
     
     func getFormattedDate(_ format: String) -> String {
+        dateFormatter.locale = Locale.current
         dateFormatter.dateFormat = format
         // dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
         return dateFormatter.string(from: currentDate)
@@ -259,9 +293,11 @@ struct WidgetPreferencesView: View {
         
         // MARK: Changing Integer
         case .network:
-            // MARK: Network Choice Handling
+            // MARK: Network Choices Handling
             widgetStruct.config["isUp"] = intSelection == 1 ? true : false
-            widgetStruct.config["isArrow"] = intSelection_arrow == 1 ? true : false
+            widgetStruct.config["speedIcon"] = intSelection2
+            widgetStruct.config["minUnit"] = intSelection3
+            widgetStruct.config["hideSpeedWhenZero"] = boolSelection
         case .temperature:
             // MARK: Temperature Unit Handling
             widgetStruct.config["useFahrenheit"] = intSelection == 1 ? true : false
