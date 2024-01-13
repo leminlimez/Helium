@@ -1073,7 +1073,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         labelView.alpha = getIntFromDictKey(properties, @"textAlpha", 1.0);
         labelView.font = textFont;
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
-        if (adaptive) {
+        if (adaptive && getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
             [labelView setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
             blurView.hidden = YES;
         }
@@ -1089,12 +1089,14 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             maskLabel.textColor = [UIColor whiteColor];
             maskLabel.font = textFont;
             maskLabel.translatesAutoresizingMaskIntoConstraints = NO;
-            [maskLabel setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
-            //[_maskLayer addSublayer: maskLabel.layer];
-            [_backdropView setMaskView:maskLabel];
+            if (getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
+                [maskLabel setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
+                //[_maskLayer addSublayer: maskLabel.layer];
+                [_backdropView setMaskView:maskLabel];
+                labelView.alpha = 0;
+                labelView.lineBreakMode = NSLineBreakByClipping;
+            }
             [_maskLabelViews addObject: maskLabel];
-            labelView.alpha = 0;
-            labelView.lineBreakMode = NSLineBreakByClipping;
         }
     }
     
