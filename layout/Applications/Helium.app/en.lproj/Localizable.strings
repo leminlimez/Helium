@@ -26,6 +26,7 @@
 "Show when Rotating" = "Show when Rotating";
 "Hide Save Confirmation Popup" = "Hide Save Confirmation Popup";
 "Ignore Safe Zone Changes" = "Ignore Safe Zone Changes";
+"Use Adaptive Colors" = "Use Adaptive Colors";
 "Helium Data" = "Helium Data";
 "Successfully deleted user data!" = "Successfully deleted user data!";
 "Please restart the app to continue." = "Please restart the app to continue.";
@@ -116,6 +117,7 @@
 "Custom Text Color" = "Custom Text Color";
 "Text Color" = "Text Color";
 "Set Text Color" = "Set Text Color";
+"Adaptive Color" = "Adaptive Color";
 "Text Font" = "Text Font";
 "Bold Text" = "Bold Text";
 "Italic Text" = "Italic Text";
@@ -150,6 +152,7 @@
 "Example" = "Example";
 "Battery Capacity" = "Battery Capacity";
 "Charging Symbol" = "Charging Symbol";
+"Weather" = "Weather";
 
 /* WidgetManager.mm */
 "error" = "error";

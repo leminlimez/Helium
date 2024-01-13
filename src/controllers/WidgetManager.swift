@@ -57,7 +57,7 @@ struct ColorDetailsStruct: Identifiable, Equatable {
     
     var usesCustomColor: Bool = false
     var color: UIColor = .white
-//    var dynamicColor: Bool
+    var dynamicColor: Bool = true
 }
 
 struct WidgetSetStruct: Identifiable, Equatable {
@@ -149,7 +149,8 @@ class WidgetManager: ObservableObject {
                 let selectedColor: UIColor = UIColor.getColorFromData(data: colorDetails["color"] as? Data) ?? UIColor.white
                 let colorDetailsStruct: ColorDetailsStruct = .init(
                     usesCustomColor: colorDetails["usesCustomColor"] as? Bool ?? false,
-                    color: selectedColor
+                    color: selectedColor,
+                    dynamicColor: colorDetails["dynamicColor"] as? Bool ?? true
                 )
                 // create the object
                 var widgetSet: WidgetSetStruct = .init(
@@ -223,7 +224,8 @@ class WidgetManager: ObservableObject {
             
             let colorDetails: [String: Any] = [
                 "usesCustomColor": s.colorDetails.usesCustomColor,
-                "color": s.colorDetails.color.data as Any
+                "color": s.colorDetails.color.data as Any,
+                "dynamicColor": s.colorDetails.dynamicColor
             ]
             wSet["colorDetails"] = colorDetails
             

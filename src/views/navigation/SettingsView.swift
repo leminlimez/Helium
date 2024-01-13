@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-let buildNumber: Int = 2
+let buildNumber: Int = 1
 let DEBUG_MODE_ENABLED = false
 let USER_DEFAULTS_PATH = "/var/mobile/Library/Preferences/com.leemin.helium.plist"
 
@@ -23,6 +23,7 @@ struct SettingsView: View {
     @State var usesRotation: Bool = false
     @State var hideSaveConfirmation: Bool = false
     @State var ignoreSafeZone: Bool = false
+    @State var adaptiveColors: Bool = false
     
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -81,6 +82,20 @@ struct SettingsView: View {
                         }
                         .onAppear {
                             ignoreSafeZone = UserDefaults.standard.bool(forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
+                        }
+                    }
+                    
+                    HStack {
+                        Toggle(isOn: $adaptiveColors) {
+                            Text(NSLocalizedString("Use Adaptive Colors", comment:""))
+                                .bold()
+                                .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: adaptiveColors) { _ in
+                            UserDefaults.standard.setValue(adaptiveColors, forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
+                        }
+                        .onAppear {
+                            adaptiveColors = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
                         }
                     }
                     

@@ -23,6 +23,7 @@
 #include "../extensions/FontUtils.h"
 #include "../extensions/EZTimer.h"
 #include "../extensions/WeatherUtils.h"
+#include "../helpers/private_headers/CAFilter.h"
 
 
 extern "C" char **environ;
@@ -608,6 +609,17 @@ static void DumpThreads(void)
 @end
 
 
+#pragma mark - AnyBackdropView
+
+@interface AnyBackdropView : UIView
+@end
+
+@implementation AnyBackdropView
++ (Class)layerClass {
+    return [NSClassFromString(@"CABackdropLayer") class];
+}
+@end
+
 #pragma mark - HUDRootViewController
 
 @implementation HUDRootViewController {
@@ -615,6 +627,9 @@ static void DumpThreads(void)
     NSMutableArray <NSLayoutConstraint *> *_constraints;
     FBSOrientationObserver *_orientationObserver;
     // view object arrays
+    NSMutableArray <AnyBackdropView *> *_backdropViews;
+    NSMutableArray <UILabel *> *_maskLabelViews;
+
     NSMutableArray <UIVisualEffectView *> *_blurViews;
     NSMutableArray <UILabel *> *_labelViews;
     
@@ -705,6 +720,12 @@ static void DumpThreads(void)
         return 1.0;
     }
     return interval ? [interval doubleValue] : 1.0;
+}
+- (BOOL) adaptiveColors
+{
+    [self loadUserDefaults: NO];
+    NSNumber *mode = [_userDefaults objectForKey: @"adaptiveColors"];
+    return mode ? [mode boolValue] : NO;
 }
 
 /*
@@ -824,6 +845,10 @@ Example format for properties:
         _constraints = [NSMutableArray array];
         _blurViews = [NSMutableArray array];
         _labelViews = [NSMutableArray array];
+        if ([self adaptiveColors]) {
+            _backdropViews = [NSMutableArray array];
+            _maskLabelViews = [NSMutableArray array];
+        }
         _orientationObserver = [[objc_getClass("FBSOrientationObserver") alloc] init];
         __weak HUDRootViewController *weakSelf = self;
         [_orientationObserver setHandler:^(FBSOrientationUpdate *orientationUpdate) {
@@ -910,6 +935,8 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
 {
     [super viewDidLoad];
     /* Just put your HUD view here */
+
+    BOOL adaptive = [self adaptiveColors];
     
     // MARK: Main Content View
     _contentView = [[UIView alloc] init];
@@ -976,11 +1003,54 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         //     labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
         // }
         NSString *fontName = getStringFromDictKey(properties, @"fontName", @"Default Font");
-        labelView.font = [FontUtils loadFontWithName:fontName size: getDoubleFromDictKey(properties, @"fontSize", 10) bold: getBoolFromDictKey(properties, @"textBold") italic: getBoolFromDictKey(properties, @"textItalic")];
+        UIFont *textFont = [FontUtils loadFontWithName:fontName size: getDoubleFromDictKey(properties, @"fontSize", 10) bold: getBoolFromDictKey(properties, @"textBold") italic: getBoolFromDictKey(properties, @"textItalic")];
         labelView.alpha = getIntFromDictKey(properties, @"textAlpha", 1.0);
+        labelView.font = textFont;
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
+        if (adaptive && getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
+            [labelView setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
+            blurView.hidden = YES;
+        }
         [_contentView addSubview: labelView];
         [_labelViews addObject: labelView];
+
+        // MARK: Adaptive Color Backdrop
+        // create adaptive label
+        if (adaptive) {
+            AnyBackdropView *backdropView = [[AnyBackdropView alloc] init];
+            backdropView.translatesAutoresizingMaskIntoConstraints = NO;
+            [_backdropViews addObject: backdropView];
+
+            UILabel *maskLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+            maskLabel.numberOfLines = 0;
+            maskLabel.lineBreakMode = NSLineBreakByClipping;
+            maskLabel.textAlignment = alignment;
+            maskLabel.textColor = [UIColor whiteColor];
+            maskLabel.font = textFont;
+            maskLabel.translatesAutoresizingMaskIntoConstraints = NO;
+            if (getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
+                CAFilter *blurFilter = [CAFilter filterWithName:kCAFilterGaussianBlur];
+                CAFilter *brightnessFilter = [CAFilter filterWithName:kCAFilterColorBrightness];
+                CAFilter *contrastFilter = [CAFilter filterWithName:kCAFilterColorContrast];
+                CAFilter *saturateFilter = [CAFilter filterWithName:kCAFilterColorSaturate];
+                CAFilter *colorInvertFilter = [CAFilter filterWithName:kCAFilterColorInvert];
+                [blurFilter setValue:@(10.0) forKey:@"inputRadius"];
+                [blurFilter setValue:@(YES) forKey:@"inputHardEdges"];
+                [brightnessFilter setValue:@(0.06) forKey:@"inputAmount"];
+                [contrastFilter setValue:@(10.0) forKey:@"inputAmount"];
+                [saturateFilter setValue:@(0.0) forKey:@"inputAmount"];
+                [backdropView.layer setFilters:@[
+                    blurFilter, brightnessFilter, contrastFilter,
+                    saturateFilter, colorInvertFilter,
+                ]];
+                [_contentView addSubview:backdropView];
+                [maskLabel setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
+                [backdropView setMaskView:maskLabel];
+                labelView.alpha = 0;
+                labelView.lineBreakMode = NSLineBreakByClipping;
+            }
+            [_maskLabelViews addObject: maskLabel];
+        }
     }
     
     [self reloadUserDefaults];
@@ -990,6 +1060,19 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     NSLog(@"userid %@,%@", publicID, apiKey);
     // [WeatherUtils setIDKey:publicID apiKey:apiKey];
     [self resetLoopTimer];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    if ([self adaptiveColors]) {
+        for (int i = 0; i < [_maskLabelViews count]; i++) {
+            UILabel *maskLabel = [_maskLabelViews objectAtIndex: i];
+            AnyBackdropView *backdropView = [_backdropViews objectAtIndex: i];
+            if (maskLabel && backdropView) {
+                [maskLabel setFrame: backdropView.bounds];
+            }
+        }
+    }
 }
 
 #pragma mark - Timer and View Updating
@@ -1018,8 +1101,17 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
                 os_log_debug(OS_LOG_DEFAULT, "updateLabel");
             #endif
                 NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold, labelView.textColor);
-                if (attributedText)
+                if (attributedText) {
                     [labelView setAttributedText: attributedText];
+                    if ([self adaptiveColors]) {
+                        UILabel *maskLabelView = [_maskLabelViews objectAtIndex:i];
+                        AnyBackdropView *backdropView = [_backdropViews objectAtIndex:i];
+                        if (maskLabelView && backdropView) {
+                            [maskLabelView setAttributedText: attributedText];
+                            [maskLabelView setFrame:backdropView.bounds];
+                        }
+                    }
+                }
             });
         }];
     }
@@ -1116,6 +1208,21 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         if (!getBoolFromDictKey(properties, @"autoResizes")) {
             [_constraints addObject:[labelView.widthAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scale", 50.0)]];
             [_constraints addObject:[labelView.heightAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scaleY", 12.0)]];
+        }
+
+        if ([self adaptiveColors]) {
+            NSDictionary *colorDetails = [properties valueForKey:@"colorDetails"] ? [properties valueForKey:@"colorDetails"] : @{@"dynamicColor" : @(YES)};
+            if (getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
+                AnyBackdropView *backdropView = [_backdropViews objectAtIndex: i];
+                if (backdropView) {
+                    [_constraints addObjectsFromArray:@[
+                        [blurView.topAnchor constraintEqualToAnchor:backdropView.topAnchor],
+                        [blurView.leadingAnchor constraintEqualToAnchor:backdropView.leadingAnchor],
+                        [blurView.trailingAnchor constraintEqualToAnchor:backdropView.trailingAnchor],
+                        [blurView.bottomAnchor constraintEqualToAnchor:backdropView.bottomAnchor],
+                    ]];
+                }
+            }
         }
         
         [_constraints addObjectsFromArray:@[

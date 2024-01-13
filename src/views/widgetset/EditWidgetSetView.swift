@@ -12,6 +12,7 @@ struct EditWidgetSetView: View {
     @StateObject var widgetManager: WidgetManager
     @State var widgetSet: WidgetSetStruct
     @State var currentWidgetSet: WidgetSetStruct? = nil
+    @State var usesAdaptiveColor: Bool = false
     
     @State var showingAddView: Bool = false
     
@@ -37,7 +38,7 @@ struct EditWidgetSetView: View {
     
     @State var usesCustomColor: Bool = false
     @State var customColor: Color = .white
-    @State var usesSystemColor: Bool = false
+    @State var dynamicColor: Bool = true
     
     @State var textBold: Bool = false
     @State var textItalic: Bool = false
@@ -179,84 +180,99 @@ struct EditWidgetSetView: View {
                     Text(NSLocalizedString("Size Constraints", comment: ""))
                 }
                 
-                Section {
-                    // MARK: Has Blur
-                    HStack {
-                        Toggle(isOn: $hasBlur) {
-                            Text(NSLocalizedString("Background Blur", comment: ""))
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: hasBlur) { _ in
-                            changesMade = true
-                        }
-                    }
-                    if hasBlur {
-                        // MARK: Blur Style
+                if !usesAdaptiveColor || !dynamicColor {
+                    Section {
+                        // MARK: Has Blur
                         HStack {
-                            Text(NSLocalizedString("Blur Style", comment: "")).foregroundColor(.primary).bold()
-                            Spacer()
-                            Picker(selection: $blurStyle) {
-                                Text(NSLocalizedString("Light", comment: "")).tag(0)
-                                Text(NSLocalizedString("Dark", comment: "")).tag(1)
-                            } label: {}
-                                .pickerStyle(.menu)
-                                .onChange(of: blurStyle) { _ in
-                                    changesMade = true
-                                }
-                        }
-                        // MARK: Blur Corner Radius
-                        VStack {
-                            HStack {
-                                Text(NSLocalizedString("Blur Corner Radius", comment: ""))
+                            Toggle(isOn: $hasBlur) {
+                                Text(NSLocalizedString("Background Blur", comment: ""))
                                     .bold()
-                                Spacer()
+                                    .minimumScaleFactor(0.5)
                             }
-                            BetterSlider(value: $cornerRadius, bounds: 0...30, step: 1)
-                                .onChange(of: cornerRadius) { _ in
-                                    changesMade = true
-                                }
+                            .onChange(of: hasBlur) { _ in
+                                changesMade = true
+                            }
                         }
-                        // MARK: Blur Alpha
-                        VStack {
+                        if hasBlur {
+                            // MARK: Blur Style
                             HStack {
-                                Text(NSLocalizedString("Blur Alpha", comment: ""))
-                                    .bold()
+                                Text(NSLocalizedString("Blur Style", comment: "")).foregroundColor(.primary).bold()
                                 Spacer()
+                                Picker(selection: $blurStyle) {
+                                    Text(NSLocalizedString("Light", comment: "")).tag(0)
+                                    Text(NSLocalizedString("Dark", comment: "")).tag(1)
+                                } label: {}
+                                    .pickerStyle(.menu)
+                                    .onChange(of: blurStyle) { _ in
+                                        changesMade = true
+                                    }
                             }
-                            BetterSlider(value: $blurAlpha, bounds: 0.0...1.0)
-                                .onChange(of: blurAlpha) { _ in
-                                    changesMade = true
+                            // MARK: Blur Corner Radius
+                            VStack {
+                                HStack {
+                                    Text(NSLocalizedString("Blur Corner Radius", comment: ""))
+                                        .bold()
+                                    Spacer()
                                 }
+                                BetterSlider(value: $cornerRadius, bounds: 0...30, step: 1)
+                                    .onChange(of: cornerRadius) { _ in
+                                        changesMade = true
+                                    }
+                            }
+                            // MARK: Blur Alpha
+                            VStack {
+                                HStack {
+                                    Text(NSLocalizedString("Blur Alpha", comment: ""))
+                                        .bold()
+                                    Spacer()
+                                }
+                                BetterSlider(value: $blurAlpha, bounds: 0.0...1.0)
+                                    .onChange(of: blurAlpha) { _ in
+                                        changesMade = true
+                                    }
+                            }
                         }
+                    } header: {
+                        Text(NSLocalizedString("Blur", comment: ""))
                     }
-                } header: {
-                    Text(NSLocalizedString("Blur", comment: ""))
                 }
                 
                 Section {
-                    // MARK: Uses Custom Color
-                    HStack {
-                        Toggle(isOn: $usesCustomColor) {
-                            Text(NSLocalizedString("Custom Text Color", comment: ""))
+                    if !usesAdaptiveColor || !dynamicColor {
+                        // MARK: Uses Custom Color
+                        HStack {
+                            Toggle(isOn: $usesCustomColor) {
+                                Text(NSLocalizedString("Custom Text Color", comment: ""))
+                                    .bold()
+                                    .minimumScaleFactor(0.5)
+                            }
+                            .onChange(of: usesCustomColor) { _ in
+                                changesMade = true
+                            }
+                        }
+                        // MARK: Custom Text Color
+                        if usesCustomColor {
+                            HStack {
+                                Text(NSLocalizedString("Text Color", comment: ""))
+                                    .bold()
+                                Spacer()
+                                ColorPicker(NSLocalizedString("Set Text Color", comment: ""), selection: $customColor)
+                                    .labelsHidden()
+                                    .onChange(of: customColor) { _ in
+                                        changesMade = true
+                                    }
+                            }
+                        }
+                    }
+                    // MARK: Dynamic Color
+                    if usesAdaptiveColor {
+                        Toggle(isOn: $dynamicColor) {
+                            Text(NSLocalizedString("Adaptive Color", comment: ""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
-                        .onChange(of: usesCustomColor) { _ in
+                        .onChange(of: dynamicColor) { _ in
                             changesMade = true
-                        }
-                    }
-                    // MARK: Custom Text Color
-                    if usesCustomColor {
-                        HStack {
-                            Text(NSLocalizedString("Text Color", comment: ""))
-                                .bold()
-                            Spacer()
-                            ColorPicker(NSLocalizedString("Set Text Color", comment: ""), selection: $customColor)
-                                .labelsHidden()
-                                .onChange(of: customColor) { _ in
-                                    changesMade = true
-                                }
                         }
                     }
                 } header: {
@@ -410,6 +426,7 @@ struct EditWidgetSetView: View {
                 if currentWidgetSet == widgetSet {
                     return
                 }
+                usesAdaptiveColor = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
                 currentWidgetSet = widgetSet
                 nameInput = widgetSet.title
                 updateInterval = widgetSet.updateInterval
@@ -435,6 +452,7 @@ struct EditWidgetSetView: View {
                 
                 usesCustomColor = widgetSet.colorDetails.usesCustomColor
                 customColor = Color(widgetSet.colorDetails.color)
+                dynamicColor = widgetSet.colorDetails.dynamicColor
                 
                 fontName = widgetSet.fontName
                 textBold = widgetSet.textBold
@@ -498,7 +516,8 @@ struct EditWidgetSetView: View {
             
             colorDetails: .init(
                 usesCustomColor: usesCustomColor,
-                color: UIColor(customColor)
+                color: UIColor(customColor),
+                dynamicColor: dynamicColor
             ),
             
             fontName: fontName,
