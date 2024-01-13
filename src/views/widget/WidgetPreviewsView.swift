@@ -48,6 +48,7 @@ struct WidgetPreviewsView: View {
         case .dateWidget, .timeWidget:
             let dateFormat: String = widget.config["dateFormat"] as? String ?? (widget.module == .dateWidget ? "E MMM dd" : "hh:mm")
             let dateFormatter = DateFormatter()
+            dateFormatter.locale = Locale.current
             dateFormatter.dateFormat = dateFormat
             text = dateFormatter.string(from: Date())
             // SAFEGUARD
