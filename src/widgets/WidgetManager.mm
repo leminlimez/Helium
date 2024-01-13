@@ -55,6 +55,7 @@ static NSString* formattedDate(NSString *dateFormat)
 {
     if (!formatter) {
         formatter = [[NSDateFormatter alloc] init];
+        formatter.locale = [NSLocale currentLocale];
     }
     NSDate *currentDate = [NSDate date];
     [formatter setDateFormat:dateFormat];

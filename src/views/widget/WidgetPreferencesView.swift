@@ -211,6 +211,7 @@ struct WidgetPreferencesView: View {
     }
     
     func getFormattedDate(_ format: String) -> String {
+        dateFormatter.locale = Locale.current
         dateFormatter.dateFormat = format
         return dateFormatter.string(from: currentDate)
     }
