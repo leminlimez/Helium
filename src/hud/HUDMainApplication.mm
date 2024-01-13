@@ -846,14 +846,20 @@ Example format for properties:
     NSArray *widgetProps = [self widgetProperties];
     for (int i = 0; i < [widgetProps count]; i++) {
         UILabel *labelView = [_labelViews objectAtIndex:i];
-        UILabel *maskLabelView = [_maskLabelViews objectAtIndex:i];
         NSDictionary *properties = [widgetProps objectAtIndex:i];
         if (!labelView || !properties)
             break;
         NSArray *identifiers = [properties objectForKey: @"widgetIDs"] ? [properties objectForKey: @"widgetIDs"] : @[];
         double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
         bool textBold = [properties objectForKey: @"textBold"] ? [[properties objectForKey: @"textBold"] boolValue] : false;
-        [self updateLabel: labelView updateMaskLabel: maskLabelView identifiers: identifiers fontSize: fontSize textBold: textBold];
+        if ([self adaptiveColors]) {
+            UILabel *maskLabelView = [_maskLabelViews objectAtIndex:i];
+            if (maskLabelView) {
+                [self updateLabel: labelView updateMaskLabel: maskLabelView identifiers: identifiers fontSize: fontSize textBold: textBold];
+                continue;
+            }
+        }
+        [self updateLabel: labelView identifiers: identifiers fontSize: fontSize textBold: textBold];
     }
 }
 
@@ -869,6 +875,17 @@ Example format for properties:
             [maskLabel setAttributedText: attributedText];
             [maskLabel setFrame:_backdropView.bounds];
         }
+    }
+}
+
+- (void) updateLabel:(UILabel *) label identifiers:(NSArray *) identifiers fontSize:(double) fontSize textBold:(bool) textBold
+{
+#if DEBUG
+    os_log_debug(OS_LOG_DEFAULT, "updateLabel");
+#endif
+    NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold, label.textColor);
+    if (attributedText) {
+        [label setAttributedText: attributedText];
     }
 }
 
