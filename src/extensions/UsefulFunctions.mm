@@ -10,9 +10,13 @@
 
 // MARK: Dictionary Value Functions
 // Bools
+BOOL getBoolFromDictKey(NSDictionary *dict, NSString *key, BOOL defaultValue)
+{
+    return [dict valueForKey:key] ? [[dict valueForKey:key] boolValue] : defaultValue;
+}
 BOOL getBoolFromDictKey(NSDictionary *dict, NSString *key)
 {
-    return [dict valueForKey:key] ? [[dict valueForKey:key] boolValue] : NO;
+    return getBoolFromDictKey(dict, key, NO);
 }
 
 // Ints

@@ -54,6 +54,7 @@
 "Center" = "Center";
 "Right" = "Right";
 "Untitled" = "Untitled";
+"Customize" = "Customize";
 
 /* WidgetPreferencesView.swift */
 "Date Format" = "Date Format";
@@ -64,6 +65,9 @@
 "Arrow Type" = "Arrow Type";
 "Triangle" = "Triangle";
 "Arrow" = "Arrow";
+"Temperature Unit" = "Temperature Unit";
+"Celcius" = "Celcius";
+"Fahrenheit" = "Fahrenheit";
 "Battery Option" = "Battery Option";
 "Watts" = "Watts";
 "Charging Current" = "Charging Current";
@@ -75,6 +79,7 @@
 "Example" = "Example";
 "Location" = "Location";
 "Show Percent (%) Symbol" = "Show Percent (%) Symbol";
+"Fill Symbol" = "Fill Symbol";
 "No Configurable Aspects" = "No Configurable Aspects";
 "Save Changes" = "Save Changes";
 "Would you like to save changes to the widget?" = "Would you like to save changes to the widget?";
@@ -90,13 +95,21 @@
 "Widget Set Title" = "Widget Set Title";
 "Title" = "Title";
 "Widget Set Details" = "Widget Set Details";
-"Anchor Side" = "Anchor Side";
+"Horizontal Anchor Side" = "Horizontal Anchor Side";
+"Vertical Anchor Side" = "Vertical Anchor Side";
+"Top" = "Top";
+"Bottom" = "Bottom";
 "Offset X" = "Offset X";
 "Offset Y" = "Offset Y";
+"Positioning" = "Positioning";
 "Auto Resize" = "Auto Resize";
 "Width" = "Width";
-"Constraints" = "Constraints";
+"Height" = "Height";
+"Size Constraints" = "Size Constraints";
 "Background Blur" = "Background Blur";
+"Blur Style" = "Blur Style";
+"Light" = "Light";
+"Dark" = "Dark";
 "Blur Corner Radius" = "Blur Corner Radius";
 "Blur Alpha" = "Blur Alpha";
 "Blur" = "Blur";
@@ -108,6 +121,7 @@
 "Italic Text" = "Italic Text";
 "Text Alignment" = "Text Alignment";
 "Font Size" = "Font Size";
+"Text Alpha" = "Text Alpha";
 "Text Properties" = "Text Properties";
 "Add Widget" = "Add Widget";
 "Delete Widget" = "Delete Widget";
@@ -118,7 +132,6 @@
 
 /* UIApplicationViews.swift */
 "Home" = "Home";
-"Customize" = "Customize";
 "Settings" = "Settings";
 "Info" = "Info";
 "Make sure you enable developer mode before using! This will not work otherwise." = "Make sure you enable developer mode before using! This will not work otherwise.";
@@ -136,6 +149,7 @@
 "Text Label" = "Text Label";
 "Example" = "Example";
 "Battery Capacity" = "Battery Capacity";
+"Charging Symbol" = "Charging Symbol";
 
 /* WidgetManager.mm */
 "error" = "error";

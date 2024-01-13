@@ -16,10 +16,11 @@ enum WidgetModule: Int, CaseIterable {
     
     case battery = 4
     case currentCapacity = 7
+    case chargeSymbol = 8
     case temperature = 3
     
     case textWidget = 6
-    case weather = 8
+    case weather = 9
 }
 
 struct WidgetIDStruct: Identifiable, Equatable {
@@ -43,7 +44,8 @@ struct BlurDetailsStruct: Identifiable, Equatable {
     
     var hasBlur: Bool
     var cornerRadius: Double // Int when saving, Double for runtime convenience
-    var blurAlpha: Double
+    var styleDark: Bool
+    var alpha: Double
 }
 
 struct ColorDetailsStruct: Identifiable, Equatable {
@@ -69,10 +71,13 @@ struct WidgetSetStruct: Identifiable, Equatable {
     var updateInterval: Double
     
     var anchor: Int
+    var anchorY: Int
     var offsetX: Double
     var offsetY: Double
+    
     var autoResizes: Bool
     var scale: Double
+    var scaleY: Double
     
     var widgetIDs: [WidgetIDStruct]
     
@@ -85,6 +90,7 @@ struct WidgetSetStruct: Identifiable, Equatable {
     var textItalic: Bool
     var textAlignment: Int
     var fontSize: Double
+    var textAlpha: Double
 }
 
 // MARK: Widget Manager Class
@@ -136,7 +142,8 @@ class WidgetManager: ObservableObject {
                 let blurDetailsStruct: BlurDetailsStruct = .init(
                     hasBlur: blurDetails["hasBlur"] as? Bool ?? false,
                     cornerRadius: blurDetails["cornerRadius"] as? Double ?? 4,
-                    blurAlpha: blurDetails["blurAlpha"] as? Double ?? 1.0
+                    styleDark: blurDetails["styleDark"] as? Bool ?? true,
+                    alpha: blurDetails["alpha"] as? Double ?? 1.0
                 )
                 let colorDetails: [String: Any] = s["colorDetails"] as? [String: Any] ?? [:]
                 let selectedColor: UIColor = UIColor.getColorFromData(data: colorDetails["color"] as? Data) ?? UIColor.white
@@ -149,10 +156,13 @@ class WidgetManager: ObservableObject {
                     title: s["title"] as? String ?? NSLocalizedString("Untitled", comment: ""),
                     updateInterval: s["updateInterval"] as? Double ?? 1.0,
                     anchor: s["anchor"] as? Int ?? 0,
+                    anchorY: s["anchorY"] as? Int ?? 0,
                     offsetX: s["offsetX"] as? Double ?? 10.0,
                     offsetY: s["offsetY"] as? Double ?? 0.0,
+                    
                     autoResizes: s["autoResizes"] as? Bool ?? false,
                     scale: s["scale"] as? Double ?? 100.0,
+                    scaleY: s["scaleY"] as? Double ?? 12.0,
                     
                     widgetIDs: widgetIDs,
                     
@@ -162,7 +172,8 @@ class WidgetManager: ObservableObject {
                     textBold: s["textBold"] as? Bool ?? false,
                     textItalic: s["textItalic"] as? Bool ?? false,
                     textAlignment: s["textAlignment"] as? Int ?? 1,
-                    fontSize: s["fontSize"] as? Double ?? 10.0
+                    fontSize: s["fontSize"] as? Double ?? 10.0,
+                    textAlpha: s["textAlpha"] as? Double ?? 1.0
                 )
                 widgetSet.colorDetails = colorDetailsStruct
                 sets.append(widgetSet)
@@ -181,11 +192,15 @@ class WidgetManager: ObservableObject {
             var wSet: [String: Any] = [:]
             wSet["title"] = s.title
             wSet["updateInterval"] = s.updateInterval
+            
             wSet["anchor"] = s.anchor
+            wSet["anchorY"] = s.anchorY
             wSet["offsetX"] = s.offsetX
             wSet["offsetY"] = s.offsetY
+            
             wSet["autoResizes"] = s.autoResizes
             wSet["scale"] = s.scale
+            wSet["scaleY"] = s.scaleY
             
             var widgetIDs: [[String: Any]] = []
             for w in s.widgetIDs {
@@ -201,7 +216,8 @@ class WidgetManager: ObservableObject {
             let blurDetails: [String: Any] = [
                 "hasBlur": s.blurDetails.hasBlur,
                 "cornerRadius": Int(s.blurDetails.cornerRadius),
-                "blurAlpha": s.blurDetails.blurAlpha
+                "styleDark": s.blurDetails.styleDark,
+                "alpha": s.blurDetails.alpha
             ]
             wSet["blurDetails"] = blurDetails
             
@@ -216,6 +232,7 @@ class WidgetManager: ObservableObject {
             wSet["textItalic"] = s.textItalic
             wSet["textAlignment"] = s.textAlignment
             wSet["fontSize"] = s.fontSize
+            wSet["textAlpha"] = s.textAlpha
             
             dict.append(wSet)
         }
@@ -319,24 +336,29 @@ class WidgetManager: ObservableObject {
             updateInterval: 1.0,
             
             anchor: anchor,
+            anchorY: 0,
             offsetX: anchor == 1 ? 0.0 : 10.0,
             offsetY: 0.0,
+            
             autoResizes: true,
             scale: 100.0,
+            scaleY: 12.0,
             
             widgetIDs: [],
             
             blurDetails: .init(
                 hasBlur: false,
                 cornerRadius: 4,
-                blurAlpha: 1.0
+                styleDark: true,
+                alpha: 1.0
             ),
             
             fontName: "Default Font",
             textBold: false,
             textItalic: false,
             textAlignment: 1,
-            fontSize: 10.0
+            fontSize: 10.0,
+            textAlpha: 1.0
         ), save: save)
     }
     
@@ -348,10 +370,13 @@ class WidgetManager: ObservableObject {
                 widgetSets[i].updateInterval = ns.updateInterval
                 
                 widgetSets[i].anchor = ns.anchor
+                widgetSets[i].anchorY = ns.anchorY
                 widgetSets[i].offsetX = ns.offsetX
                 widgetSets[i].offsetY = ns.offsetY
+                
                 widgetSets[i].autoResizes = ns.autoResizes
                 widgetSets[i].scale = ns.scale
+                widgetSets[i].scaleY = ns.scaleY
                 
                 widgetSets[i].blurDetails = ns.blurDetails
                 
@@ -362,6 +387,7 @@ class WidgetManager: ObservableObject {
                 widgetSets[i].textItalic = ns.textItalic
                 widgetSets[i].textAlignment = ns.textAlignment
                 widgetSets[i].fontSize = ns.fontSize
+                widgetSets[i].textAlpha = ns.textAlpha
                 break
             }
         }
@@ -397,6 +423,8 @@ class WidgetDetails {
             return (NSLocalizedString("Text Label", comment: ""), NSLocalizedString("Example", comment: ""))
         case .currentCapacity:
             return (NSLocalizedString("Battery Capacity", comment: ""), "50%")
+        case .chargeSymbol:
+            return (NSLocalizedString("Charging Symbol", comment: ""), "􀋦")
         case .weather:
             return (NSLocalizedString("Weather", comment: ""), "🌤 20℃")
         }
