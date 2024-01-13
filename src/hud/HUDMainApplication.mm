@@ -863,7 +863,7 @@ Example format for properties:
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
 #endif
     NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold, label.textColor);
-    if (attributedText)
+    if (attributedText) {
         [label setAttributedText: attributedText];
         if (maskLabel) {
             [maskLabel setAttributedText: attributedText];
