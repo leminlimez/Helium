@@ -33,6 +33,7 @@
 "Reset Data" = "重置数据";
 "Preferences" = "偏好设置";
 "Side Widget Size" = "侧边小部件大小";
+"Side Size" = "侧边尺寸";
 "Center Widget Size" = "中心小部件大小";
 "Center Size" = "中心尺寸";
 "Debug Preferences" = "调试设置";
@@ -49,9 +50,9 @@
 "Name" = "名称";
 "Choose Side" = "选择显示位置";
 "Choose a side for the widget set to anchor to. This can be changed later." = "选择小部件集的显示位置。稍后可以更改";
-"Left" = "左";
-"Center" = "中";
-"Right" = "右";
+"Left" = "左边";
+"Center" = "中间";
+"Right" = "右边";
 "Untitled" = "未命名";
 "Customize" = "自定义";
 
@@ -64,6 +65,9 @@
 "Arrow Type" = "箭头类型";
 "Triangle" = "三角形";
 "Arrow" = "箭头";
+"Temperature Unit" = "温度单位";
+"Celcius" = "摄氏度";
+"Fahrenheit" = "华氏度";
 "Battery Option" = "电池选项";
 "Watts" = "瓦特";
 "Charging Current" = "充电电流";
@@ -74,6 +78,7 @@
 "Label Text" = "标签文本";
 "Example" = "示例";
 "Show Percent (%) Symbol" = "显示电量%";
+"Fill Symbol" = "显示符号";
 "No Configurable Aspects" = "无可配置项";
 "Save Changes" = "保存更改";
 "Would you like to save changes to the widget?" = "是否保存对小部件的更改？";
@@ -86,13 +91,20 @@
 "Widget Set Title" = "小部件集标题";
 "Title" = "标题";
 "Widget Set Details" = "小部件集详情";
-"Anchor Side" = "显示位置";
+"Horizontal Anchor Side" = "水平显示位置";
+"Vertical Anchor Side" = "垂直显示位置";
+"Top" = "顶部";
+"Bottom" = "底部";
 "Offset X" = "X偏移";
 "Offset Y" = "Y偏移";
+"Positioning" = "定位";
 "Auto Resize" = "自动调整大小";
 "Width" = "宽度";
-"Constraints" = "约束";
+"Size Constraints" = "尺寸限制";
 "Background Blur" = "背景模糊";
+"Blur Style" = "模糊样式";
+"Light" = "明亮";
+"Dark" = "黑暗";
 "Blur Corner Radius" = "模糊角半径";
 "Blur Alpha" = "模糊透明度";
 "Blur" = "模糊";
@@ -104,6 +116,7 @@
 "Italic Text" = "斜体文本";
 "Text Alignment" = "文本对齐";
 "Font Size" = "字体大小";
+"Text Alpha" = "文字透明度";
 "Text Properties" = "文本属性";
 "Add Widget" = "添加小部件";
 "Delete Widget" = "删除小部件";
@@ -132,3 +145,4 @@
 "Text Label" = "文本标签";
 "Example" = "示例";
 "Battery Capacity" = "电池容量";
+"Charging Symbol" = "充电符号";

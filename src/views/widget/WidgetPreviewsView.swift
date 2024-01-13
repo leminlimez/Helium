@@ -56,41 +56,33 @@ struct WidgetPreviewsView: View {
             if (text == "") {
                 text = NSLocalizedString("ERROR", comment:"")
             }
-            break;
         case .network:
             let isUp: Bool = widget.config["isUp"] as? Bool ?? false
             let isArrow: Bool = widget.config["isArrow"] as? Bool ?? false
             text = "\(!isArrow ? (isUp ? "▲" : "▼") : (isUp ? "↑" : "↓")) 0 KB/s"
-            break;
         case .temperature:
-            text = "26.02ºC"
-            break;
+            text = widget.config["useFahrenheit"] as? Bool ?? false ? "78.84ºF" : "26.02ºC"
         case .battery:
             let batteryValue: Int = widget.config["batteryValueType"] as? Int ?? 0
             switch (batteryValue) {
             case 0:
                 text = "0 W"
-                break;
             case 1:
-                text = "0 mAh"
-                break;
+                text = "0 mA"
             case 2:
-                text = "0 mAh"
-                break;
+                text = "0 mA"
             case 3:
                 text = "25"
-                break;
             default:
                 text = "???"
-                break;
             }
-            break;
         case .textWidget:
             text = widget.config["text"] as? String ?? NSLocalizedString("Unknown", comment:"")
             break;
         case .currentCapacity:
             text = "50\(widget.config["showPercentage"] as? Bool ?? true ? "%" : "")"
-            break;
+        case .chargeSymbol:
+            text = "\(widget.config["filled"] as? Bool ?? true ? "􀋦" : "􀋥")"
         }
         widget.modified = false
     }
