@@ -218,28 +218,30 @@ struct EditWidgetSetView: View {
                 }
                 
                 Section {
-                    // MARK: Uses Custom Color
-                    HStack {
-                        Toggle(isOn: $usesCustomColor) {
-                            Text("Custom Text Color")
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: usesCustomColor) { _ in
-                            changesMade = true
-                        }
-                    }
-                    // MARK: Custom Text Color
-                    if usesCustomColor {
+                    if !usesAdaptiveColor || !dynamicColor {
+                        // MARK: Uses Custom Color
                         HStack {
-                            Text("Text Color")
-                                .bold()
-                            Spacer()
-                            ColorPicker("Set Text Color", selection: $customColor)
-                                .labelsHidden()
-                                .onChange(of: customColor) { _ in
-                                    changesMade = true
-                                }
+                            Toggle(isOn: $usesCustomColor) {
+                                Text("Custom Text Color")
+                                    .bold()
+                                    .minimumScaleFactor(0.5)
+                            }
+                            .onChange(of: usesCustomColor) { _ in
+                                changesMade = true
+                            }
+                        }
+                        // MARK: Custom Text Color
+                        if usesCustomColor {
+                            HStack {
+                                Text("Text Color")
+                                    .bold()
+                                Spacer()
+                                ColorPicker("Set Text Color", selection: $customColor)
+                                    .labelsHidden()
+                                    .onChange(of: customColor) { _ in
+                                        changesMade = true
+                                    }
+                            }
                         }
                     }
                     // MARK: Dynamic Color
