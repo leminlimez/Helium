@@ -631,6 +631,7 @@ static void DumpThreads(void)
     FBSOrientationObserver *_orientationObserver;
     // view object arrays
     AnyBackdropView *_backdropView;
+    //CALayer *_maskLayer;
     NSMutableArray <UILabel *> *_maskLabelViews;
 
     NSMutableArray <UIVisualEffectView *> *_blurViews;
@@ -1028,6 +1029,9 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             saturateFilter, colorInvertFilter,
         ]];
         [_contentView addSubview:_backdropView];
+
+        //_maskLayer = [[CALayer alloc] init];
+        //_backdropView.layer.mask = _maskLayer;
     }
 
     // MARK: Create the Widgets
@@ -1093,17 +1097,11 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         labelView.alpha = getIntFromDictKey(properties, @"textAlpha", 1.0);
         labelView.font = textFont;
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
-        if (adaptive) {
+        if (adaptive && getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
             [labelView setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
             blurView.hidden = YES;
-            [_contentView addSubview: labelView];
-        } else {
-            if (hasBlur) {
-                [blurView.contentView addSubview:labelView];
-            } else {
-                [_contentView addSubview: labelView];
-            }
         }
+        [_contentView addSubview: labelView];
         [_labelViews addObject: labelView];
 
         // create adaptive label
@@ -1115,11 +1113,14 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             maskLabel.textColor = [UIColor whiteColor];
             maskLabel.font = textFont;
             maskLabel.translatesAutoresizingMaskIntoConstraints = NO;
-            [maskLabel setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
-            [_backdropView setMaskView:maskLabel];
+            if (getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
+                [maskLabel setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
+                //[_maskLayer addSublayer: maskLabel.layer];
+                [_backdropView setMaskView:maskLabel];
+                labelView.alpha = 0;
+                labelView.lineBreakMode = NSLineBreakByClipping;
+            }
             [_maskLabelViews addObject: maskLabel];
-            labelView.alpha = 0;
-            labelView.lineBreakMode = NSLineBreakByClipping;
         }
     }
     
@@ -1229,12 +1230,15 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         }
 
         if ([self adaptiveColors]) {
-            [_constraints addObjectsFromArray:@[
-                [blurView.topAnchor constraintEqualToAnchor:_backdropView.topAnchor],
-                [blurView.leadingAnchor constraintEqualToAnchor:_backdropView.leadingAnchor],
-                [blurView.trailingAnchor constraintEqualToAnchor:_backdropView.trailingAnchor],
-                [blurView.bottomAnchor constraintEqualToAnchor:_backdropView.bottomAnchor],
-            ]];
+            NSDictionary *colorDetails = [properties valueForKey:@"colorDetails"] ? [properties valueForKey:@"colorDetails"] : @{@"dynamicColor" : @(YES)};
+            if (getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
+                [_constraints addObjectsFromArray:@[
+                    [blurView.topAnchor constraintEqualToAnchor:_backdropView.topAnchor],
+                    [blurView.leadingAnchor constraintEqualToAnchor:_backdropView.leadingAnchor],
+                    [blurView.trailingAnchor constraintEqualToAnchor:_backdropView.trailingAnchor],
+                    [blurView.bottomAnchor constraintEqualToAnchor:_backdropView.bottomAnchor],
+                ]];
+            }
         }
         
         [_constraints addObjectsFromArray:@[

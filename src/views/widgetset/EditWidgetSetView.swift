@@ -12,6 +12,7 @@ struct EditWidgetSetView: View {
     @StateObject var widgetManager: WidgetManager
     @State var widgetSet: WidgetSetStruct
     @State var currentWidgetSet: WidgetSetStruct? = nil
+    @State var usesAdaptiveColor: Bool = false
     
     @State var showingAddView: Bool = false
     
@@ -36,7 +37,7 @@ struct EditWidgetSetView: View {
     
     @State var usesCustomColor: Bool = false
     @State var customColor: Color = .white
-    @State var usesSystemColor: Bool = false
+    @State var dynamicColor: Bool = true
     
     @State var textBold: Bool = false
     @State var textItalic: Bool = false
@@ -245,6 +246,17 @@ struct EditWidgetSetView: View {
                                 }
                         }
                     }
+                    // MARK: Dynamic Color
+                    if usesAdaptiveColor {
+                        Toggle(isOn: $dynamicColor) {
+                            Text(NSLocalizedString("Adaptive Color", comment: ""))
+                                .bold()
+                                .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: dynamicColor) { _ in
+                            changesMade = true
+                        }
+                    }
                 } header: {
                     Text(NSLocalizedString("Text Color", comment: ""))
                 }
@@ -396,6 +408,7 @@ struct EditWidgetSetView: View {
                 if currentWidgetSet == widgetSet {
                     return
                 }
+                usesAdaptiveColor = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
                 currentWidgetSet = widgetSet
                 nameInput = widgetSet.title
                 
@@ -420,6 +433,7 @@ struct EditWidgetSetView: View {
                 
                 usesCustomColor = widgetSet.colorDetails.usesCustomColor
                 customColor = Color(widgetSet.colorDetails.color)
+                dynamicColor = widgetSet.colorDetails.dynamicColor
                 
                 fontName = widgetSet.fontName
                 textBold = widgetSet.textBold
@@ -482,7 +496,8 @@ struct EditWidgetSetView: View {
             
             colorDetails: .init(
                 usesCustomColor: usesCustomColor,
-                color: UIColor(customColor)
+                color: UIColor(customColor),
+                dynamicColor: dynamicColor
             ),
             
             fontName: fontName,
