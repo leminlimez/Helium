@@ -258,14 +258,12 @@ static NSString* formattedCurrentCapacity(BOOL showPercentage)
 #pragma mark - Charging Symbol Widget
 static NSString* formattedChargingSymbol(BOOL filled)
 {
-    NSDictionary *batteryInfo = getBatteryInfo();
-    if (batteryInfo) {
-        if ([batteryInfo[@"IsCharging"] boolValue]) {
-            if (filled) {
-                return @"bolt.fill";
-            } else {
-                return @"bolt";
-            }
+    [[UIDevice currentDevice] setBatteryMonitoringEnabled: YES];
+    if ([[UIDevice currentDevice] batteryState] != UIDeviceBatteryStateUnplugged) {
+        if (filled) {
+            return @"bolt.fill";
+        } else {
+            return @"bolt";
         }
     }
     return @"";
