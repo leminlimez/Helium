@@ -57,7 +57,8 @@ struct WidgetPreviewsView: View {
             }
         case .network:
             let isUp: Bool = widget.config["isUp"] as? Bool ?? false
-            text = "\(isUp ? "▲" : "▼") 0 KB/s"
+            let speedIcon: Int = widget.config["speedIcon"] as? Int ?? 0
+            text = "\(isUp ? (speedIcon == 0 ? "▲" : "↑") : (speedIcon == 0 ? "▼" : "↓")) 30 KB/s"
         case .temperature:
             text = widget.config["useFahrenheit"] as? Bool ?? false ? "78.84ºF" : "26.02ºC"
         case .battery:
