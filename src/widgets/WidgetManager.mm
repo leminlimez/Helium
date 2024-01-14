@@ -170,7 +170,7 @@ static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, NSInteger s
                 [mutableString appendAttributedString:(speedIcon == 0 ? attributedUploadPrefix : attributedUploadPrefix2)];
             else
                 [mutableString appendAttributedString:(speedIcon == 0 ? attributedDownloadPrefix : attributedDownloadPrefix2)];
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:speedString attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:speedString]];
         }
         
         return [mutableString copy];

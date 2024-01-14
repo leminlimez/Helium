@@ -1006,6 +1006,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         UIFont *textFont = [FontUtils loadFontWithName:fontName size: getDoubleFromDictKey(properties, @"fontSize", 10) bold: getBoolFromDictKey(properties, @"textBold") italic: getBoolFromDictKey(properties, @"textItalic")];
         labelView.alpha = getIntFromDictKey(properties, @"textAlpha", 1.0);
         labelView.font = textFont;
+        labelView.lineBreakMode = NSLineBreakByClipping;
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
         if (adaptive && getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
             [labelView setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
