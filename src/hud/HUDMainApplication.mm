@@ -712,15 +712,13 @@ static void DumpThreads(void)
     return mode ? [mode boolValue] : NO;
 }
 
-- (double) updateInterval
+- (NSString*) apiKey
 {
-    [self loadUserDefaults: NO];
-    NSNumber *interval = [_userDefaults objectForKey: @"updateInterval"];
-    if (interval ? [interval doubleValue] : 1.0 <= 0) {
-        return 1.0;
-    }
-    return interval ? [interval doubleValue] : 1.0;
+    [self loadUserDefaults:NO];
+    NSString *apiKey = [_userDefaults objectForKey: @"apiKey"];
+    return apiKey ? apiKey : @"";
 }
+
 - (BOOL) adaptiveColors
 {
     [self loadUserDefaults: NO];
@@ -1101,7 +1099,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             #if DEBUG
                 os_log_debug(OS_LOG_DEFAULT, "updateLabel");
             #endif
-                NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold, labelView.textColor);
+                NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold, labelView.textColor, [self apiKey]);
                 if (attributedText) {
                     [labelView setAttributedText: attributedText];
                     if ([self adaptiveColors]) {

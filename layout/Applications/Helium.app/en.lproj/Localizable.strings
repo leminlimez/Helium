@@ -21,8 +21,7 @@
 "Version " = "Version ";
 "UNKNOWN" = "UNKNOWN";
 "Release" = "Release";
-"Update Interval (seconds)" = "Update Interval (seconds)";
-"Seconds" = "Seconds";
+"Gaode Api key" = "Gaode Api key";
 "Show when Rotating" = "Show when Rotating";
 "Hide Save Confirmation Popup" = "Hide Save Confirmation Popup";
 "Ignore Safe Zone Changes" = "Ignore Safe Zone Changes";
@@ -95,6 +94,8 @@
 /* EditWidgetSetView.swift */
 "Widget Set Title" = "Widget Set Title";
 "Title" = "Title";
+"Update Interval (seconds)" = "Update Interval (seconds)";
+"Seconds" = "Seconds";
 "Widget Set Details" = "Widget Set Details";
 "Horizontal Anchor Side" = "Horizontal Anchor Side";
 "Vertical Anchor Side" = "Vertical Anchor Side";

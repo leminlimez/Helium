@@ -1,7 +1,5 @@
 #import "WeatherUtils.h"
 
-static NSString *apiKey = @"";
-
 @implementation WeatherUtils
 
 + (NSString *)getWeatherIcon:(NSString *)text {
@@ -23,11 +21,7 @@ static NSString *apiKey = @"";
     return weatherIcon;
 }
 
-+ (void)setIDKey:(NSString *)publicID apiKey:(NSString *) apiKey {
-    // NSLog(@"userid %@,%@", publicID, apiKey);
-}
-
-+ (NSDictionary *)fetchCurrentWeatherForLocation:(NSString *)location {
++ (NSDictionary *)fetchCurrentWeatherForLocation:(NSString *)location apiKey:(NSString *) apiKey{
     NSString *res = [self getDataFrom:[NSString stringWithFormat:@"https://restapi.amap.com/v3/weather/weatherInfo?city=%@&key=%@&extensions=base", location, apiKey]];
     NSData *data = [res dataUsingEncoding:NSUTF8StringEncoding];
     NSError *erro = nil;
@@ -38,7 +32,7 @@ static NSString *apiKey = @"";
     return nil;
 }
 
-+ (NSDictionary *)fetchTodayWeatherForLocation:(NSString *)location {
++ (NSDictionary *)fetchTodayWeatherForLocation:(NSString *)location apiKey:(NSString *) apiKey{
     NSString *res = [self getDataFrom:[NSString stringWithFormat:@"https://restapi.amap.com/v3/weather/weatherInfo?city=%@&key=%@&extensions=all", location, apiKey]];
     NSData *data = [res dataUsingEncoding:NSUTF8StringEncoding];
     NSError *erro = nil;

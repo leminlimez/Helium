@@ -20,16 +20,11 @@ struct SettingsView: View {
     @State var centerWidgetSize: Int = 100
     
     // Preference Variables
+    @State var apiKey: String = ""
     @State var usesRotation: Bool = false
     @State var hideSaveConfirmation: Bool = false
     @State var ignoreSafeZone: Bool = false
     @State var adaptiveColors: Bool = false
-    
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
     
     var body: some View {
         NavigationView {
@@ -43,6 +38,33 @@ struct SettingsView: View {
                 
                 // Preferences List
                 Section {
+                    HStack {
+                        Text(NSLocalizedString("Gaode Api key", comment:""))
+                            .bold()
+                        Spacer()
+                        if #available(iOS 15, *) {
+                            TextField("", text: $apiKey)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            //                            .keyboardType(.decimalPad)
+                                .submitLabel(.done)
+                                .onSubmit {
+                                    UserDefaults.standard.setValue(apiKey, forKey: "apiKey", forPath: USER_DEFAULTS_PATH)
+                                }
+                                .onAppear {
+                                    apiKey = UserDefaults.standard.string(forKey: "apiKey", forPath: USER_DEFAULTS_PATH) ?? ""
+                                }
+                        } else {
+                            TextField("", text: $apiKey)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .onChange(of: apiKey) { nv in
+                                    UserDefaults.standard.setValue(apiKey, forKey: "apiKey", forPath: USER_DEFAULTS_PATH)
+                                }
+                                .onAppear {
+                                    apiKey = UserDefaults.standard.string(forKey: "apiKey", forPath: USER_DEFAULTS_PATH) ?? ""
+                                }
+                        }
+                    }
+
                     HStack {
                         Toggle(isOn: $usesRotation) {
                             Text(NSLocalizedString("Show when Rotating", comment:""))

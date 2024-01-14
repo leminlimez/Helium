@@ -108,9 +108,9 @@ static NSString* formattedSpeed(uint64_t bytes, NSInteger minUnit)
 {
     if (0 == DATAUNIT) {
         // Get min units first
-        if (minUnit == 1 && bytes < KILOBYTES) return @"0 KB/s";
-        else if (minUnit == 2 && bytes < MEGABYTES) return @"0 MB/s";
-        else if (minUnit == 3 && bytes < GIGABYTES) return @"0 GB/s";
+        if (minUnit == 1 && bytes < KILOBYTES) return @"0 KB/s";
+        else if (minUnit == 2 && bytes < MEGABYTES) return @"0 MB/s";
+        else if (minUnit == 3 && bytes < GIGABYTES) return @"0 GB/s";
 
         if (bytes < KILOBYTES) return [NSString stringWithFormat:@"%.0f B/s", (double)bytes];
         else if (bytes < MEGABYTES) return [NSString stringWithFormat:@"%.0f KB/s", (double)bytes / KILOBYTES];
@@ -118,9 +118,9 @@ static NSString* formattedSpeed(uint64_t bytes, NSInteger minUnit)
         else return [NSString stringWithFormat:@"%.2f GB/s", (double)bytes / GIGABYTES];
     } else {
         // Get min units first
-        if (minUnit == 1 && bytes < KILOBITS) return @"0 Kb/s";
-        else if (minUnit == 2 && bytes < MEGABITS) return @"0 Mb/s";
-        else if (minUnit == 3 && bytes < GIGABITS) return @"0 Gb/s";
+        if (minUnit == 1 && bytes < KILOBITS) return @"0 Kb/s";
+        else if (minUnit == 2 && bytes < MEGABITS) return @"0 Mb/s";
+        else if (minUnit == 3 && bytes < GIGABITS) return @"0 Gb/s";
 
         if (bytes < KILOBITS) return [NSString stringWithFormat:@"%.0f b/s", (double)bytes];
         else if (bytes < MEGABITS) return [NSString stringWithFormat:@"%.0f Kb/s", (double)bytes / KILOBITS];
@@ -223,25 +223,25 @@ static NSString* formattedBattery(NSInteger valueType)
             // Watts
             int watts = [batteryInfo[@"AdapterDetails"][@"Watts"] longLongValue];
             if (watts) {
-                return [NSString stringWithFormat: @"%d W", watts];
+                return [NSString stringWithFormat: @"%d W", watts];
             } else {
-                return @"0 W";
+                return @"0 W";
             }
         } else if (valueType == 1) {
             // Charging Current
             double current = [batteryInfo[@"AdapterDetails"][@"Current"] doubleValue];
             if (current) {
-                return [NSString stringWithFormat: @"%.0f mA", current];
+                return [NSString stringWithFormat: @"%.0f mA", current];
             } else {
-                return @"0 mA";
+                return @"0 mA";
             }
         } else if (valueType == 2) {
             // Regular Amperage
             double amps = [batteryInfo[@"Amperage"] doubleValue];
             if (amps) {
-                return [NSString stringWithFormat: @"%.0f mA", amps];
+                return [NSString stringWithFormat: @"%.0f mA", amps];
             } else {
-                return @"0 mA";
+                return @"0 mA";
             }
         } else if (valueType == 3) {
             // Charge Cycles
@@ -299,7 +299,7 @@ static NSString* formattedChargingSymbol(BOOL filled)
  TODO:
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold, UIColor *textColor)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold, UIColor *textColor, NSString *apiKey)
 {
     NSString *widgetString;
     NSString *sfSymbolName;
@@ -373,9 +373,9 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                 // Weather
                 NSString *location = [parsedInfo valueForKey:@"location"];
                 NSString *format = [parsedInfo valueForKey:@"format"];
-                NSDictionary *current = [WeatherUtils fetchCurrentWeatherForLocation: location];
+                NSDictionary *current = [WeatherUtils fetchCurrentWeatherForLocation: location apiKey:apiKey];
                 widgetString = [WeatherUtils formatCurrentResult:current format:format];
-                NSDictionary *today = [WeatherUtils fetchTodayWeatherForLocation: location];
+                NSDictionary *today = [WeatherUtils fetchTodayWeatherForLocation: location apiKey:apiKey];
                 widgetString = [WeatherUtils formatTodayResult:today format:widgetString];
             }
             break;
@@ -392,7 +392,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold, UIColor *textColor)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold, UIColor *textColor, NSString *apiKey)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -401,7 +401,7 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold, textColor);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold, textColor, apiKey);
             }
         } else {
             return nil;

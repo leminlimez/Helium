@@ -21,8 +21,7 @@
 "Version " = "版本 ";
 "UNKNOWN" = "未知";
 "Release" = "发布";
-"Update Interval (seconds)" = "更新间隔 (秒)";
-"Seconds" = "秒";
+"Gaode Api key" = "高德ApiKey";
 "Show when Rotating" = "旋转屏幕时显示";
 "Hide Save Confirmation Popup" = "不显示保存确认弹窗";
 "Ignore Safe Zone Changes" = "忽略安全区域变化";
@@ -95,6 +94,8 @@
 /* EditWidgetSetView.swift */
 "Widget Set Title" = "小部件集标题";
 "Title" = "标题";
+"Update Interval (seconds)" = "更新间隔 (秒)";
+"Seconds" = "秒";
 "Widget Set Details" = "小部件集详情";
 "Horizontal Anchor Side" = "水平显示位置";
 "Vertical Anchor Side" = "垂直显示位置";

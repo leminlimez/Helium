@@ -5,9 +5,8 @@
 
 @interface WeatherUtils : NSObject
 + (NSString *)getWeatherIcon:(NSString *)text;
-+ (void)setIDKey:(NSString *)Id apiKey:(NSString *) key;
-+ (NSDictionary *)fetchCurrentWeatherForLocation:(NSString *)location;
-+ (NSDictionary *)fetchTodayWeatherForLocation:(NSString *)location;
++ (NSDictionary *)fetchCurrentWeatherForLocation:(NSString *)location apiKey:(NSString *) apiKey;
++ (NSDictionary *)fetchTodayWeatherForLocation:(NSString *)location apiKey:(NSString *) apiKey;
 + (NSString *)formatCurrentResult:(NSDictionary *)data format:(NSString *)format;
 + (NSString *)formatTodayResult:(NSDictionary *)data format:(NSString *)format;
 + (NSString *)getDataFrom:(NSString *)url;
