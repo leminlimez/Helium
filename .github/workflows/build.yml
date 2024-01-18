@@ -35,4 +35,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
           name: Helium.ipa
-          path: ./build/Helium.ipa
+          path: ${{ github.workspace }}/build/Helium.ipa
