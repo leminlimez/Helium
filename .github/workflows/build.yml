@@ -1,0 +1,38 @@
+name: Build Helium
+
+on:
+  push:
+    branches: [ ipa ]
+  pull_request:
+    branches: [ "ipa" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-13
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Update submodules
+      run: git submodule update --init --recursive
+      
+    - name: Switch to Xcode 15
+      run: sudo xcode-select -s /Applications/Xcode_15.0.app
+
+    - name: Install theos
+      run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/roothide/theos/master/bin/install-theos)"
+
+    - name: Setup Environment
+      run: echo "THEOS=~/theos" >> $GITHUB_ENV
+
+    - name: Make IPA
+      run: make
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+          name: Helium.ipa
+          path: Helium.ipa
