@@ -30,6 +30,9 @@ jobs:
 
     - name: Make IPA
       run: ./ipabuild.sh
+      
+    - name: test
+      run: ls -al ${{ github.workspace }}/build
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
