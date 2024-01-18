@@ -29,10 +29,10 @@ jobs:
       run: echo "THEOS=~/theos" >> $GITHUB_ENV
 
     - name: Make IPA
-      run: make
+      run: ./ipabuild.sh
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
           name: Helium.ipa
-          path: Helium.ipa
+          path: ./build/Helium.ipa
