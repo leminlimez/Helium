@@ -2,9 +2,9 @@ name: Build Helium
 
 on:
   push:
-    branches: [ ipa ]
+    branches: [ main ]
   pull_request:
-    branches: [ "ipa" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
