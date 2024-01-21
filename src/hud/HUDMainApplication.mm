@@ -273,12 +273,7 @@ static void SpringBoardLockStatusChanged
 {
     HUDRootViewController *rootViewController = (__bridge HUDRootViewController *)observer;
     NSString *lockState = (__bridge NSString *)name;
-    if ([lockState isEqualToString:@NOTIFY_UI_LOCKCOMPLETE])
-    {
-        [rootViewController pauseLoopTimer];
-        [rootViewController.view setHidden:YES];
-    }
-    else if ([lockState isEqualToString:@NOTIFY_UI_LOCKSTATE])
+    if ([lockState isEqualToString:@NOTIFY_UI_LOCKSTATE])
     {
         mach_port_t sbsPort = SBSSpringBoardServerPort();
         
@@ -1004,6 +999,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         UIFont *textFont = [FontUtils loadFontWithName:fontName size: getDoubleFromDictKey(properties, @"fontSize", 10) bold: getBoolFromDictKey(properties, @"textBold") italic: getBoolFromDictKey(properties, @"textItalic")];
         labelView.alpha = getIntFromDictKey(properties, @"textAlpha", 1.0);
         labelView.font = textFont;
+        labelView.numberOfLines = 0;
         labelView.lineBreakMode = NSLineBreakByClipping;
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
         if (adaptive && getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
@@ -1053,11 +1049,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     }
     
     [self reloadUserDefaults];
-
-    NSString *publicID = [_userDefaults objectForKey: @"publicID"];
-    NSString *apiKey = [_userDefaults objectForKey: @"apiKey"];
-    NSLog(@"userid %@,%@", publicID, apiKey);
-    // [WeatherUtils setIDKey:publicID apiKey:apiKey];
     [self resetLoopTimer];
 }
 
