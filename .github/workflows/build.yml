@@ -42,6 +42,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         name: Release ${{ github.sha }}
+        tag_name: ${{ github.sha }}
         draft: false
         prerelease: true
         generate_release_notes: true
