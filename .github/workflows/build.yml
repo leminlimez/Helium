@@ -28,6 +28,15 @@ jobs:
     - name: Setup Environment
       run: echo "THEOS=~/theos" >> $GITHUB_ENV
 
+    - name: Set env
+      run: |
+        sT=$(TZ=UTC-8 date +'%S')
+        echo "msT=$(date -j -f "%Y-%m-%d %H:%M:%S" "$(TZ=UTC-8 date +'%Y-%m-%d %H:%M'):${sT}" +%s)" >> $GITHUB_ENV
+
+    - name: Print env
+      run: |
+        echo ${{ env.msT }}
+
     - name: Make IPA
       run: ./ipabuild.sh
 
@@ -42,7 +51,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         name: Release ${{ github.sha }}
-        tag_name: ${{ github.sha }}
+        tag_name: ${{ env.msT }}
         draft: false
         prerelease: true
         generate_release_notes: true
