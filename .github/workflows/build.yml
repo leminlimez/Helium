@@ -44,5 +44,6 @@ jobs:
         name: Release ${{ github.sha }}
         draft: false
         prerelease: true
+        generate_release_notes: true
         files: |
           ${{ github.workspace }}/build/Helium.tipa
