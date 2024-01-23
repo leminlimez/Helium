@@ -657,15 +657,6 @@ static void DumpThreads(void)
         darwinCenter,
         (__bridge const void *)self,
         SpringBoardLockStatusChanged,
-        CFSTR(NOTIFY_UI_LOCKCOMPLETE),
-        NULL,
-        CFNotificationSuspensionBehaviorDeliverImmediately
-    );
-    
-    CFNotificationCenterAddObserver(
-        darwinCenter,
-        (__bridge const void *)self,
-        SpringBoardLockStatusChanged,
         CFSTR(NOTIFY_UI_LOCKSTATE),
         NULL,
         CFNotificationSuspensionBehaviorDeliverImmediately
