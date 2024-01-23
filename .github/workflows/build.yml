@@ -36,3 +36,15 @@ jobs:
       with:
           name: Helium.tipa
           path: ${{ github.workspace }}/build/Helium.tipa
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+        tag_name: prebuild
+        name: Release ${{ github.sha }}
+        body: 由提交${{ github.sha }}自动触发编译生成的Release。
+        draft: false
+        prerelease: true
+        files: |
+          ${{ github.workspace }}/build/Helium.tipa
