@@ -32,10 +32,12 @@ jobs:
       run: |
         sT=$(TZ=UTC-8 date +'%S')
         echo "msT=$(date -j -f "%Y-%m-%d %H:%M:%S" "$(TZ=UTC-8 date +'%Y-%m-%d %H:%M'):${sT}" +%s)" >> $GITHUB_ENV
+        echo "logT=$(TZ=UTC-8 date +'%Y-%m-%d %H:%M'):${sT}" >> $GITHUB_ENV
 
     - name: Print env
       run: |
         echo ${{ env.msT }}
+        echo ${{ env.logT }}
 
     - name: Make IPA
       run: ./ipabuild.sh
@@ -50,10 +52,11 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        name: Release ${{ github.sha }}
+        name: Auto Release ${{ env.msT }}
         tag_name: ${{ env.msT }}
+        body: ${{ env.logT }}
         draft: false
-        prerelease: true
+        prerelease: false
         generate_release_notes: true
         files: |
           ${{ github.workspace }}/build/Helium.tipa
