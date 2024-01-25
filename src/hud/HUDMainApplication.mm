@@ -881,37 +881,45 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
 - (void)updateOrientation:(UIInterfaceOrientation)orientation animateWithDuration:(NSTimeInterval)duration
 {
     BOOL usesRotation = [self usesRotation];
-    
+
     if (!usesRotation)
     {
         if (orientation == UIInterfaceOrientationPortrait)
         {
+            __weak typeof(self) weakSelf = self;
             [UIView animateWithDuration:duration animations:^{
-                self->_contentView.alpha = 1.0;
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                strongSelf->_contentView.alpha = 1.0;
             }];
         }
         else
         {
+            __weak typeof(self) weakSelf = self;
             [UIView animateWithDuration:duration animations:^{
-                self->_contentView.alpha = 0.0;
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                strongSelf->_contentView.alpha = 0.0;
             }];
         }
+
         return;
     }
 
-    if (orientation == _orientation)
+    if (orientation == _orientation) {
         return;
+    }
+
     _orientation = orientation;
 
     CGRect bounds = orientationBounds(orientation, [UIScreen mainScreen].bounds);
     [self.view setNeedsUpdateConstraints];
     [self.view setHidden:YES];
     [self.view setBounds:bounds];
-    
+
+    __weak typeof(self) weakSelf = self;
     [UIView animateWithDuration:duration animations:^{
-        [self.view setTransform:CGAffineTransformMakeRotation(orientationAngle(orientation))];
+        [weakSelf.view setTransform:CGAffineTransformMakeRotation(orientationAngle(orientation))];
     } completion:^(BOOL finished) {
-        [self.view setHidden:NO];
+        [weakSelf.view setHidden:NO];
     }];
 }
 
@@ -1015,16 +1023,22 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             maskLabel.font = textFont;
             maskLabel.translatesAutoresizingMaskIntoConstraints = NO;
             if (getBoolFromDictKey(colorDetails, @"dynamicColor", true)) {
+                // code by Lessica/TrollSpeed
                 CAFilter *blurFilter = [CAFilter filterWithName:kCAFilterGaussianBlur];
+                [blurFilter setValue:@(50.0) forKey:@"inputRadius"];  // radius 50pt
+                [blurFilter setValue:@YES forKey:@"inputNormalizeEdges"];  // do not use inputHardEdges
+
                 CAFilter *brightnessFilter = [CAFilter filterWithName:kCAFilterColorBrightness];
+                [brightnessFilter setValue:@(-0.3) forKey:@"inputAmount"];  // -30%
+
                 CAFilter *contrastFilter = [CAFilter filterWithName:kCAFilterColorContrast];
+                [contrastFilter setValue:@(500.0) forKey:@"inputAmount"];   // 500x
+
                 CAFilter *saturateFilter = [CAFilter filterWithName:kCAFilterColorSaturate];
-                CAFilter *colorInvertFilter = [CAFilter filterWithName:kCAFilterColorInvert];
-                [blurFilter setValue:@(10.0) forKey:@"inputRadius"];
-                [blurFilter setValue:@(YES) forKey:@"inputHardEdges"];
-                [brightnessFilter setValue:@(0.06) forKey:@"inputAmount"];
-                [contrastFilter setValue:@(10.0) forKey:@"inputAmount"];
                 [saturateFilter setValue:@(0.0) forKey:@"inputAmount"];
+
+                CAFilter *colorInvertFilter = [CAFilter filterWithName:kCAFilterColorInvert];
+
                 [backdropView.layer setFilters:@[
                     blurFilter, brightnessFilter, contrastFilter,
                     saturateFilter, colorInvertFilter,
@@ -1131,7 +1145,15 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     UILayoutGuide *layoutGuide = self.view.safeAreaLayoutGuide;
     BOOL ignoreSZ = [self ignoreSafeZone];
     
-    if (_orientation == UIInterfaceOrientationLandscapeLeft || _orientation == UIInterfaceOrientationLandscapeRight)
+    UIInterfaceOrientation orientation = _orientation;
+    BOOL isLandscape;
+    if (orientation == UIInterfaceOrientationUnknown) {
+        isLandscape = CGRectGetWidth(self.view.bounds) > CGRectGetHeight(self.view.bounds);
+    } else {
+        isLandscape = UIInterfaceOrientationIsLandscape(orientation);
+    }
+
+    if (isLandscape)
     {
         [_constraints addObjectsFromArray:@[
             [_contentView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:(!ignoreSZ && layoutGuide.layoutFrame.origin.y > 1) ? 20 : 4],
