@@ -48,10 +48,10 @@ struct WidgetPreviewsView: View {
         case .dateWidget, .timeWidget:
             let dateFormat: String = widget.config["dateFormat"] as? String ?? (widget.module == .dateWidget ? NSLocalizedString("E MMM dd", comment:"") : "hh:mm")
             let dateFormatter = DateFormatter()
-            dateFormatter.locale = Locale.current
             let newDateFormat = LunarDate.getChineseCalendar(with: Date(), format: dateFormat)
             dateFormatter.dateFormat = newDateFormat
-            // dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
+            let locale = UserDefaults.standard.string(forKey: "dateLocale", forPath: USER_DEFAULTS_PATH) ?? "en_US"
+            dateFormatter.locale = Locale(identifier: locale)
             text = dateFormatter.string(from: Date())
             // SAFEGUARD
             if (text == "") {

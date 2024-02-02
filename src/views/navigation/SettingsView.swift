@@ -21,6 +21,7 @@ struct SettingsView: View {
     
     // Preference Variables
     @State var apiKey: String = ""
+    @State var dateLocale: String = "en_US"
     @State var usesRotation: Bool = false
     @State var hideSaveConfirmation: Bool = false
     @State var ignoreSafeZone: Bool = false
@@ -39,30 +40,22 @@ struct SettingsView: View {
                 // Preferences List
                 Section {
                     HStack {
+                        Text(NSLocalizedString("Date Locale", comment:""))
+                            .bold()
+                        Spacer()
+                        Picker("", selection: $dateLocale) {
+                            Text("en_US").tag("en_US")
+                            Text("zh_CN").tag("zh_CN")
+                        }
+                        .pickerStyle(.menu)
+                    }
+
+                    HStack {
                         Text(NSLocalizedString("Gaode Api key", comment:""))
                             .bold()
                         Spacer()
-                        if #available(iOS 15, *) {
-                            TextField("", text: $apiKey)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                            //                            .keyboardType(.decimalPad)
-                                .submitLabel(.done)
-                                .onSubmit {
-                                    UserDefaults.standard.setValue(apiKey, forKey: "apiKey", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    apiKey = UserDefaults.standard.string(forKey: "apiKey", forPath: USER_DEFAULTS_PATH) ?? ""
-                                }
-                        } else {
-                            TextField("", text: $apiKey)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .onChange(of: apiKey) { nv in
-                                    UserDefaults.standard.setValue(apiKey, forKey: "apiKey", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    apiKey = UserDefaults.standard.string(forKey: "apiKey", forPath: USER_DEFAULTS_PATH) ?? ""
-                                }
-                        }
+                        TextField("", text: $apiKey)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
 
                     HStack {
@@ -70,12 +63,6 @@ struct SettingsView: View {
                             Text(NSLocalizedString("Show when Rotating", comment:""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: usesRotation) { _ in
-                            UserDefaults.standard.setValue(usesRotation, forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
-                        }
-                        .onAppear {
-                            usesRotation = UserDefaults.standard.bool(forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
                         }
                     }
                     
@@ -85,12 +72,6 @@ struct SettingsView: View {
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
-                        .onChange(of: hideSaveConfirmation) { _ in
-                            UserDefaults.standard.setValue(hideSaveConfirmation, forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
-                        }
-                        .onAppear {
-                            hideSaveConfirmation = UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
-                        }
                     }
                     
                     HStack {
@@ -99,12 +80,6 @@ struct SettingsView: View {
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
-                        .onChange(of: ignoreSafeZone) { _ in
-                            UserDefaults.standard.setValue(ignoreSafeZone, forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
-                        }
-                        .onAppear {
-                            ignoreSafeZone = UserDefaults.standard.bool(forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
-                        }
                     }
                     
                     HStack {
@@ -112,12 +87,6 @@ struct SettingsView: View {
                             Text(NSLocalizedString("Use Adaptive Colors", comment:""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: adaptiveColors) { _ in
-                            UserDefaults.standard.setValue(adaptiveColors, forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
-                        }
-                        .onAppear {
-                            adaptiveColors = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
                         }
                     }
                     
@@ -152,12 +121,6 @@ struct SettingsView: View {
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .keyboardType(.decimalPad)
                                 .submitLabel(.done)
-                                .onSubmit {
-                                    UserDefaults.standard.setValue(sideWidgetSize, forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
-                                }
                         }
                         
                         HStack {
@@ -168,12 +131,6 @@ struct SettingsView: View {
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .keyboardType(.decimalPad)
                                 .submitLabel(.done)
-                                .onSubmit {
-                                    UserDefaults.standard.setValue(centerWidgetSize, forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
-                                }
                         }
                     } header: {
                         Label(NSLocalizedString("Debug Preferences", comment:""), systemImage: "ladybug")
@@ -188,9 +145,44 @@ struct SettingsView: View {
                     Label(NSLocalizedString("Credits", comment:""), systemImage: "wrench.and.screwdriver")
                 }
             }
+            .toolbar {
+                HStack {
+                    Button(action: {
+                        saveChanges()
+                    }) {
+                        Text(NSLocalizedString("Save", comment:""))
+                    }
+                }
+            }
             .navigationTitle(NSLocalizedString("Settings", comment:""))
             .navigationViewStyle(.stack)
+            .onAppear {
+                loadSettings()
+            }
         }
+    }
+
+    func loadSettings() {
+        dateLocale = UserDefaults.standard.string(forKey: "dateLocale", forPath: USER_DEFAULTS_PATH) ?? "en_US"
+        apiKey = UserDefaults.standard.string(forKey: "apiKey", forPath: USER_DEFAULTS_PATH) ?? ""
+        usesRotation = UserDefaults.standard.bool(forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
+        hideSaveConfirmation = UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
+        ignoreSafeZone = UserDefaults.standard.bool(forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
+        adaptiveColors = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
+        sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
+        centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
+    }
+
+    func saveChanges() {
+        UserDefaults.standard.setValue(sideWidgetSize, forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(centerWidgetSize, forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(apiKey, forKey: "apiKey", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(dateLocale, forKey: "dateLocale", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(usesRotation, forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(hideSaveConfirmation, forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(ignoreSafeZone, forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(adaptiveColors, forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
+        UIApplication.shared.alert(title: NSLocalizedString("Save Changes", comment:""), body: NSLocalizedString("Settings saved successfully", comment:""))
     }
     
     // Link Cell code from Cowabunga

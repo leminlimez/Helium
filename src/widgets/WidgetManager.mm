@@ -54,11 +54,11 @@ static NSAttributedString *attributedUploadPrefix2 = nil;
 static NSAttributedString *attributedDownloadPrefix2 = nil;
 
 #pragma mark - Date Widget
-static NSString* formattedDate(NSString *dateFormat)
+static NSString* formattedDate(NSString *dateFormat, NSString *dateLocale)
 {
     if (!formatter) {
         formatter = [[NSDateFormatter alloc] init];
-        formatter.locale = [NSLocale currentLocale];
+        formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:dateLocale];
     }
     NSDate *currentDate = [NSDate date];
     NSString *newDateFormat = [LunarDate getChineseCalendarWithDate:currentDate format:dateFormat];
@@ -299,7 +299,7 @@ static NSString* formattedChargingSymbol(BOOL filled)
  TODO:
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold, UIColor *textColor, NSString *apiKey)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold, UIColor *textColor, NSString *apiKey, NSString *dateLocale)
 {
     NSString *widgetString;
     NSString *sfSymbolName;
@@ -309,7 +309,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
         case 5:
             // Date/Time
             widgetString = formattedDate(
-                [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? NSLocalizedString(@"E MMM dd", comment: @"") : @"hh:mm")
+                [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? NSLocalizedString(@"E MMM dd", comment: @"") : @"hh:mm"), dateLocale
             );
             break;
         case 2:
@@ -392,7 +392,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold, UIColor *textColor, NSString *apiKey)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold, UIColor *textColor, NSString *apiKey, NSString *dateLocale)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -401,7 +401,7 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold, textColor, apiKey);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold, textColor, apiKey, dateLocale);
             }
         } else {
             return nil;

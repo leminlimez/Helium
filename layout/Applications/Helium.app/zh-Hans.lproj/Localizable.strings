@@ -18,9 +18,11 @@
 "Opening HUD" = "正在打开 HUD";
 
 /* SettingsView.swift */
+"Save" = "保存";
 "Version " = "版本 ";
 "UNKNOWN" = "未知";
 "Release" = "发布";
+"Date Locale" = "日期地区";
 "Gaode Api key" = "高德ApiKey";
 "Show when Rotating" = "旋转屏幕时显示";
 "Hide Save Confirmation Popup" = "不显示保存确认弹窗";
@@ -40,6 +42,7 @@
 "Main Developer" = "主开发者";
 "TrollSpeed & Assistive Touch Logic" = "TrollSpeed & Assistive Touch Logic";
 "Credits" = "致谢";
+"Settings saved successfully" = "设置保存成功";
 
 /* WidgetCustomizationView.swift */
 "Delete " = "删除 ";
@@ -155,6 +158,3 @@
 "Battery Capacity" = "电池容量";
 "Charging Symbol" = "充电符号";
 "Weather" = "天气";
-
-/* WidgetManager.mm */
-"error" = "出错了";

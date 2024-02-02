@@ -705,6 +705,13 @@ static void DumpThreads(void)
     return apiKey ? apiKey : @"";
 }
 
+- (NSString*) dateLocale
+{
+    [self loadUserDefaults:NO];
+    NSString *locale = [_userDefaults objectForKey: @"dateLocale"];
+    return locale ? locale : @"en_US";
+}
+
 - (BOOL) adaptiveColors
 {
     [self loadUserDefaults: NO];
@@ -1095,7 +1102,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
             #if DEBUG
                 os_log_debug(OS_LOG_DEFAULT, "updateLabel");
             #endif
-                NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold, labelView.textColor, [self apiKey]);
+                NSAttributedString *attributedText = formattedAttributedString(identifiers, fontSize, textBold, labelView.textColor, [self apiKey], [self dateLocale]);
                 if (attributedText) {
                     [labelView setAttributedText: attributedText];
                     if ([self adaptiveColors]) {
