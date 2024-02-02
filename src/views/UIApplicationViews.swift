@@ -38,7 +38,6 @@ struct RootView: View {
             } else {
                 // Fallback on earlier versions
             }
-            UIApplication.shared.statusBarStyle = .default
             
             do {
                 try FileManager.default.contentsOfDirectory(atPath: "/var/mobile")
@@ -62,12 +61,18 @@ open class ContentInterface: NSObject {
     @objc
     open func createUI() -> UIViewController {
         let contents = RootView()
-        return UIHostingController(rootView: contents)
+        return HostingController(rootView: contents)
     }
 }
 
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {
         RootView()
+    }
+}
+
+class HostingController<Content>: UIHostingController<Content> where Content: View {
+    @objc override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
 }

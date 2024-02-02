@@ -261,8 +261,8 @@ struct WidgetPreferencesView: View {
                     
                     Text(NSLocalizedString("Weather Format", comment:""))
                 }
-            default:
-                Text(NSLocalizedString("No Configurable Aspects", comment:""))
+            // default:
+            //     Text(NSLocalizedString("No Configurable Aspects", comment:""))
             }
         }
         .padding(.horizontal, 15)
@@ -307,7 +307,8 @@ struct WidgetPreferencesView: View {
     }
     
     func getFormattedDate(_ format: String) -> String {
-        dateFormatter.locale = Locale.current
+        let locale = UserDefaults.standard.string(forKey: "dateLocale", forPath: USER_DEFAULTS_PATH) ?? "en_US"
+        dateFormatter.locale = Locale(identifier: locale)
         dateFormatter.dateFormat = format
         // dateFormatter.locale = Locale(identifier: NSLocalizedString("en_US", comment:""))
         return dateFormatter.string(from: currentDate)
@@ -369,8 +370,8 @@ struct WidgetPreferencesView: View {
             } else {
                 widgetStruct.config["format"] = weatherFormat
             }
-        default:
-            return;
+        // default:
+        //     return;
         }
         
         widgetManager.updateWidgetConfig(widgetSet: widgetSet, id: widgetID, newID: widgetStruct)
