@@ -1,11 +1,6 @@
 name: Build Helium
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+on: push
 
 jobs:
   build:
@@ -38,6 +33,7 @@ jobs:
       run: |
         echo ${{ env.msT }}
         echo ${{ env.logT }}
+        echo ${{ github.ref }}
 
     - name: Make IPA
       run: ./ipabuild.sh
@@ -50,12 +46,10 @@ jobs:
 
     - name: Release
       uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
+      if: startsWith(github.ref, 'refs/tags/v')
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         body: ${{ env.logT }}
-        draft: false
-        prerelease: false
         generate_release_notes: true
         files: |
           ${{ github.workspace }}/build/Helium.tipa
