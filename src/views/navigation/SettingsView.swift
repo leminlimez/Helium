@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-let buildNumber: Int = 1
+let buildNumber: Int = 0
 let DEBUG_MODE_ENABLED = false
 let USER_DEFAULTS_PATH = "/var/mobile/Library/Preferences/com.leemin.helium.plist"
 
