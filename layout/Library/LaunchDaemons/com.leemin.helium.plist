@@ -6,11 +6,6 @@
 	<false/>
 	<key>EnableTransactions</key>
 	<false/>
-	<key>EnvironmentVariables</key>
-	<dict>
-		<key>_MSSafeMode</key>
-		<string>1</string>
-	</dict>
 	<key>GroupName</key>
 	<string>wheel</string>
 	<key>HighPriorityIO</key>
