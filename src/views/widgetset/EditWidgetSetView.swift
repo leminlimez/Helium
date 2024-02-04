@@ -289,7 +289,7 @@ struct EditWidgetSetView: View {
                                 Text(_fontName).font(Font.custom(_fontName, size: UIFont.systemFontSize))
                             }
                         } label: {}
-                        .pickerStyle(.menu)
+                        .pickerStyle(.wheel)
                         .onChange(of: fontName) { _ in
                             changesMade = true
                         }
