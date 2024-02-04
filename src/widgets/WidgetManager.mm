@@ -373,9 +373,9 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                 // Weather
                 NSString *location = [parsedInfo valueForKey:@"location"];
                 NSString *format = [parsedInfo valueForKey:@"format"];
-                NSDictionary *current = [WeatherUtils fetchCurrentWeatherForLocation: location apiKey:apiKey];
-                widgetString = [WeatherUtils formatCurrentResult:current format:format];
-                NSDictionary *today = [WeatherUtils fetchTodayWeatherForLocation: location apiKey:apiKey];
+                NSDictionary *now = [WeatherUtils fetchNowWeatherForLocation: location apiKey:apiKey dateLocale:dateLocale];
+                NSDictionary *today = [WeatherUtils fetchTodayWeatherForLocation: location apiKey:apiKey dateLocale:dateLocale];
+                widgetString = [WeatherUtils formatNowResult:now format:format];
                 widgetString = [WeatherUtils formatTodayResult:today format:widgetString];
             }
             break;

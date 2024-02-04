@@ -23,7 +23,7 @@
 "UNKNOWN" = "UNKNOWN";
 "Release" = "Release";
 "Date Locale" = "Date Locale";
-"Gaode Api key" = "Gaode Api key";
+"Weather Api key" = "QWeather Api key";
 "Show when Rotating" = "Show when Rotating";
 "Hide Save Confirmation Popup" = "Hide Save Confirmation Popup";
 "Ignore Safe Zone Changes" = "Ignore Safe Zone Changes";
@@ -80,19 +80,24 @@
 "Time Format" = "Time Format";
 "Label Text" = "Label Text";
 "Example" = "Example";
-"Location" = "Location";
+"Location" = "LocationID or Latitude,Longitude";
+"Input" = "Input";
+"Get" = "Get";
+"Input Location Name" = "Input Location Name";
+"Get Location ID" = "Get Location ID";
 "Show Percent (%) Symbol" = "Show Percent (%) Symbol";
 "Fill Symbol" = "Fill Symbol";
 "No Configurable Aspects" = "No Configurable Aspects";
 "Save Changes" = "Save Changes";
 "Would you like to save changes to the widget?" = "Would you like to save changes to the widget?";
-"Weather Format" = "Weather Format Explanation:\n{icon} Weather Icon\t{text} Weather Text\n{temp} Current Temperature\t{humidity} Humidity\n{wind} Wind Direction\t{windpower} Wind Power\n{dayicon} Daytime Weather Icon\n{daytext} Daytime Weather Text\n{nighticon} Nighttime Weather Icon\n{nighttext} Nighttime Weather Text\n{daytemp} Daytime Temperature\n{nighttemp} Nighttime Temperature\n{daywind} Daytime Wind Direction\n{nightwind} Nighttime Wind Direction\n{daypower} Daytime Wind Power\n{nightpower} Nighttime Wind Power";
+"Weather Format Now" = "Now Weather Format Explanation:\n{i} Weather Icon\t\t\t{n} Weather Text\n{t} Current Temperature\t{h} Humidity\n{w} Wind Direction\t\t{wp} Wind Power\n{bt} Body Temperature\t{pc} Precipitation\n{ps} Pressure\t\t\t\t{v} Visibility\n{c} Cloud Cover";
+"Weather Format Today" = "Today Weather Format Explanation:\n{di} Daytime Weather Icon\n{dn} Daytime Weather Text\n{dt} Daytime Temperature\n{dw} Daytime Wind Direction\n{dwp} Daytime Wind Power\n{ni} Nighttime Weather Icon\n{nn} Nighttime Weather Text\n{nt} Nighttime Temperature\n{nw} Nighttime Wind Direction\n{nwp} Nighttime Wind Power\n{tpc} Today Precipitation\n{tuv} Today UV Index\n{th} Today Humidity\n{tps} Today Pressure\n{tv} Today Visibility\n{tc} Today Cloud Cover";
 "Format" = "Format";
 
 /* WidgetPreviewsView.swift */
 "ERROR" = "ERROR";
 "Unknown" = "Unknown";
-"🌤 Sun 20℃ 💧54%" = "🌤 Sun 20℃ 💧54%";
+"Weather Preview" = "🌤Sun 15°~20° (20°)💧54%";
 
 /* EditWidgetSetView.swift */
 "Widget Set Title" = "Widget Set Title";
@@ -157,3 +162,6 @@
 "Battery Capacity" = "Battery Capacity";
 "Charging Symbol" = "Charging Symbol";
 "Weather" = "Weather";
+
+/* WeatherUtils.mm */
+"error" = "error";

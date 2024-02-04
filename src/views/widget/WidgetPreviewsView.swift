@@ -81,7 +81,7 @@ struct WidgetPreviewsView: View {
             text = widget.config["text"] as? String ?? NSLocalizedString("Unknown", comment:"")
             break;
         case .weather:
-            text = NSLocalizedString("🌤 Sun 20℃ 💧54%", comment:"")
+            text = NSLocalizedString("Weather Preview", comment:"")
             break;
         case .currentCapacity:
             text = "50\(widget.config["showPercentage"] as? Bool ?? true ? "%" : "")"

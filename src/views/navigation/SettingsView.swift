@@ -51,7 +51,7 @@ struct SettingsView: View {
                     }
 
                     HStack {
-                        Text(NSLocalizedString("Gaode Api key", comment:""))
+                        Text(NSLocalizedString("Weather Api key", comment:""))
                             .bold()
                         Spacer()
                         TextField("", text: $apiKey)

@@ -23,7 +23,7 @@
 "UNKNOWN" = "未知";
 "Release" = "发布";
 "Date Locale" = "日期地区";
-"Gaode Api key" = "高德ApiKey";
+"Weather Api key" = "和风天气ApiKey";
 "Show when Rotating" = "旋转屏幕时显示";
 "Hide Save Confirmation Popup" = "不显示保存确认弹窗";
 "Ignore Safe Zone Changes" = "忽略安全区域变化";
@@ -80,19 +80,24 @@
 "Time Format" = "时间格式";
 "Label Text" = "标签文本";
 "Example" = "示例";
-"Location" = "地区的ID";
+"Location" = "地区ID或者经纬度";
+"Input" = "输入";
+"Get" = "获取";
+"Input Location Name" = "输入地区名称";
+"Get Location ID" = "获取地区ID";
 "Show Percent (%) Symbol" = "显示电量%";
 "Fill Symbol" = "显示符号";
 "No Configurable Aspects" = "无可配置项";
 "Save Changes" = "保存更改";
 "Would you like to save changes to the widget?" = "是否保存对小部件的更改？";
-"Weather Format" = "格式说明:\n{icon} 天气图标\t{text} 天气文字\n{temp} 当前温度\t{humidity} 湿度\n{wind} 风向\t{windpower} 风力\n{dayicon} 白天天气图标\t{daytext} 白天天气文字\n{nighticon} 晚上天气图标\t{nighttext} 晚上天气文字\n{daytemp} 白天温度\t{nighttemp} 晚上温度\n{daywind} 白天风向\t{nightwind} 晚上风向\n{daypower} 白天风力\t{nightpower} 晚上风向";
+"Weather Format Now" = "实时天气格式说明:\n{i} 天气图标\t{n} 天气文字\n{t} 当前温度\t{h} 湿度\n{w} 风向\t\t{wp} 风力\n{bt} 体感温度\t{pc} 降水量\n{ps} 大气压力\t{v} 能见度\n{c} 云量";
+"Weather Format Today" = "今日天气格式说明：\n{di} 白天天气图标\t{dn} 白天天气文本\n{dt} 白天气温\t\t{dw} 白天风向\n{dwp} 白天风力\t{nwp} 夜间风力\n{ni} 夜间天气图标\t{nn} 夜间天气文本\n{nt} 夜间气温\t\t{nw} 夜间风向\n{tpc} 今日降水量\t{tuv} 今日紫外线指数\n{th} 今日湿度\t\t{tps} 今日气压\n{tv} 今日能见度\t{tc} 今日云量";
 "Format" = "格式";
 
 /* WidgetPreviewsView.swift */
 "ERROR" = "错误";
 "Unknown" = "未知";
-"🌤 Sun 20℃ 💧54%" = "🌤晴 20℃ 💧54%";
+"Weather Preview" = "🌤晴 15°~20° (20°)💧54%";
 
 /* EditWidgetSetView.swift */
 "Widget Set Title" = "小部件集标题";
@@ -158,3 +163,6 @@
 "Battery Capacity" = "电池容量";
 "Charging Symbol" = "充电符号";
 "Weather" = "天气";
+
+/* WeatherUtils.mm */
+"error" = "出错啦";

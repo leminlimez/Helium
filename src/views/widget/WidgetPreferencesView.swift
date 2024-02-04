@@ -21,6 +21,7 @@ struct WidgetPreferencesView: View {
     @State var boolSelection: Bool = false
     
     @State var modified: Bool = false
+    @State private var isPresented = false
     
     let timeFormats: [String] = [
         "hh:mm",
@@ -224,42 +225,59 @@ struct WidgetPreferencesView: View {
                     }
                 }
             case .weather:
-                VStack {
-                    HStack {
-                        Text(NSLocalizedString("Location", comment:""))
-                            .foregroundColor(.primary)
-                            .bold()
-                        Spacer()
-                        TextField(NSLocalizedString("110000", comment:""), text: $text)
-                            .frame(maxWidth: 120)
-                            .multilineTextAlignment(.trailing)
-                            .onAppear {
-                                if let format = widgetID.config["location"] as? String {
-                                    text = format
-                                } else {
-                                    text = NSLocalizedString("110000", comment:"")
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack {
+                        HStack {
+                            Text(NSLocalizedString("Location", comment:""))
+                                .foregroundColor(.primary)
+                                .bold()
+                            Spacer()
+                            TextField(NSLocalizedString("Input", comment:""), text: $text)
+                                .frame(maxWidth: 240)
+                                .multilineTextAlignment(.trailing)
+                                .onAppear {
+                                    if let format = widgetID.config["location"] as? String {
+                                        text = format
+                                    } else {
+                                        text = "110000"
+                                    }
                                 }
+                            Button(NSLocalizedString("Get", comment:"")) {
+                                isPresented = true
                             }
-                    }
+                            .sheet(isPresented: $isPresented) {
+                                WeatherLocationView(locationID: self.$text)
+                            }
+                        }
 
-                    HStack {
-                        Text(NSLocalizedString("Format", comment:""))
-                            .foregroundColor(.primary)
-                            .bold()
-                        Spacer()
-                        TextField("{icon}{text} {temp}℃ 💧{humidity}%", text: $weatherFormat)
-                            .frame(maxWidth: 220)
-                            .multilineTextAlignment(.trailing)
-                            .onAppear {
-                                if let format = widgetID.config["format"] as? String {
-                                    weatherFormat = format
-                                } else {
-                                    weatherFormat = "{icon}{text} {temp}℃ 💧{humidity}%"
+                        HStack {
+                            Text(NSLocalizedString("Format", comment:""))
+                                .foregroundColor(.primary)
+                                .bold()
+                            Spacer()
+                            TextField("{i}{n} {nt}°~{dt}° ({t}°)💧{h}%", text: $weatherFormat)
+                                .frame(maxWidth: 240)
+                                .multilineTextAlignment(.trailing)
+                                .onAppear {
+                                    if let format = widgetID.config["format"] as? String {
+                                        weatherFormat = format
+                                    } else {
+                                        weatherFormat = "{i}{n} {nt}°~{dt}° ({t}°)💧{h}%"
+                                    }
                                 }
-                            }
+                        }
+                        HStack {
+                            Text(NSLocalizedString("Weather Format Now", comment:""))
+                                .multilineTextAlignment(.leading)
+                            Spacer()
+                        }
+                        Text("\n")
+                        HStack {
+                            Text(NSLocalizedString("Weather Format Today", comment:""))
+                                .multilineTextAlignment(.leading)
+                            Spacer()
+                        }
                     }
-                    
-                    Text(NSLocalizedString("Weather Format", comment:""))
                 }
             // default:
             //     Text(NSLocalizedString("No Configurable Aspects", comment:""))
@@ -378,4 +396,170 @@ struct WidgetPreferencesView: View {
         widgetID.config = widgetStruct.config
         modified = false
     }
+}
+
+struct WeatherLocationView: View {
+    @State var searchString = ""
+    @Binding var locationID: String
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
+    @State var locations: [Location] = []
+    
+    var body: some View {
+        NavigationView{
+            VStack {
+                SearchBarUIView(text: $searchString, search: search, placeHolder: NSLocalizedString("Input Location Name", comment:""))
+                Spacer()
+                List(locations) {location in
+                    ListCell(item: location)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            locationID = location.id
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                }
+                .navigationBarTitle(Text(NSLocalizedString("Get Location ID", comment:"")))
+                .resignKeyboardOnDragGesture()
+            }
+            .padding()
+        }
+    }
+
+    func search() {
+        if !searchString.isEmpty {
+            let dateLocale = UserDefaults.standard.string(forKey: "dateLocale", forPath: USER_DEFAULTS_PATH) ?? "en_US"
+            let apiKey = UserDefaults.standard.string(forKey: "apiKey", forPath: USER_DEFAULTS_PATH) ?? ""
+            let data = WeatherUtils.fetchLocationID(forName:searchString, apiKey:apiKey, dateLocale:dateLocale)
+            let json = try! JSONSerialization.jsonObject(with: data!, options: []) as! Dictionary<String, Any>
+            if json["code"] as? String == "200" {
+                let array = json["location"] as! [Dictionary<String, Any>]
+                for item in array {
+                    let name = item["name"] as! String
+                    let id = item["id"] as! String
+                    let country = item["country"] as! String
+                    let adm1 = item["adm1"] as! String
+                    let adm2 = item["adm2"] as! String
+                    let lat = item["lat"] as! String
+                    let lon = item["lon"] as! String
+                    locations.append(Location(id: id, name: name, country: country, adm1: adm1, adm2: adm2, lat: lat, lon: lon))
+                }
+            }
+        }
+    }
+}
+
+struct SearchBarUIView: UIViewRepresentable {
+    @Binding var text: String
+    let placeHolder: String?
+    var search: () -> Void
+    init(text: Binding<String>, search: @escaping () -> Void, placeHolder: String? = nil) {
+        self._text = text
+        self.placeHolder = placeHolder
+        self.search = search
+    }
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text, searchAction: search)
+    }
+    
+    func makeUIView(context: Context) -> UISearchBar {
+        let searchBar = UISearchBar()
+        searchBar.searchBarStyle = .minimal
+        searchBar.delegate = context.coordinator
+        if let placeHolder = self.placeHolder {
+            searchBar.placeholder = placeHolder
+        }
+        return searchBar
+    }
+    func updateUIView(_ uiView: UISearchBar, context: Context) {
+        
+    }
+    class Coordinator: NSObject, UISearchBarDelegate {
+        @Binding var text: String
+        var search: () -> Void
+        public init(text: Binding<String>, searchAction: @escaping () -> Void) {
+            self._text = text
+            search = searchAction
+        }
+        func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+            self.text = searchText
+        }
+        func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+            searchBar.showsCancelButton = false
+        }
+        func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+            searchBar.showsCancelButton = true
+        }
+        func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+            searchBar.showsCancelButton = false
+            searchBar.searchTextField.endEditing(true)
+            self.text = ""
+            searchBar.searchTextField.text = ""
+        }
+        func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+            search()
+            UIApplication.shared.endEditing(true)
+        }
+    }
+}
+
+struct ListCell: View {
+    var item: Location
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("\(item.id),\(item.name)")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.primary)
+                Spacer()
+            }
+            HStack {
+                Text("\(item.adm1),\(item.adm2)")
+                    .lineLimit(1)
+                    .font(.system(size: 15))
+                    .foregroundColor(.secondary)
+                Spacer()
+            }
+        }
+    }
+}
+
+// Update for iOS 15
+// MARK: - UIApplication extension for resgning keyboard on pressing the cancel buttion of the search bar
+extension UIApplication {
+    /// Resigns the keyboard.
+    ///
+    /// Used for resigning the keyboard when pressing the cancel button in a searchbar based on [this](https://stackoverflow.com/a/58473985/3687284) solution.
+    /// - Parameter force: set true to resign the keyboard.
+    func endEditing(_ force: Bool) {
+        let scenes = UIApplication.shared.connectedScenes
+        let windowScene = scenes.first as? UIWindowScene
+        let window = windowScene?.windows.first
+        window?.endEditing(force)
+    }
+}
+
+struct ResignKeyboardOnDragGesture: ViewModifier {
+    var gesture = DragGesture().onChanged{_ in
+        UIApplication.shared.endEditing(true)
+    }
+    func body(content: Content) -> some View {
+        content.gesture(gesture)
+    }
+}
+
+extension View {
+    func resignKeyboardOnDragGesture() -> some View {
+        return modifier(ResignKeyboardOnDragGesture())
+    }
+}
+
+struct Location: Identifiable {
+    var id: String
+    var name: String
+    var country: String
+    var adm1: String
+    var adm2: String
+    var lat: String
+    var lon: String
 }
