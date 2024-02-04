@@ -141,6 +141,7 @@ struct SettingsView: View {
                 Section {
                     LinkCell(imageName: "leminlimez", url: "https://github.com/leminlimez", title: "LeminLimez", contribution: NSLocalizedString("Main Developer", comment: "leminlimez's contribution"), circle: true)
                     LinkCell(imageName: "lessica", url: "https://github.com/Lessica/TrollSpeed", title: "Lessica", contribution: NSLocalizedString("TrollSpeed & Assistive Touch Logic", comment: "lessica's contribution"), circle: true)
+                    LinkCell(imageName: "Fuuko", url: "https://github.com/AsakuraFuuko", title: "Fuuko", contribution: NSLocalizedString("Modder", comment: "Fuuko's contribution"), circle: true)
                 } header: {
                     Label(NSLocalizedString("Credits", comment:""), systemImage: "wrench.and.screwdriver")
                 }
