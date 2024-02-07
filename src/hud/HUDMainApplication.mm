@@ -1001,7 +1001,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         // } else {
         //     labelView.font = [UIFont systemFontOfSize: getDoubleFromDictKey(properties, @"fontSize", 10)];
         // }
-        NSString *fontName = getStringFromDictKey(properties, @"fontName", @"Default Font");
+        NSString *fontName = getStringFromDictKey(properties, @"fontName", @"System Font");
         UIFont *textFont = [FontUtils loadFontWithName:fontName size: getDoubleFromDictKey(properties, @"fontSize", 10) bold: getBoolFromDictKey(properties, @"textBold") italic: getBoolFromDictKey(properties, @"textItalic")];
         labelView.alpha = getIntFromDictKey(properties, @"textAlpha", 1.0);
         labelView.font = textFont;

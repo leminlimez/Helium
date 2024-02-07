@@ -42,7 +42,7 @@ struct EditWidgetSetView: View {
     
     @State var textBold: Bool = false
     @State var textItalic: Bool = false
-    @State var fontName: String = "Default Font"
+    @State var fontName: String = "System Font"
     @State var textAlignment: Int = 1
     @State var fontSize: Double = 10.0
     @State var textAlpha: Double = 1.0

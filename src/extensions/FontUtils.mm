@@ -41,7 +41,6 @@ static NSMutableArray *_allFontNames = [NSMutableArray array];
     //     [_allFontNames addObjectsFromArray:names];
     // }
     [_allFontNames addObjectsFromArray:familyNames];
-    [_allFontNames insertObject:@"Default Font" atIndex:0];
     // CFArrayRef allFonts = CTFontManagerCopyAvailableFontFamilyNames();
     // for (NSInteger i = 0; i < CFArrayGetCount(allFonts); i++) {
     //     NSString *fontName = (__bridge NSString *)CFArrayGetValueAtIndex(allFonts, i);
@@ -51,12 +50,15 @@ static NSMutableArray *_allFontNames = [NSMutableArray array];
 }
 
 + (NSArray<NSString *> *)allFontNames {
-    return [_allFontNames sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+    NSMutableArray *copyArray = [[NSMutableArray alloc] init];
+    copyArray = [_allFontNames sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)].mutableCopy;
+    [copyArray insertObject:@"System Font" atIndex:0];
+    return copyArray;
 }
 
 + (UIFont*)loadFontWithName:(NSString*)fontName size:(float)size bold:(BOOL) bold italic:(BOOL) italic{
     UIFont *font = [UIFont fontWithDescriptor:[UIFontDescriptor fontDescriptorWithName:fontName size:size] size:size];
-    if ([fontName isEqualToString:@"Default Font"]) {
+    if ([fontName isEqualToString:@"System Font"]) {
         font = [UIFont systemFontOfSize: size];
     }
     UIFontDescriptorSymbolicTraits symbolicTraits = 0;

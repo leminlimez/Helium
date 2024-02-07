@@ -169,7 +169,7 @@ class WidgetManager: ObservableObject {
                     
                     blurDetails: blurDetailsStruct,
                     
-                    fontName: s["fontName"] as? String ?? "Default Font",
+                    fontName: s["fontName"] as? String ?? "System Font",
                     textBold: s["textBold"] as? Bool ?? false,
                     textItalic: s["textItalic"] as? Bool ?? false,
                     textAlignment: s["textAlignment"] as? Int ?? 1,
@@ -355,7 +355,7 @@ class WidgetManager: ObservableObject {
                 alpha: 1.0
             ),
             
-            fontName: "Default Font",
+            fontName: "System Font",
             textBold: false,
             textItalic: false,
             textAlignment: 1,
