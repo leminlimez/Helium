@@ -1039,7 +1039,7 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
                 [brightnessFilter setValue:@(-0.285) forKey:@"inputAmount"];  // -28.5%
 
                 CAFilter *contrastFilter = [CAFilter filterWithName:kCAFilterColorContrast];
-                [contrastFilter setValue:@(100.0) forKey:@"inputAmount"];   // 1000x
+                [contrastFilter setValue:@(1000.0) forKey:@"inputAmount"];   // 1000x
 
                 CAFilter *saturateFilter = [CAFilter filterWithName:kCAFilterColorSaturate];
                 [saturateFilter setValue:@(0.0) forKey:@"inputAmount"];
