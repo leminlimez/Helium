@@ -1123,6 +1123,9 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
 {
     NSArray *widgetProps = [self widgetProperties];
     for (int i = 0; i < [widgetProps count]; i++) {
+        NSDictionary *properties = [widgetProps objectAtIndex:i];
+        if (!getBoolFromDictKey(properties, @"isEnabled"))
+            continue;
         [[EZTimer shareInstance] pause:[NSString stringWithFormat:@"labelview%d", i]];
     }
 }
@@ -1131,6 +1134,9 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
 {
     NSArray *widgetProps = [self widgetProperties];
     for (int i = 0; i < [widgetProps count]; i++) {
+        NSDictionary *properties = [widgetProps objectAtIndex:i];
+        if (!getBoolFromDictKey(properties, @"isEnabled"))
+            continue;
         [[EZTimer shareInstance] resume:[NSString stringWithFormat:@"labelview%d", i]];
     }
 }
@@ -1196,6 +1202,8 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
         NSDictionary *properties = [widgetProps objectAtIndex:i];
         if (!blurView || !labelView || !properties)
             break;
+        if (!getBoolFromDictKey(properties, @"isEnabled"))
+            continue;
         double offsetX = getDoubleFromDictKey(properties, @"offsetX", 10);
         double offsetY = getDoubleFromDictKey(properties, @"offsetY");
         NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");

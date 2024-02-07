@@ -101,6 +101,7 @@
 "Weather Preview" = "🌤晴 15°~20° (20°)💧54%";
 
 /* EditWidgetSetView.swift */
+"Enable" = "启用小部件集";
 "Widget Set Title" = "小部件集标题";
 "Title" = "标题";
 "Update Interval (seconds)" = "更新间隔 (秒)";

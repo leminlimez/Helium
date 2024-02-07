@@ -15,7 +15,8 @@ struct EditWidgetSetView: View {
     @State var usesAdaptiveColor: Bool = false
     
     @State var showingAddView: Bool = false
-    
+
+    @State var isEnabled: Bool = true
     @State var nameInput: String = ""
     @State var updateInterval: Double = 1.0
     
@@ -65,6 +66,17 @@ struct EditWidgetSetView: View {
                             .onChange(of: nameInput) { _ in
                                 changesMade = true
                             }
+                    }
+
+                    HStack {
+                        Toggle(isOn: $isEnabled) {
+                            Text(NSLocalizedString("Enable", comment: ""))
+                                .bold()
+                                .minimumScaleFactor(0.5)
+                        }
+                        .onChange(of: isEnabled) { _ in
+                            changesMade = true
+                        }
                     }
 
                     // MARK: Offset X
@@ -428,6 +440,7 @@ struct EditWidgetSetView: View {
                 }
                 usesAdaptiveColor = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
                 currentWidgetSet = widgetSet
+                isEnabled = widgetSet.isEnabled
                 nameInput = widgetSet.title
                 updateInterval = widgetSet.updateInterval
                 
@@ -493,6 +506,7 @@ struct EditWidgetSetView: View {
     func saveSet(save: Bool = true) {
         changesMade = false
         widgetManager.editWidgetSet(widgetSet: widgetSet, newSetDetails: .init(
+            isEnabled: isEnabled,
             title: nameInput,
             updateInterval: updateInterval,
             

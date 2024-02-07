@@ -67,6 +67,7 @@ struct WidgetSetStruct: Identifiable, Equatable {
     
     var id = UUID()
     
+    var isEnabled: Bool
     var title: String
     var updateInterval: Double
     
@@ -154,6 +155,7 @@ class WidgetManager: ObservableObject {
                 )
                 // create the object
                 var widgetSet: WidgetSetStruct = .init(
+                    isEnabled: s["isEnabled"] as? Bool ?? true,
                     title: s["title"] as? String ?? NSLocalizedString("Untitled", comment: ""),
                     updateInterval: s["updateInterval"] as? Double ?? 1.0,
                     anchor: s["anchor"] as? Int ?? 0,
@@ -191,6 +193,7 @@ class WidgetManager: ObservableObject {
         
         for s in widgetSets {
             var wSet: [String: Any] = [:]
+            wSet["isEnabled"] = s.isEnabled
             wSet["title"] = s.title
             wSet["updateInterval"] = s.updateInterval
             
@@ -334,6 +337,7 @@ class WidgetManager: ObservableObject {
     public func createWidgetSet(title: String, anchor: Int = 0, save: Bool = true) {
         // create a widget set with the default values
         addWidgetSet(widgetSet: .init(
+            isEnabled: true,
             title: title,
             updateInterval: 1.0,
             
@@ -368,6 +372,7 @@ class WidgetManager: ObservableObject {
     public func editWidgetSet(widgetSet: WidgetSetStruct, newSetDetails ns: WidgetSetStruct, save: Bool = true) {
         for (i, wSet) in widgetSets.enumerated() {
             if wSet == widgetSet {
+                widgetSets[i].isEnabled = ns.isEnabled
                 widgetSets[i].title = ns.title
                 widgetSets[i].updateInterval = ns.updateInterval
                 

@@ -101,6 +101,7 @@
 "Weather Preview" = "🌤Sun 15°~20° (20°)💧54%";
 
 /* EditWidgetSetView.swift */
+"Enable" = "Enable Widget Set";
 "Widget Set Title" = "Widget Set Title";
 "Title" = "Title";
 "Update Interval (seconds)" = "Update Interval (seconds)";
