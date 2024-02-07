@@ -25,7 +25,6 @@ struct SettingsView: View {
     @State var usesRotation: Bool = false
     @State var hideSaveConfirmation: Bool = false
     @State var ignoreSafeZone: Bool = false
-    @State var adaptiveColors: Bool = false
     
     var body: some View {
         NavigationView {
@@ -77,14 +76,6 @@ struct SettingsView: View {
                     HStack {
                         Toggle(isOn: $ignoreSafeZone) {
                             Text(NSLocalizedString("Ignore Safe Zone Changes", comment:""))
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                    }
-                    
-                    HStack {
-                        Toggle(isOn: $adaptiveColors) {
-                            Text(NSLocalizedString("Use Adaptive Colors", comment:""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -169,7 +160,6 @@ struct SettingsView: View {
         usesRotation = UserDefaults.standard.bool(forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
         hideSaveConfirmation = UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
         ignoreSafeZone = UserDefaults.standard.bool(forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
-        adaptiveColors = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
         sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
         centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
     }
@@ -182,7 +172,6 @@ struct SettingsView: View {
         UserDefaults.standard.setValue(usesRotation, forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
         UserDefaults.standard.setValue(hideSaveConfirmation, forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
         UserDefaults.standard.setValue(ignoreSafeZone, forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
-        UserDefaults.standard.setValue(adaptiveColors, forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
         UIApplication.shared.alert(title: NSLocalizedString("Save Changes", comment:""), body: NSLocalizedString("Settings saved successfully", comment:""))
     }
     

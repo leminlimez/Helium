@@ -57,7 +57,6 @@ struct ColorDetailsStruct: Identifiable, Equatable {
     
     var usesCustomColor: Bool = false
     var color: UIColor = .white
-    var dynamicColor: Bool = true
 }
 
 struct WidgetSetStruct: Identifiable, Equatable {
@@ -84,6 +83,7 @@ struct WidgetSetStruct: Identifiable, Equatable {
     
     var blurDetails: BlurDetailsStruct
     
+    var dynamicColor: Bool
     var colorDetails: ColorDetailsStruct = .init()
     
     var fontName: String
@@ -150,8 +150,7 @@ class WidgetManager: ObservableObject {
                 let selectedColor: UIColor = UIColor.getColorFromData(data: colorDetails["color"] as? Data) ?? UIColor.white
                 let colorDetailsStruct: ColorDetailsStruct = .init(
                     usesCustomColor: colorDetails["usesCustomColor"] as? Bool ?? false,
-                    color: selectedColor,
-                    dynamicColor: colorDetails["dynamicColor"] as? Bool ?? true
+                    color: selectedColor
                 )
                 // create the object
                 var widgetSet: WidgetSetStruct = .init(
@@ -171,6 +170,7 @@ class WidgetManager: ObservableObject {
                     
                     blurDetails: blurDetailsStruct,
                     
+                    dynamicColor: s["dynamicColor"] as? Bool ?? true,
                     fontName: s["fontName"] as? String ?? "System Font",
                     textBold: s["textBold"] as? Bool ?? false,
                     textItalic: s["textItalic"] as? Bool ?? false,
@@ -225,10 +225,10 @@ class WidgetManager: ObservableObject {
             ]
             wSet["blurDetails"] = blurDetails
             
+            wSet["dynamicColor"] = s.dynamicColor
             let colorDetails: [String: Any] = [
                 "usesCustomColor": s.colorDetails.usesCustomColor,
-                "color": s.colorDetails.color.data as Any,
-                "dynamicColor": s.colorDetails.dynamicColor
+                "color": s.colorDetails.color.data as Any
             ]
             wSet["colorDetails"] = colorDetails
             
@@ -249,6 +249,8 @@ class WidgetManager: ObservableObject {
             // remove from the defaults
             defaults.removeObject(forKey: "widgetProperties", forPath: USER_DEFAULTS_PATH)
         }
+
+        DarwinNotificationCenter.default.post(name: NOTIFY_RELOAD_HUD)
     }
     
     // MARK: Widget Modification Management
@@ -359,6 +361,7 @@ class WidgetManager: ObservableObject {
                 alpha: 1.0
             ),
             
+            dynamicColor: true,
             fontName: "System Font",
             textBold: false,
             textItalic: false,
@@ -387,6 +390,7 @@ class WidgetManager: ObservableObject {
                 
                 widgetSets[i].blurDetails = ns.blurDetails
                 
+                widgetSets[i].dynamicColor = ns.dynamicColor
                 widgetSets[i].colorDetails = ns.colorDetails
                 
                 widgetSets[i].fontName = ns.fontName

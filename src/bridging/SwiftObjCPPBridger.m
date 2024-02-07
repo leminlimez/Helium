@@ -7,7 +7,6 @@
 
 #import "SwiftObjCPPBridger.h"
 
-
 #pragma mark - HUD Functions
 
 extern BOOL IsHUDEnabled(void);

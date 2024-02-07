@@ -12,7 +12,6 @@ struct EditWidgetSetView: View {
     @StateObject var widgetManager: WidgetManager
     @State var widgetSet: WidgetSetStruct
     @State var currentWidgetSet: WidgetSetStruct? = nil
-    @State var usesAdaptiveColor: Bool = false
     
     @State var showingAddView: Bool = false
 
@@ -192,7 +191,7 @@ struct EditWidgetSetView: View {
                     Text(NSLocalizedString("Size Constraints", comment: ""))
                 }
                 
-                if !usesAdaptiveColor || !dynamicColor {
+                if !dynamicColor {
                     Section {
                         // MARK: Has Blur
                         HStack {
@@ -250,7 +249,17 @@ struct EditWidgetSetView: View {
                 }
                 
                 Section {
-                    if !usesAdaptiveColor || !dynamicColor {
+                    // MARK: Dynamic Color
+                    Toggle(isOn: $dynamicColor) {
+                        Text(NSLocalizedString("Adaptive Color", comment: ""))
+                            .bold()
+                            .minimumScaleFactor(0.5)
+                    }
+                    .onChange(of: dynamicColor) { _ in
+                        changesMade = true
+                    }
+
+                    if !dynamicColor {
                         // MARK: Uses Custom Color
                         HStack {
                             Toggle(isOn: $usesCustomColor) {
@@ -274,17 +283,6 @@ struct EditWidgetSetView: View {
                                         changesMade = true
                                     }
                             }
-                        }
-                    }
-                    // MARK: Dynamic Color
-                    if usesAdaptiveColor {
-                        Toggle(isOn: $dynamicColor) {
-                            Text(NSLocalizedString("Adaptive Color", comment: ""))
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: dynamicColor) { _ in
-                            changesMade = true
                         }
                     }
                 } header: {
@@ -438,7 +436,6 @@ struct EditWidgetSetView: View {
                 if currentWidgetSet == widgetSet {
                     return
                 }
-                usesAdaptiveColor = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
                 currentWidgetSet = widgetSet
                 isEnabled = widgetSet.isEnabled
                 nameInput = widgetSet.title
@@ -463,9 +460,9 @@ struct EditWidgetSetView: View {
                 blurStyle = widgetSet.blurDetails.styleDark ? 1 : 0
                 blurAlpha = widgetSet.blurDetails.alpha
                 
+                dynamicColor = widgetSet.dynamicColor
                 usesCustomColor = widgetSet.colorDetails.usesCustomColor
                 customColor = Color(widgetSet.colorDetails.color)
-                dynamicColor = widgetSet.colorDetails.dynamicColor
                 
                 fontName = widgetSet.fontName
                 textBold = widgetSet.textBold
@@ -528,10 +525,10 @@ struct EditWidgetSetView: View {
                 alpha: blurAlpha
             ),
             
+            dynamicColor: dynamicColor,
             colorDetails: .init(
                 usesCustomColor: usesCustomColor,
-                color: UIColor(customColor),
-                dynamicColor: dynamicColor
+                color: UIColor(customColor)
             ),
             
             fontName: fontName,

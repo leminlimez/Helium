@@ -50,10 +50,6 @@ $(APPLICATION_NAME)_CFLAGS += -fobjc-arc -Iinclude
 $(APPLICATION_NAME)_CFLAGS += -include hud-prefix.pch -Wno-deprecated-declarations
 $(APPLICATION_NAME)_SWIFTFLAGS += -import-objc-header src/bridging/Helium-Bridging-Header.h
 
-$(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_LAUNCHED_HUD=\"com.leemin.notification.hud.launched\"
-$(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_DISMISSAL_HUD=\"com.leemin.notification.hud.dismissal\"
-$(APPLICATION_NAME)_CCFLAGS += -DNOTIFY_RELOAD_HUD=\"com.leemin.notification.hud.reload\"
-
 $(APPLICATION_NAME)_FRAMEWORKS += CoreGraphics QuartzCore UIKit Foundation
 $(APPLICATION_NAME)_PRIVATE_FRAMEWORKS += BackBoardServices GraphicsServices IOKit SpringBoardServices
 

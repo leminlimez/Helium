@@ -47,14 +47,14 @@
     NSString *res = [self getDataFrom:[NSString stringWithFormat:@"https://geoapi.qweather.com/v2/city/lookup?location=%@&key=%@&lang=%@", [self encodeURIComponent:name], apiKey, [self convertDateLocaleToLang:dateLocale]]];
     NSData *data = [res dataUsingEncoding:NSUTF8StringEncoding];
     if (data!=nil) {
-        NSLog(@"weather location:%@", data);
+        // NSLog(@"weather location:%@", data);
         return data;
     }
     return nil;
 }
 
 + (NSString*)formatNowResult:(NSDictionary *)data format:(NSString *)format {
-    NSLog(@"weather now:%@", data);
+    // NSLog(@"weather now:%@", data);
     if(data && [data[@"code"] isEqualToString:@"200"]) {
         format = [format stringByReplacingOccurrencesOfString:@"{i}" withString:[WeatherUtils getWeatherIcon: data[@"now"][@"text"]]];
         format = [format stringByReplacingOccurrencesOfString:@"{n}" withString:data[@"now"][@"text"]];
@@ -74,7 +74,7 @@
 }
 
 + (NSString*)formatTodayResult:(NSDictionary *)data format:(NSString *)format {
-    NSLog(@"weather today:%@", data);
+    // NSLog(@"weather today:%@", data);
     if(data && [data[@"code"] isEqualToString:@"200"]) {
         format = [format stringByReplacingOccurrencesOfString:@"{di}" withString:[WeatherUtils getWeatherIcon: data[@"daily"][0][@"textDay"]]];
         format = [format stringByReplacingOccurrencesOfString:@"{dn}" withString:data[@"daily"][0][@"textDay"]];
@@ -99,7 +99,7 @@
 }
 
 + (NSString *)getDataFrom:(NSString *)url{
-    NSLog(@"url:%@", url);
+    // NSLog(@"url:%@", url);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setHTTPMethod:@"GET"];
     [request setURL:[NSURL URLWithString:url]];

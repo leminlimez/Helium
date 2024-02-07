@@ -16,7 +16,7 @@
 #import <IOKit/IOKitLib.h>
 #import "../extensions/LunarDate.h"
 #import "../extensions/FontUtils.h"
-#include "../extensions/WeatherUtils.h"
+#import "../extensions/WeatherUtils.h"
 
 // Thanks to: https://github.com/lwlsw/NetworkSpeed13
 
@@ -299,7 +299,7 @@ static NSString* formattedChargingSymbol(BOOL filled)
  TODO:
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold, UIColor *textColor, NSString *apiKey, NSString *dateLocale)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, UIColor *textColor, NSString *apiKey, NSString *dateLocale)
 {
     NSString *widgetString;
     NSString *sfSymbolName;
@@ -392,7 +392,7 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold, UIColor *textColor, NSString *apiKey, NSString *dateLocale)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, UIColor *textColor, NSString *apiKey, NSString *dateLocale)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -401,7 +401,7 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold, textColor, apiKey, dateLocale);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textColor, apiKey, dateLocale);
             }
         } else {
             return nil;
