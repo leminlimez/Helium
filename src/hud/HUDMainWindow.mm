@@ -15,7 +15,7 @@
 
 + (BOOL)_isSystemWindow { return YES; }
 - (BOOL)_isWindowServerHostingManaged { return NO; }
-- (BOOL)_ignoresHitTest { return [HUDRootViewController passthroughMode]; }
+- (BOOL)_ignoresHitTest { return YES; }
 // - (BOOL)keepContextInBackground { return YES; }
 // - (BOOL)_usesWindowServerHitTesting { return NO; }
 // - (BOOL)_isSecure { return YES; }

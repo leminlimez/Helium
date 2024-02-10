@@ -227,11 +227,6 @@ static void ReloadHUD
     }
 }
 
-+ (BOOL) passthroughMode
-{
-    return [[[NSDictionary dictionaryWithContentsOfFile:USER_DEFAULTS_PATH] objectForKey: @"passthroughMode"] boolValue];
-}
-
 - (BOOL) usesRotation
 {
     [self loadUserDefaults:NO];
