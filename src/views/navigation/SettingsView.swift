@@ -173,6 +173,7 @@ struct SettingsView: View {
         UserDefaults.standard.setValue(hideSaveConfirmation, forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
         UserDefaults.standard.setValue(ignoreSafeZone, forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
         UIApplication.shared.alert(title: NSLocalizedString("Save Changes", comment:""), body: NSLocalizedString("Settings saved successfully", comment:""))
+        DarwinNotificationCenter.default.post(name: NOTIFY_RELOAD_HUD)
     }
     
     // Link Cell code from Cowabunga

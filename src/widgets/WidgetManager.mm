@@ -314,11 +314,6 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
             break;
         case 2:
             // Network Speed
-            // [
-            //     mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
-            //         NSString stringWithFormat: @"%c", getSeparator(mutableString)
-            //     ] attributes:@{NSFontAttributeName: textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
-            // ];
             [
                 mutableString appendAttributedString: formattedAttributedSpeedString(
                     [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO,

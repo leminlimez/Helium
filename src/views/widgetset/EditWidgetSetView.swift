@@ -191,6 +191,47 @@ struct EditWidgetSetView: View {
                     Text(NSLocalizedString("Size Constraints", comment: ""))
                 }
                 
+                Section {
+                    // MARK: Dynamic Color
+                    Toggle(isOn: $dynamicColor) {
+                        Text(NSLocalizedString("Adaptive Color", comment: ""))
+                            .bold()
+                            .minimumScaleFactor(0.5)
+                    }
+                    .onChange(of: dynamicColor) { _ in
+                        changesMade = true
+                    }
+
+                    if !dynamicColor {
+                        // MARK: Uses Custom Color
+                        HStack {
+                            Toggle(isOn: $usesCustomColor) {
+                                Text(NSLocalizedString("Custom Text Color", comment: ""))
+                                    .bold()
+                                    .minimumScaleFactor(0.5)
+                            }
+                            .onChange(of: usesCustomColor) { _ in
+                                changesMade = true
+                            }
+                        }
+                        // MARK: Custom Text Color
+                        if usesCustomColor {
+                            HStack {
+                                Text(NSLocalizedString("Text Color", comment: ""))
+                                    .bold()
+                                Spacer()
+                                ColorPicker(NSLocalizedString("Set Text Color", comment: ""), selection: $customColor)
+                                    .labelsHidden()
+                                    .onChange(of: customColor) { _ in
+                                        changesMade = true
+                                    }
+                            }
+                        }
+                    }
+                } header: {
+                    Text(NSLocalizedString("Text Color", comment: ""))
+                }
+                
                 if !dynamicColor {
                     Section {
                         // MARK: Has Blur
@@ -246,47 +287,6 @@ struct EditWidgetSetView: View {
                     } header: {
                         Text(NSLocalizedString("Blur", comment: ""))
                     }
-                }
-                
-                Section {
-                    // MARK: Dynamic Color
-                    Toggle(isOn: $dynamicColor) {
-                        Text(NSLocalizedString("Adaptive Color", comment: ""))
-                            .bold()
-                            .minimumScaleFactor(0.5)
-                    }
-                    .onChange(of: dynamicColor) { _ in
-                        changesMade = true
-                    }
-
-                    if !dynamicColor {
-                        // MARK: Uses Custom Color
-                        HStack {
-                            Toggle(isOn: $usesCustomColor) {
-                                Text(NSLocalizedString("Custom Text Color", comment: ""))
-                                    .bold()
-                                    .minimumScaleFactor(0.5)
-                            }
-                            .onChange(of: usesCustomColor) { _ in
-                                changesMade = true
-                            }
-                        }
-                        // MARK: Custom Text Color
-                        if usesCustomColor {
-                            HStack {
-                                Text(NSLocalizedString("Text Color", comment: ""))
-                                    .bold()
-                                Spacer()
-                                ColorPicker(NSLocalizedString("Set Text Color", comment: ""), selection: $customColor)
-                                    .labelsHidden()
-                                    .onChange(of: customColor) { _ in
-                                        changesMade = true
-                                    }
-                            }
-                        }
-                    }
-                } header: {
-                    Text(NSLocalizedString("Text Color", comment: ""))
                 }
                 
                 Section {
