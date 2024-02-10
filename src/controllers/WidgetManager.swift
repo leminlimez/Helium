@@ -67,6 +67,7 @@ struct WidgetSetStruct: Identifiable, Equatable {
     var id = UUID()
     
     var isEnabled: Bool
+    var orientationMode: Int
     var title: String
     var updateInterval: Double
     
@@ -155,6 +156,7 @@ class WidgetManager: ObservableObject {
                 // create the object
                 var widgetSet: WidgetSetStruct = .init(
                     isEnabled: s["isEnabled"] as? Bool ?? true,
+                    orientationMode: s["orientationMode"] as? Int ?? 0,
                     title: s["title"] as? String ?? NSLocalizedString("Untitled", comment: ""),
                     updateInterval: s["updateInterval"] as? Double ?? 1.0,
                     anchor: s["anchor"] as? Int ?? 0,
@@ -194,6 +196,7 @@ class WidgetManager: ObservableObject {
         for s in widgetSets {
             var wSet: [String: Any] = [:]
             wSet["isEnabled"] = s.isEnabled
+            wSet["orientationMode"] = s.orientationMode
             wSet["title"] = s.title
             wSet["updateInterval"] = s.updateInterval
             
@@ -340,6 +343,7 @@ class WidgetManager: ObservableObject {
         // create a widget set with the default values
         addWidgetSet(widgetSet: .init(
             isEnabled: true,
+            orientationMode: 0,
             title: title,
             updateInterval: 1.0,
             
@@ -376,6 +380,7 @@ class WidgetManager: ObservableObject {
         for (i, wSet) in widgetSets.enumerated() {
             if wSet == widgetSet {
                 widgetSets[i].isEnabled = ns.isEnabled
+                widgetSets[i].orientationMode = ns.orientationMode
                 widgetSets[i].title = ns.title
                 widgetSets[i].updateInterval = ns.updateInterval
                 

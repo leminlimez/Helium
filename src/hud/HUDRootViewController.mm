@@ -166,6 +166,12 @@ static void ReloadHUD
 - (void) reloadUserDefaults
 {
     [self loadUserDefaults: YES];
+    
+    if ([self debugBorder]) {
+        _contentView.layer.borderWidth = 1.0;
+    } else {
+        _contentView.layer.borderWidth = 0.0;
+    }
 
     NSArray *widgetProps = [self widgetProperties];
     for (int i = 0; i < [widgetProps count]; i++) {
@@ -175,6 +181,7 @@ static void ReloadHUD
         UILabel *maskLabelView = [_maskLabelViews objectAtIndex:i];
 
         NSDictionary *properties = [widgetProps objectAtIndex:i];
+        NSInteger orientationMode = getIntFromDictKey(properties, @"orientationMode", 0);
         NSDictionary *blurDetails = [properties valueForKey:@"blurDetails"] ? [properties valueForKey:@"blurDetails"] : @{@"hasBlur" : @(NO)};
         UIBlurEffect *blurEffect = [
             UIBlurEffect effectWithStyle: getBoolFromDictKey(blurDetails, @"styleDark", true) ? UIBlurEffectStyleSystemMaterialDark : UIBlurEffectStyleSystemMaterialLight
@@ -224,20 +231,31 @@ static void ReloadHUD
                 [blurView setHidden:YES];
             }
         }
+
+        if ((orientationMode == 1 && [self isLandscapeOrientation])
+            || (orientationMode == 2 && ![self isLandscapeOrientation])) {
+            [blurView setHidden:YES];
+            [labelView setHidden:YES];
+            [backdropView setHidden:YES];
+            [maskLabelView setHidden:YES];
+        }
+
+        if ([self debugBorder]) {
+            labelView.layer.borderWidth = 1.0;
+            // backdropView.layer.borderWidth = 1.0;
+            maskLabelView.layer.borderWidth = 1.0;
+        } else {
+            labelView.layer.borderWidth = 0.0;
+            // backdropView.layer.borderWidth = 0.0;
+            maskLabelView.layer.borderWidth = 0.0;
+        }
     }
 }
 
-- (BOOL) usesRotation
+- (BOOL) debugBorder
 {
     [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey: @"usesRotation"];
-    return mode ? [mode boolValue] : NO;
-}
-
-- (BOOL) ignoreSafeZone
-{
-    [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey: @"ignoreSafeZone"];
+    NSNumber *mode = [_userDefaults objectForKey: @"debugBorder"];
     return mode ? [mode boolValue] : NO;
 }
 
@@ -260,6 +278,17 @@ static void ReloadHUD
     [self loadUserDefaults: NO];
     NSArray *properties = [_userDefaults objectForKey: @"widgetProperties"];
     return properties;
+}
+
+- (BOOL)isLandscapeOrientation
+{
+    BOOL isLandscape;
+    if (_orientation == UIInterfaceOrientationUnknown) {
+        isLandscape = CGRectGetWidth(self.view.bounds) > CGRectGetHeight(self.view.bounds);
+    } else {
+        isLandscape = UIInterfaceOrientationIsLandscape(_orientation);
+    }
+    return isLandscape;
 }
 
 #pragma mark - Initialization and Deallocation
@@ -304,6 +333,8 @@ static void ReloadHUD
     _contentView = [[UIView alloc] init];
     _contentView.backgroundColor = [UIColor clearColor];
     _contentView.translatesAutoresizingMaskIntoConstraints = NO;
+    _contentView.layer.borderColor = [UIColor redColor].CGColor;
+    [_contentView setUserInteractionEnabled:YES];
     [self.view addSubview:_contentView];
 
     [self createWidgetSetsView];
@@ -391,8 +422,17 @@ static void ReloadHUD
 - (void)viewSafeAreaInsetsDidChange
 {
     [super viewSafeAreaInsetsDidChange];
-    if (![self ignoreSafeZone]) {
-        [self updateViewConstraints];
+    [self updateViewConstraints];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    for (int i = 0; i < [_maskLabelViews count]; i++) {
+        UILabel *maskLabel = [_maskLabelViews objectAtIndex: i];
+        AnyBackdropView *backdropView = [_backdropViews objectAtIndex: i];
+        if (maskLabel && backdropView) {
+            [maskLabel setFrame: backdropView.bounds];
+        }
     }
 }
 
@@ -416,6 +456,7 @@ static void ReloadHUD
         labelView.numberOfLines = 0;
         labelView.lineBreakMode = NSLineBreakByClipping;
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
+        labelView.layer.borderColor = [UIColor redColor].CGColor;
         [labelView setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
         [_contentView addSubview:labelView];
         [_labelViews addObject:labelView];
@@ -424,6 +465,7 @@ static void ReloadHUD
         // create backdrop view
         AnyBackdropView *backdropView = [[AnyBackdropView alloc] init];
         backdropView.translatesAutoresizingMaskIntoConstraints = NO;
+        backdropView.layer.borderColor = [UIColor redColor].CGColor;
         [_contentView addSubview:backdropView];
         [_backdropViews addObject:backdropView];
 
@@ -432,7 +474,8 @@ static void ReloadHUD
         maskLabel.numberOfLines = 0;
         maskLabel.lineBreakMode = NSLineBreakByClipping;
         maskLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        // code by Lessica/TrollSpeed
+        maskLabel.layer.borderColor = [UIColor redColor].CGColor;
+        // code from Lessica/TrollSpeed
         CAFilter *blurFilter = [CAFilter filterWithName:kCAFilterGaussianBlur];
         [blurFilter setValue:@(50.0) forKey:@"inputRadius"];  // radius 50pt
         [blurFilter setValue:@YES forKey:@"inputNormalizeEdges"];  // do not use inputHardEdges
@@ -466,41 +509,73 @@ static void ReloadHUD
 
     BOOL isPad = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad);
     UILayoutGuide *layoutGuide = self.view.safeAreaLayoutGuide;
-    BOOL ignoreSZ = [self ignoreSafeZone];
     
-    UIInterfaceOrientation orientation = _orientation;
-    BOOL isLandscape;
-    if (orientation == UIInterfaceOrientationUnknown) {
-        isLandscape = CGRectGetWidth(self.view.bounds) > CGRectGetHeight(self.view.bounds);
-    } else {
-        isLandscape = UIInterfaceOrientationIsLandscape(orientation);
-    }
-
-    if (isLandscape)
+    // code from Lessica/TrollSpeed
+    if ([self isLandscapeOrientation])
     {
-        [_constraints addObjectsFromArray:@[
-            [_contentView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:(!ignoreSZ && layoutGuide.layoutFrame.origin.y > 1) ? 20 : 4],
-            [_contentView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:(!ignoreSZ && layoutGuide.layoutFrame.origin.y > 1) ? -20 : -4],
-        ]];
+        CGFloat notchHeight;
+        CGFloat paddingNearNotch;
+        CGFloat paddingFarFromNotch;
+
+        notchHeight = CGRectGetMinY(layoutGuide.layoutFrame);
+        paddingNearNotch = (notchHeight > 30) ? notchHeight - 16 : 4;
+        paddingFarFromNotch = (notchHeight > 30) ? -24 : -4;
 
         [_constraints addObjectsFromArray:@[
-            [_contentView.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:(isPad ? 30 : 10)],
-            [_contentView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
+            [_contentView.leadingAnchor constraintEqualToAnchor:layoutGuide.leadingAnchor constant:(_orientation == UIInterfaceOrientationLandscapeLeft ? -paddingFarFromNotch : paddingNearNotch)],
+            [_contentView.trailingAnchor constraintEqualToAnchor:layoutGuide.trailingAnchor constant:(_orientation == UIInterfaceOrientationLandscapeLeft ? -paddingNearNotch : paddingFarFromNotch)],
         ]];
+
+        CGFloat minimumLandscapeTopConstant = 0;
+        CGFloat minimumLandscapeBottomConstant = 0;
+
+        minimumLandscapeTopConstant = (isPad ? 30 : 10);
+        minimumLandscapeBottomConstant = (isPad ? -34 : -14);
+
+        /* Fixed Constraints */
+        [_constraints addObjectsFromArray:@[
+            [_contentView.topAnchor constraintGreaterThanOrEqualToAnchor:self.view.topAnchor constant:minimumLandscapeTopConstant],
+            [_contentView.bottomAnchor constraintLessThanOrEqualToAnchor:self.view.bottomAnchor constant:minimumLandscapeBottomConstant],
+        ]];
+
+        /* Flexible Constraint */
+        NSLayoutConstraint *_topConstraint = [_contentView.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:minimumLandscapeTopConstant];
+        _topConstraint.priority = UILayoutPriorityDefaultLow;
+
+        [_constraints addObject:_topConstraint];
     }
     else
     {
         [_constraints addObjectsFromArray:@[
-            [_contentView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
-            [_contentView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+            [_contentView.leadingAnchor constraintEqualToAnchor:layoutGuide.leadingAnchor],
+            [_contentView.trailingAnchor constraintEqualToAnchor:layoutGuide.trailingAnchor],
         ]];
-        
-        if (!ignoreSZ && layoutGuide.layoutFrame.origin.y > 1)
-            [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:-10]];
-        else
-            [_constraints addObject:[_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:(isPad ? 30 : 20)]];
 
-        [_constraints addObject:[_contentView.bottomAnchor constraintEqualToAnchor:layoutGuide.bottomAnchor]];
+        CGFloat minimumTopConstraintConstant = 0;
+        CGFloat minimumBottomConstraintConstant = 0;
+
+        if (CGRectGetMinY(layoutGuide.layoutFrame) >= 51) {
+            minimumTopConstraintConstant = -8;
+            minimumBottomConstraintConstant = -4;
+        } else if (CGRectGetMinY(layoutGuide.layoutFrame) > 30) {
+            minimumTopConstraintConstant = -12;
+            minimumBottomConstraintConstant = -4;
+        } else {
+            minimumTopConstraintConstant = (isPad ? 30 : 20);
+            minimumBottomConstraintConstant = -20;
+        }
+
+        /* Fixed Constraints */
+        [_constraints addObjectsFromArray:@[
+            [_contentView.topAnchor constraintGreaterThanOrEqualToAnchor:layoutGuide.topAnchor constant:minimumTopConstraintConstant],
+            [_contentView.bottomAnchor constraintLessThanOrEqualToAnchor:layoutGuide.bottomAnchor constant:minimumBottomConstraintConstant],
+        ]];
+
+        /* Flexible Constraint */
+        NSLayoutConstraint *_topConstraint = [_contentView.topAnchor constraintEqualToAnchor:layoutGuide.topAnchor constant:minimumTopConstraintConstant];
+        _topConstraint.priority = UILayoutPriorityDefaultLow;
+
+        [_constraints addObject:_topConstraint];
     }
 
     // MARK: Set Label Constraints
@@ -509,6 +584,8 @@ static void ReloadHUD
     for (int i = 0; i < [widgetProps count]; i++) {
         UIVisualEffectView *blurView = [_blurViews objectAtIndex:i];
         UILabel *labelView = [_labelViews objectAtIndex:i];
+        AnyBackdropView *backdropView = [_backdropViews objectAtIndex: i];
+        // UILabel *maskLabelView = [_maskLabelViews objectAtIndex:i];
         NSDictionary *properties = [widgetProps objectAtIndex:i];
         if (!blurView || !labelView || !properties)
             break;
@@ -519,34 +596,34 @@ static void ReloadHUD
         NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
         NSInteger anchorYSide = getIntFromDictKey(properties, @"anchorY");
         // set the vertical anchor
-        if (anchorYSide == 1)
+        if (anchorYSide == 1) {
             [_constraints addObject:[labelView.centerYAnchor constraintEqualToAnchor:_contentView.centerYAnchor constant: offsetY]];
-        else if (anchorYSide == 0)
+        } else if (anchorYSide == 0) {
             [_constraints addObject:[labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY]];
-        else
+        } else {
             [_constraints addObject:[labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: offsetY]];
+        }
         // set the horizontal anchor
-        if (anchorSide == 1)
+        if (anchorSide == 1) {
             [_constraints addObject:[labelView.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor constant: offsetX]];
-        else if (anchorSide == 0)
+        } else if (anchorSide == 0) {
             [_constraints addObject:[labelView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant: offsetX]];
-        else
+        } else {
             [_constraints addObject:[labelView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant: -offsetX]];
+        }
+
         // set the width
         if (!getBoolFromDictKey(properties, @"autoResizes")) {
             [_constraints addObject:[labelView.widthAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scale", 50.0)]];
             [_constraints addObject:[labelView.heightAnchor constraintEqualToConstant:getDoubleFromDictKey(properties, @"scaleY", 12.0)]];
         }
-
-        AnyBackdropView *backdropView = [_backdropViews objectAtIndex: i];
-        if (backdropView) {
-            [_constraints addObjectsFromArray:@[
-                [blurView.topAnchor constraintEqualToAnchor:backdropView.topAnchor],
-                [blurView.leadingAnchor constraintEqualToAnchor:backdropView.leadingAnchor],
-                [blurView.trailingAnchor constraintEqualToAnchor:backdropView.trailingAnchor],
-                [blurView.bottomAnchor constraintEqualToAnchor:backdropView.bottomAnchor],
-            ]];
-        }
+        
+        [_constraints addObjectsFromArray:@[
+            [backdropView.topAnchor constraintEqualToAnchor:blurView.topAnchor],
+            [backdropView.leadingAnchor constraintEqualToAnchor:blurView.leadingAnchor],
+            [backdropView.trailingAnchor constraintEqualToAnchor:blurView.trailingAnchor],
+            [backdropView.bottomAnchor constraintEqualToAnchor:blurView.bottomAnchor],
+        ]];
         
         [_constraints addObjectsFromArray:@[
             [blurView.topAnchor constraintEqualToAnchor:labelView.topAnchor constant:-2],
@@ -587,28 +664,56 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
 
 - (void)updateOrientation:(UIInterfaceOrientation)orientation animateWithDuration:(NSTimeInterval)duration
 {
-    BOOL usesRotation = [self usesRotation];
+    __weak typeof(self) weakSelf = self;
+    NSArray *widgetProps = [weakSelf widgetProperties];
+    for (int i = 0; i < [widgetProps count]; i++) {
+        UIVisualEffectView *blurView = [_blurViews objectAtIndex:i];
+        UILabel *labelView = [_labelViews objectAtIndex:i];
+        AnyBackdropView *backdropView = [_backdropViews objectAtIndex: i];
+        UILabel *maskLabelView = [_maskLabelViews objectAtIndex:i];
 
-    if (!usesRotation)
-    {
-        if (orientation == UIInterfaceOrientationPortrait)
-        {
-            __weak typeof(self) weakSelf = self;
-            [UIView animateWithDuration:duration animations:^{
-                __strong typeof(weakSelf) strongSelf = weakSelf;
-                strongSelf->_contentView.alpha = 1.0;
-            }];
+        NSDictionary *properties = [widgetProps objectAtIndex:i];
+        NSInteger orientationMode = getIntFromDictKey(properties, @"orientationMode", 0);
+        BOOL isEnabled = getBoolFromDictKey(properties, @"isEnabled");
+        BOOL dynamicColor = getBoolFromDictKey(properties, @"dynamicColor", true);
+        if (isEnabled) {
+            switch (orientationMode) {
+                // Portrait
+                case 1: {
+                    if (UIInterfaceOrientationIsLandscape(orientation)) {
+                        [blurView setHidden:YES];
+                        [labelView setHidden:YES];
+                        [backdropView setHidden:YES];
+                        [maskLabelView setHidden:YES];
+                    } else {
+                        if (dynamicColor) {
+                            [backdropView setHidden:NO];
+                            [maskLabelView setHidden:NO];
+                        } else {
+                            [blurView setHidden:NO];
+                            [labelView setHidden:NO];
+                        }
+                    }
+                }break;
+                // Landscape
+                case 2: {
+                    if (UIInterfaceOrientationIsLandscape(orientation)) {
+                        if (dynamicColor) {
+                            [backdropView setHidden:NO];
+                            [maskLabelView setHidden:NO];
+                        } else {
+                            [blurView setHidden:NO];
+                            [labelView setHidden:NO];
+                        }
+                    } else {
+                        [blurView setHidden:YES];
+                        [labelView setHidden:YES];
+                        [backdropView setHidden:YES];
+                        [maskLabelView setHidden:YES];
+                    }
+                }break;
+            }
         }
-        else
-        {
-            __weak typeof(self) weakSelf = self;
-            [UIView animateWithDuration:duration animations:^{
-                __strong typeof(weakSelf) strongSelf = weakSelf;
-                strongSelf->_contentView.alpha = 0.0;
-            }];
-        }
-
-        return;
     }
 
     if (orientation == _orientation) {
@@ -622,7 +727,6 @@ static inline CGRect orientationBounds(UIInterfaceOrientation orientation, CGRec
     [self.view setHidden:YES];
     [self.view setBounds:bounds];
 
-    __weak typeof(self) weakSelf = self;
     [UIView animateWithDuration:duration animations:^{
         [weakSelf.view setTransform:CGAffineTransformMakeRotation(orientationAngle(orientation))];
     } completion:^(BOOL finished) {

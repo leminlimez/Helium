@@ -61,9 +61,9 @@ struct WidgetCustomizationView: View {
                     }
                 }
             }
-            .navigationTitle(NSLocalizedString("Customize", comment:""))
-            .navigationViewStyle(.stack)
+            .navigationTitle(Text(NSLocalizedString("Customize", comment:"")))
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

@@ -22,9 +22,8 @@ struct SettingsView: View {
     // Preference Variables
     @State var apiKey: String = ""
     @State var dateLocale: String = "en_US"
-    @State var usesRotation: Bool = false
     @State var hideSaveConfirmation: Bool = false
-    @State var ignoreSafeZone: Bool = false
+    @State var debugBorder: Bool = false
     
     var body: some View {
         NavigationView {
@@ -56,14 +55,6 @@ struct SettingsView: View {
                         TextField("", text: $apiKey)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
-
-                    HStack {
-                        Toggle(isOn: $usesRotation) {
-                            Text(NSLocalizedString("Show when Rotating", comment:""))
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                    }
                     
                     HStack {
                         Toggle(isOn: $hideSaveConfirmation) {
@@ -74,8 +65,8 @@ struct SettingsView: View {
                     }
                     
                     HStack {
-                        Toggle(isOn: $ignoreSafeZone) {
-                            Text(NSLocalizedString("Ignore Safe Zone Changes", comment:""))
+                        Toggle(isOn: $debugBorder) {
+                            Text(NSLocalizedString("Display Debug Border", comment:""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
                         }
@@ -146,32 +137,26 @@ struct SettingsView: View {
                     }
                 }
             }
-            .navigationTitle(NSLocalizedString("Settings", comment:""))
-            .navigationViewStyle(.stack)
             .onAppear {
                 loadSettings()
             }
+            .navigationTitle(Text(NSLocalizedString("Settings", comment:"")))
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     func loadSettings() {
         dateLocale = UserDefaults.standard.string(forKey: "dateLocale", forPath: USER_DEFAULTS_PATH) ?? "en_US"
         apiKey = UserDefaults.standard.string(forKey: "apiKey", forPath: USER_DEFAULTS_PATH) ?? ""
-        usesRotation = UserDefaults.standard.bool(forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
         hideSaveConfirmation = UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
-        ignoreSafeZone = UserDefaults.standard.bool(forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
-        sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
-        centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
+        debugBorder = UserDefaults.standard.bool(forKey: "debugBorder", forPath: USER_DEFAULTS_PATH)
     }
 
     func saveChanges() {
-        UserDefaults.standard.setValue(sideWidgetSize, forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
-        UserDefaults.standard.setValue(centerWidgetSize, forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
         UserDefaults.standard.setValue(apiKey, forKey: "apiKey", forPath: USER_DEFAULTS_PATH)
         UserDefaults.standard.setValue(dateLocale, forKey: "dateLocale", forPath: USER_DEFAULTS_PATH)
-        UserDefaults.standard.setValue(usesRotation, forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
         UserDefaults.standard.setValue(hideSaveConfirmation, forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
-        UserDefaults.standard.setValue(ignoreSafeZone, forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(debugBorder, forKey: "debugBorder", forPath: USER_DEFAULTS_PATH)
         UIApplication.shared.alert(title: NSLocalizedString("Save Changes", comment:""), body: NSLocalizedString("Settings saved successfully", comment:""))
         DarwinNotificationCenter.default.post(name: NOTIFY_RELOAD_HUD)
     }

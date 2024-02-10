@@ -48,9 +48,9 @@ struct HomePageView: View {
                     toggleHUD(false)
                 }
             })
-            .navigationTitle(NSLocalizedString("Helium", comment:""))
-            .navigationViewStyle(.stack)
+            .navigationTitle(Text(NSLocalizedString("Helium", comment:"")))
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     func toggleHUD(_ isActive: Bool) {

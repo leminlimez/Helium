@@ -24,9 +24,8 @@
 "Release" = "Release";
 "Date Locale" = "Date Locale";
 "Weather Api key" = "QWeather Api key";
-"Show when Rotating" = "Show when Rotating";
 "Hide Save Confirmation Popup" = "Hide Save Confirmation Popup";
-"Ignore Safe Zone Changes" = "Ignore Safe Zone Changes";
+"Display Debug Border" = "Display Debug Border";
 "Use Adaptive Colors" = "Use Adaptive Colors";
 "Helium Data" = "Helium Data";
 "Successfully deleted user data!" = "Successfully deleted user data!";
@@ -102,6 +101,10 @@
 
 /* EditWidgetSetView.swift */
 "Enable" = "Enable Widget Set";
+"Orientation Mode" = "Orientation Mode";
+"Portrait & Landscape" = "Portrait & Landscape";
+"Portrait" = "Portrait";
+"Landscape" = "Landscape";
 "Widget Set Title" = "Widget Set Title";
 "Title" = "Title";
 "Update Interval (seconds)" = "Update Interval (seconds)";

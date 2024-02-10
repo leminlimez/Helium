@@ -16,6 +16,7 @@ struct EditWidgetSetView: View {
     @State var showingAddView: Bool = false
 
     @State var isEnabled: Bool = true
+    @State var orientationMode: Int = 0
     @State var nameInput: String = ""
     @State var updateInterval: Double = 1.0
     
@@ -78,7 +79,22 @@ struct EditWidgetSetView: View {
                         }
                     }
 
-                    // MARK: Offset X
+                    // MARK: Update Interval
+                    HStack {
+                        Text(NSLocalizedString("Orientation Mode", comment: "")).foregroundColor(.primary).bold()
+                        Spacer()
+                        Picker(selection: $orientationMode) {
+                            Text(NSLocalizedString("Portrait & Landscape", comment: "")).tag(0)
+                            Text(NSLocalizedString("Portrait", comment: "")).tag(1)
+                            Text(NSLocalizedString("Landscape", comment: "")).tag(2)
+                        } label: {}
+                            .pickerStyle(.menu)
+                            .onChange(of: orientationMode) { _ in
+                                changesMade = true
+                            }
+                    }
+
+                    // MARK: Update Interval
                     VStack {
                         HStack {
                             Text(NSLocalizedString("Update Interval (seconds)", comment: ""))
@@ -438,6 +454,7 @@ struct EditWidgetSetView: View {
                 }
                 currentWidgetSet = widgetSet
                 isEnabled = widgetSet.isEnabled
+                orientationMode = widgetSet.orientationMode
                 nameInput = widgetSet.title
                 updateInterval = widgetSet.updateInterval
                 
@@ -504,6 +521,7 @@ struct EditWidgetSetView: View {
         changesMade = false
         widgetManager.editWidgetSet(widgetSet: widgetSet, newSetDetails: .init(
             isEnabled: isEnabled,
+            orientationMode: orientationMode,
             title: nameInput,
             updateInterval: updateInterval,
             

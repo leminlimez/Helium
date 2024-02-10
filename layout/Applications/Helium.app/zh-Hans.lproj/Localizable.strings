@@ -26,7 +26,7 @@
 "Weather Api key" = "和风天气ApiKey";
 "Show when Rotating" = "旋转屏幕时显示";
 "Hide Save Confirmation Popup" = "不显示保存确认弹窗";
-"Ignore Safe Zone Changes" = "忽略安全区域变化";
+"Display Debug Border" = "显示调试边框";
 "Use Adaptive Colors" = "使用自适应颜色";
 "Helium Data" = "氦气数据";
 "Successfully deleted user data!" = "已成功删除用户数据！";
@@ -102,6 +102,10 @@
 
 /* EditWidgetSetView.swift */
 "Enable" = "启用小部件集";
+"Orientation Mode" = "显示模式";
+"Portrait & Landscape" = "竖屏和横屏";
+"Portrait" = "竖屏";
+"Landscape" = "横屏";
 "Widget Set Title" = "小部件集标题";
 "Title" = "标题";
 "Update Interval (seconds)" = "更新间隔 (秒)";
