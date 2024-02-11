@@ -178,8 +178,9 @@ struct WidgetPreferencesView: View {
                     .onAppear {
                         if let timeFormat = widgetID.config["dateFormat"] as? String {
                             intSelection = timeFormats.firstIndex(of: timeFormat) ?? 0
+                        } else {
+                            intSelection = 0
                         }
-                        intSelection = 0
                     }
                 }
             case .textWidget:
@@ -368,7 +369,6 @@ struct WidgetPreferencesView: View {
         case .timeWidget:
             // MARK: Time Format Handling
             widgetStruct.config["dateFormat"] = timeFormats[intSelection]
-        
         // MARK: Changing Boolean
         case .currentCapacity:
             // MARK: Current Capacity Handling
