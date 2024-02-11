@@ -73,8 +73,10 @@ struct WidgetSetStruct: Identifiable, Equatable {
     
     var anchor: Int
     var anchorY: Int
-    var offsetX: Double
-    var offsetY: Double
+    var offsetPX: Double
+    var offsetPY: Double
+    var offsetLX: Double
+    var offsetLY: Double
     
     var autoResizes: Bool
     var scale: Double
@@ -161,8 +163,10 @@ class WidgetManager: ObservableObject {
                     updateInterval: s["updateInterval"] as? Double ?? 1.0,
                     anchor: s["anchor"] as? Int ?? 0,
                     anchorY: s["anchorY"] as? Int ?? 0,
-                    offsetX: s["offsetX"] as? Double ?? 10.0,
-                    offsetY: s["offsetY"] as? Double ?? 0.0,
+                    offsetPX: s["offsetPX"] as? Double ?? 0.0,
+                    offsetPY: s["offsetPY"] as? Double ?? 0.0,
+                    offsetLX: s["offsetLX"] as? Double ?? 0.0,
+                    offsetLY: s["offsetLY"] as? Double ?? 0.0,
                     
                     autoResizes: s["autoResizes"] as? Bool ?? false,
                     scale: s["scale"] as? Double ?? 100.0,
@@ -202,8 +206,10 @@ class WidgetManager: ObservableObject {
             
             wSet["anchor"] = s.anchor
             wSet["anchorY"] = s.anchorY
-            wSet["offsetX"] = s.offsetX
-            wSet["offsetY"] = s.offsetY
+            wSet["offsetPX"] = s.offsetPX
+            wSet["offsetPY"] = s.offsetPY
+            wSet["offsetLX"] = s.offsetLX
+            wSet["offsetLY"] = s.offsetLY
             
             wSet["autoResizes"] = s.autoResizes
             wSet["scale"] = s.scale
@@ -349,8 +355,10 @@ class WidgetManager: ObservableObject {
             
             anchor: anchor,
             anchorY: 0,
-            offsetX: anchor == 1 ? 0.0 : 10.0,
-            offsetY: 0.0,
+            offsetPX: anchor == 1 ? 0.0 : 10.0,
+            offsetPY: 0.0,
+            offsetLX: anchor == 1 ? 0.0 : 10.0,
+            offsetLY: 0.0,
             
             autoResizes: true,
             scale: 100.0,
@@ -386,8 +394,10 @@ class WidgetManager: ObservableObject {
                 
                 widgetSets[i].anchor = ns.anchor
                 widgetSets[i].anchorY = ns.anchorY
-                widgetSets[i].offsetX = ns.offsetX
-                widgetSets[i].offsetY = ns.offsetY
+                widgetSets[i].offsetPX = ns.offsetPX
+                widgetSets[i].offsetPY = ns.offsetPY
+                widgetSets[i].offsetLX = ns.offsetLX
+                widgetSets[i].offsetLY = ns.offsetLY
                 
                 widgetSets[i].autoResizes = ns.autoResizes
                 widgetSets[i].scale = ns.scale

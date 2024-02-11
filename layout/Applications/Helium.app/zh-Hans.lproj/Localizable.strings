@@ -117,6 +117,10 @@
 "Bottom" = "底部";
 "Offset X" = "X偏移";
 "Offset Y" = "Y偏移";
+"Portrait Offset X" = "竖屏X偏移";
+"Portrait Offset Y" = "竖屏Y偏移";
+"Landscape Offset X" = "横屏X偏移";
+"Landscape Offset Y" = "横屏Y偏移";
 "Positioning" = "定位";
 "Auto Resize" = "自动调整大小";
 "Width" = "宽度";

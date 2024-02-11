@@ -114,8 +114,10 @@
 "Vertical Anchor Side" = "Vertical Anchor Side";
 "Top" = "Top";
 "Bottom" = "Bottom";
-"Offset X" = "Offset X";
-"Offset Y" = "Offset Y";
+"Portrait Offset X" = "Portrait Offset X";
+"Portrait Offset Y" = "Portrait Offset Y";
+"Landscape Offset X" = "Offset X";
+"Landscape Offset Y" = "Offset Y";
 "Positioning" = "Positioning";
 "Auto Resize" = "Auto Resize";
 "Width" = "Width";

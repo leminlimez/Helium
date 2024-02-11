@@ -574,25 +574,28 @@ static void ReloadHUD
             break;
         if (!getBoolFromDictKey(properties, @"isEnabled"))
             continue;
-        double offsetX = getDoubleFromDictKey(properties, @"offsetX", 10);
-        double offsetY = getDoubleFromDictKey(properties, @"offsetY");
+        double offsetPX = getDoubleFromDictKey(properties, @"offsetPX");
+        double offsetPY = getDoubleFromDictKey(properties, @"offsetPY");
+        double offsetLX = getDoubleFromDictKey(properties, @"offsetLX");
+        double offsetLY = getDoubleFromDictKey(properties, @"offsetLY");
         NSInteger anchorSide = getIntFromDictKey(properties, @"anchor");
         NSInteger anchorYSide = getIntFromDictKey(properties, @"anchorY");
+
         // set the vertical anchor
         if (anchorYSide == 1) {
-            [_constraints addObject:[labelView.centerYAnchor constraintEqualToAnchor:_contentView.centerYAnchor constant: offsetY]];
+            [_constraints addObject:[labelView.centerYAnchor constraintEqualToAnchor:_contentView.centerYAnchor constant: ([self isLandscapeOrientation] ? offsetLY : offsetPY)]];
         } else if (anchorYSide == 0) {
-            [_constraints addObject:[labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: offsetY]];
+            [_constraints addObject:[labelView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant: ([self isLandscapeOrientation] ? offsetLY : offsetPY)]];
         } else {
-            [_constraints addObject:[labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: offsetY]];
+            [_constraints addObject:[labelView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant: ([self isLandscapeOrientation] ? offsetLY : offsetPY)]];
         }
         // set the horizontal anchor
         if (anchorSide == 1) {
-            [_constraints addObject:[labelView.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor constant: offsetX]];
+            [_constraints addObject:[labelView.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor constant: ([self isLandscapeOrientation] ? offsetLX : offsetPX)]];
         } else if (anchorSide == 0) {
-            [_constraints addObject:[labelView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant: offsetX]];
+            [_constraints addObject:[labelView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant: ([self isLandscapeOrientation] ? offsetLX : offsetPX)]];
         } else {
-            [_constraints addObject:[labelView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant: -offsetX]];
+            [_constraints addObject:[labelView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant: ([self isLandscapeOrientation] ? -offsetLX : -offsetPX)]];
         }
 
         // set the width

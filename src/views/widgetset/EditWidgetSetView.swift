@@ -22,8 +22,10 @@ struct EditWidgetSetView: View {
     
     @State var anchorSelection: Int = 0
     @State var anchorYSelection: Int = 0
-    @State var offsetX: Double = 10.0
-    @State var offsetY: Double = 0.0
+    @State var offsetPX: Double = 0.0
+    @State var offsetPY: Double = 0.0
+    @State var offsetLX: Double = 0.0
+    @State var offsetLY: Double = 0.0
     
     @State var autoResizes: Bool = true
     @State var scale: Double = 100.0
@@ -138,29 +140,57 @@ struct EditWidgetSetView: View {
                                 changesMade = true
                             }
                     }
-                    // MARK: Offset X
-                    VStack {
-                        HStack {
-                            Text(NSLocalizedString("Offset X", comment: ""))
-                                .bold()
-                            Spacer()
-                        }
-                        BetterSlider(value: $offsetX, bounds: -300...300)
-                            .onChange(of: offsetX) { _ in
-                                changesMade = true
+                    if orientationMode != 2 {
+                        // MARK: Portrait Offset X
+                        VStack {
+                            HStack {
+                                Text(NSLocalizedString("Portrait Offset X", comment: ""))
+                                    .bold()
+                                Spacer()
                             }
+                            BetterSlider(value: $offsetPX, bounds: -300...300)
+                                .onChange(of: offsetPX) { _ in
+                                    changesMade = true
+                                }
+                        }
+                        // MARK: Portrait Offset Y
+                        VStack {
+                            HStack {
+                                Text(NSLocalizedString("Portrait Offset Y", comment: ""))
+                                    .bold()
+                                Spacer()
+                            }
+                            BetterSlider(value: $offsetPY, bounds: -300...300)
+                                .onChange(of: offsetPY) { _ in
+                                    changesMade = true
+                                }
+                        }
                     }
-                    // MARK: Offset Y
-                    VStack {
-                        HStack {
-                            Text(NSLocalizedString("Offset Y", comment: ""))
-                                .bold()
-                            Spacer()
-                        }
-                        BetterSlider(value: $offsetY, bounds: -300...300)
-                            .onChange(of: offsetY) { _ in
-                                changesMade = true
+                    if orientationMode != 1 {
+                        // MARK: Landscape Offset X
+                        VStack {
+                            HStack {
+                                Text(NSLocalizedString("Landscape Offset X", comment: ""))
+                                    .bold()
+                                Spacer()
                             }
+                            BetterSlider(value: $offsetLX, bounds: -300...300)
+                                .onChange(of: offsetLX) { _ in
+                                    changesMade = true
+                                }
+                        }
+                        // MARK: Landscape Offset Y
+                        VStack {
+                            HStack {
+                                Text(NSLocalizedString("Landscape Offset Y", comment: ""))
+                                    .bold()
+                                Spacer()
+                            }
+                            BetterSlider(value: $offsetLY, bounds: -300...300)
+                                .onChange(of: offsetLY) { _ in
+                                    changesMade = true
+                                }
+                        }
                     }
                 } header: {
                     Text(NSLocalizedString("Positioning", comment: ""))
@@ -460,8 +490,10 @@ struct EditWidgetSetView: View {
                 
                 anchorSelection = widgetSet.anchor
                 anchorYSelection = widgetSet.anchorY
-                offsetX = widgetSet.offsetX
-                offsetY = widgetSet.offsetY
+                offsetPX = widgetSet.offsetPX
+                offsetPY = widgetSet.offsetPY
+                offsetLX = widgetSet.offsetLX
+                offsetLY = widgetSet.offsetLY
                 
                 autoResizes = widgetSet.autoResizes
                 scale = widgetSet.scale
@@ -527,8 +559,10 @@ struct EditWidgetSetView: View {
             
             anchor: anchorSelection,
             anchorY: anchorYSelection,
-            offsetX: offsetX,
-            offsetY: offsetY,
+            offsetPX: offsetPX,
+            offsetPY: offsetPY,
+            offsetLX: offsetLX,
+            offsetLY: offsetLY,
             
             autoResizes: autoResizes,
             scale: scale,
