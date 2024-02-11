@@ -381,6 +381,9 @@ class WidgetManager: ObservableObject {
             fontSize: 10.0,
             textAlpha: 1.0
         ), save: save)
+
+        SetHUDEnabledBridger(false);
+        SetHUDEnabledBridger(true);
     }
     
     // editing an existing widget set
