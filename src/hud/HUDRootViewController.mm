@@ -11,7 +11,6 @@
 #import "../extensions/EZTimer.h"
 #import "../extensions/WeatherUtils.h"
 
-#import "../helpers/private_headers/CAFilter.h"
 #import "../helpers/private_headers/FBSOrientationUpdate.h"
 #import "../helpers/private_headers/FBSOrientationObserver.h"
 #import "../helpers/private_headers/LSApplicationProxy.h"
@@ -280,7 +279,7 @@ static void ReloadHUD
     return properties;
 }
 
-- (BOOL)isLandscapeOrientation
+- (BOOL) isLandscapeOrientation
 {
     BOOL isLandscape;
     if (_orientation == UIInterfaceOrientationUnknown) {
@@ -365,11 +364,13 @@ static void ReloadHUD
         double fontSize = [properties objectForKey: @"fontSize"] ? [[properties objectForKey: @"fontSize"] doubleValue] : 10.0;
         double updateInterval = getDoubleFromDictKey(properties, @"updateInterval", 1.0);
         BOOL isEnabled = getBoolFromDictKey(properties, @"isEnabled");
+        BOOL autoResizes = getBoolFromDictKey(properties, @"autoResizes");
+        float width = getDoubleFromDictKey(properties, @"scale", 50.0);
+        float height = getDoubleFromDictKey(properties, @"scaleY", 12.0);
         if (isEnabled) {
             [[EZTimer shareInstance] timer:[NSString stringWithFormat:@"labelview%d", i] timerInterval:updateInterval leeway:0.1 resumeType:EZTimerResumeTypeNow queue:EZTimerQueueTypeConcurrent queueName:@"update" repeats:YES action:^(NSString *timerName) {
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    [self updateLabel: labelView updateMaskLabel: maskLabelView backdropView: backdropView identifiers: identifiers fontSize: fontSize];
-                    // NSLog(@"boom time:%@ count:%lu", timerName, [[[[EZTimer shareInstance] timers] allKeys] count]);
+                    [self updateLabel: labelView updateMaskLabel: maskLabelView backdropView: backdropView identifiers: identifiers fontSize: fontSize autoResizes: autoResizes width: width height: height];
                 });
             }];
         } else {
@@ -383,7 +384,7 @@ static void ReloadHUD
     }
 }
 
-- (void) updateLabel:(UILabel *) label updateMaskLabel:(UILabel *) maskLabel backdropView:(AnyBackdropView *) backdropView identifiers:(NSArray *) identifiers fontSize:(double) fontSize
+- (void) updateLabel:(UILabel *) label updateMaskLabel:(UILabel *) maskLabel backdropView:(AnyBackdropView *) backdropView identifiers:(NSArray *) identifiers fontSize:(double) fontSize autoResizes:(BOOL) autoResizes width:(CGFloat) width height:(CGFloat) height
 {
 #if DEBUG
     os_log_debug(OS_LOG_DEFAULT, "updateLabel");
@@ -393,8 +394,22 @@ static void ReloadHUD
         // NSLog(@"boom attr:%@", attributedText);
         [label setAttributedText: attributedText];
         [maskLabel setAttributedText: attributedText];
-        [maskLabel setFrame:backdropView.bounds];
+        if (autoResizes) {
+            [self useSizeThatFitsZeroWithLabel:maskLabel];
+        } else {
+            [self useSizeThatFitsCustomWithLabel:maskLabel width: width height: height];
+        }
     }
+}
+
+- (void) useSizeThatFitsZeroWithLabel:(UILabel *)label{
+    CGSize size = [label sizeThatFits:CGSizeZero];
+    label.frame = CGRectMake(label.frame.origin.x, label.frame.origin.y, size.width, size.height);
+}
+
+- (void) useSizeThatFitsCustomWithLabel:(UILabel *)label width:(CGFloat) width height:(CGFloat) height{
+    // CGSize size = [label sizeThatFits:CGSizeMake(width, height)];
+    label.frame = CGRectMake(label.frame.origin.x, label.frame.origin.y, width, height);
 }
 
 - (void)pauseLoopTimer
@@ -425,17 +440,6 @@ static void ReloadHUD
     [self updateViewConstraints];
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    for (int i = 0; i < [_maskLabelViews count]; i++) {
-        UILabel *maskLabel = [_maskLabelViews objectAtIndex: i];
-        AnyBackdropView *backdropView = [_backdropViews objectAtIndex: i];
-        if (maskLabel && backdropView) {
-            [maskLabel setFrame: backdropView.bounds];
-        }
-    }
-}
-
 - (void)createWidgetSetsView
 {
     // MARK: Create the Widgets
@@ -454,7 +458,7 @@ static void ReloadHUD
         // create the label
         UILabel *labelView = [[UILabel alloc] initWithFrame: CGRectZero];
         labelView.numberOfLines = 0;
-        labelView.lineBreakMode = NSLineBreakByClipping;
+        labelView.lineBreakMode = NSLineBreakByWordWrapping;
         labelView.translatesAutoresizingMaskIntoConstraints = NO;
         labelView.layer.borderColor = [UIColor redColor].CGColor;
         [labelView setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
@@ -472,31 +476,10 @@ static void ReloadHUD
         // create the mask label
         UILabel *maskLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         maskLabel.numberOfLines = 0;
-        maskLabel.lineBreakMode = NSLineBreakByClipping;
+        maskLabel.lineBreakMode = NSLineBreakByWordWrapping;
         maskLabel.translatesAutoresizingMaskIntoConstraints = NO;
         maskLabel.layer.borderColor = [UIColor redColor].CGColor;
-        // code from Lessica/TrollSpeed
-        CAFilter *blurFilter = [CAFilter filterWithName:kCAFilterGaussianBlur];
-        [blurFilter setValue:@(50.0) forKey:@"inputRadius"];  // radius 50pt
-        [blurFilter setValue:@YES forKey:@"inputNormalizeEdges"];  // do not use inputHardEdges
-
-        CAFilter *brightnessFilter = [CAFilter filterWithName:kCAFilterColorBrightness];
-        [brightnessFilter setValue:@(-0.285) forKey:@"inputAmount"];  // -28.5%
-
-        CAFilter *contrastFilter = [CAFilter filterWithName:kCAFilterColorContrast];
-        [contrastFilter setValue:@(1000.0) forKey:@"inputAmount"];   // 1000x
-
-        CAFilter *saturateFilter = [CAFilter filterWithName:kCAFilterColorSaturate];
-        [saturateFilter setValue:@(0.0) forKey:@"inputAmount"];
-
-        CAFilter *colorInvertFilter = [CAFilter filterWithName:kCAFilterColorInvert];
-
-        [backdropView.layer setFilters:@[
-            blurFilter, brightnessFilter, contrastFilter,
-            saturateFilter, colorInvertFilter,
-        ]];
         [maskLabel setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
-        
         [backdropView setMaskView:maskLabel];
         [_maskLabelViews addObject:maskLabel];
     }
@@ -584,7 +567,7 @@ static void ReloadHUD
     for (int i = 0; i < [widgetProps count]; i++) {
         UIVisualEffectView *blurView = [_blurViews objectAtIndex:i];
         UILabel *labelView = [_labelViews objectAtIndex:i];
-        AnyBackdropView *backdropView = [_backdropViews objectAtIndex: i];
+        AnyBackdropView *backdropView = [_backdropViews objectAtIndex:i];
         // UILabel *maskLabelView = [_maskLabelViews objectAtIndex:i];
         NSDictionary *properties = [widgetProps objectAtIndex:i];
         if (!blurView || !labelView || !properties)
@@ -619,10 +602,10 @@ static void ReloadHUD
         }
         
         [_constraints addObjectsFromArray:@[
-            [backdropView.topAnchor constraintEqualToAnchor:blurView.topAnchor],
-            [backdropView.leadingAnchor constraintEqualToAnchor:blurView.leadingAnchor],
-            [backdropView.trailingAnchor constraintEqualToAnchor:blurView.trailingAnchor],
-            [backdropView.bottomAnchor constraintEqualToAnchor:blurView.bottomAnchor],
+            [blurView.topAnchor constraintEqualToAnchor:backdropView.topAnchor constant:-2],
+            [blurView.leadingAnchor constraintEqualToAnchor:backdropView.leadingAnchor constant:-4],
+            [blurView.trailingAnchor constraintEqualToAnchor:backdropView.trailingAnchor constant:4],
+            [blurView.bottomAnchor constraintEqualToAnchor:backdropView.bottomAnchor constant:2],
         ]];
         
         [_constraints addObjectsFromArray:@[
