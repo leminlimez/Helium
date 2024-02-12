@@ -382,8 +382,10 @@ class WidgetManager: ObservableObject {
             textAlpha: 1.0
         ), save: save)
 
-        SetHUDEnabledBridger(false);
-        SetHUDEnabledBridger(true);
+        if IsHUDEnabledBridger() {
+            SetHUDEnabledBridger(false)
+            SetHUDEnabledBridger(true)
+        }
     }
     
     // editing an existing widget set
