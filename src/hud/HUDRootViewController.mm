@@ -112,6 +112,9 @@ static void ReloadHUD
     UIView *_contentView;
     
     UIInterfaceOrientation _orientation;
+
+    UIView *_horizontalLine;
+    UIView *_verticalLine;
 }
 
 - (void)registerNotifications
@@ -168,8 +171,12 @@ static void ReloadHUD
     
     if ([self debugBorder]) {
         _contentView.layer.borderWidth = 1.0;
+        [_horizontalLine setHidden:NO];
+        [_verticalLine setHidden:NO];
     } else {
         _contentView.layer.borderWidth = 0.0;
+        [_horizontalLine setHidden:YES];
+        [_verticalLine setHidden:YES];
     }
 
     NSArray *widgetProps = [self widgetProperties];
@@ -335,6 +342,18 @@ static void ReloadHUD
     _contentView.layer.borderColor = [UIColor redColor].CGColor;
     [_contentView setUserInteractionEnabled:YES];
     [self.view addSubview:_contentView];
+
+    _horizontalLine = [[UIView alloc] initWithFrame: CGRectZero];
+    _horizontalLine.backgroundColor = [UIColor redColor];
+    _horizontalLine.translatesAutoresizingMaskIntoConstraints = NO;
+    [_horizontalLine setHidden:YES];
+    [_contentView addSubview:_horizontalLine];
+
+    _verticalLine = [[UIView alloc] initWithFrame: CGRectZero];
+    _verticalLine.backgroundColor = [UIColor redColor];
+    _verticalLine.translatesAutoresizingMaskIntoConstraints = NO;
+    [_verticalLine setHidden:YES];
+    [_contentView addSubview:_verticalLine];
 
     [self createWidgetSetsView];
     notify_post(NOTIFY_RELOAD_HUD);
@@ -618,6 +637,18 @@ static void ReloadHUD
             [blurView.bottomAnchor constraintEqualToAnchor:labelView.bottomAnchor constant:2],
         ]];
     }
+
+    [_constraints addObjectsFromArray:@[
+        [_horizontalLine.centerYAnchor constraintEqualToAnchor:_contentView.centerYAnchor],
+        [_horizontalLine.widthAnchor constraintEqualToAnchor:_contentView.widthAnchor],
+        [_horizontalLine.heightAnchor constraintEqualToConstant:1]
+    ]];
+    
+    [_constraints addObjectsFromArray:@[
+        [_verticalLine.centerXAnchor constraintEqualToAnchor:_contentView.centerXAnchor],
+        [_verticalLine.widthAnchor constraintEqualToConstant:1],
+        [_verticalLine.heightAnchor constraintEqualToAnchor:_contentView.heightAnchor]
+    ]];
     
     [NSLayoutConstraint activateConstraints:_constraints];
     [super updateViewConstraints];
