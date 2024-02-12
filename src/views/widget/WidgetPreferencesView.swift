@@ -418,10 +418,11 @@ struct WeatherLocationView: View {
                             presentationMode.wrappedValue.dismiss()
                         }
                 }
+                .listStyle(PlainListStyle())
+                .padding(.vertical, 0)
                 .navigationBarTitle(Text(NSLocalizedString("Get Location ID", comment:"")))
                 .resignKeyboardOnDragGesture()
             }
-            .padding()
         }
     }
 
