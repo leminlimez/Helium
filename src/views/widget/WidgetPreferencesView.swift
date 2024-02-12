@@ -125,9 +125,9 @@ struct WidgetPreferencesView: View {
                             .foregroundColor(.primary)
                             .bold()
                     }
-                }
-                .onAppear {
-                    boolSelection = widgetID.config["hideSpeedWhenZero"] as? Bool ?? false
+                    .onAppear {
+                        boolSelection = widgetID.config["hideSpeedWhenZero"] as? Bool ?? false
+                    }
                 }
             case .temperature:
                 // MARK: Battery Temperature Value
