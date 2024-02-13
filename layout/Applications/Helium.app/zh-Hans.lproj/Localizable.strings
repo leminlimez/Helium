@@ -87,7 +87,7 @@
 "Input Location Name" = "输入地区名称";
 "Get Location ID" = "获取地区ID";
 "Show Percent (%) Symbol" = "显示电量%";
-"Fill Symbol" = "显示符号";
+"Fill Symbol" = "填充符号";
 "No Configurable Aspects" = "无可配置项";
 "Save Changes" = "保存更改";
 "Would you like to save changes to the widget?" = "是否保存对小部件的更改？";
@@ -138,6 +138,7 @@
 "Set Text Color" = "设置文本颜色";
 "Adaptive Color" = "自适应颜色";
 "Text Font" = "文本字体";
+"Font Preview" = "预览Abc123";
 "Bold Text" = "粗体文本";
 "Italic Text" = "斜体文本";
 "Text Alignment" = "文本对齐";

@@ -11,6 +11,7 @@ import SwiftUI
 struct WidgetPreviewsView: View {
     @Binding var widget: WidgetIDStruct
     @State var text: String = ""
+    @State var image: Image?
     @State var previewColor: Color = .primary
     
     var body: some View {
@@ -24,10 +25,17 @@ struct WidgetPreviewsView: View {
                     .cornerRadius(12)
                     .clipped()
                 ZStack {
-                    Text(text)
-                        .padding(.vertical, 5)
-                        .foregroundColor(previewColor)
-                        .minimumScaleFactor(0.01)
+                    if image == nil {
+                        Text(text)
+                            .padding(.vertical, 5)
+                            .foregroundColor(previewColor)
+                            .minimumScaleFactor(0.01)
+                    } else {
+                        Text(image!)
+                            .padding(.vertical, 5)
+                            .foregroundColor(previewColor)
+                            .minimumScaleFactor(0.01)
+                    }
                 }
                 .frame(width: 125, height: 50)
             }
@@ -86,7 +94,7 @@ struct WidgetPreviewsView: View {
         case .currentCapacity:
             text = "50\(widget.config["showPercentage"] as? Bool ?? true ? "%" : "")"
         case .chargeSymbol:
-            text = "\(widget.config["filled"] as? Bool ?? true ? "􀋦" : "􀋥")"
+            image = widget.config["filled"] as? Bool ?? true ? Image(systemName: "bolt.fill") : Image(systemName: "bolt")
         }
         widget.modified = false
     }
