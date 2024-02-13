@@ -44,8 +44,8 @@ struct BetterSlider: View {
     var bounds: ClosedRange<Double>
     var step: Double.Stride? = nil
     
-    var inputTitle: String = "Enter Value"
-    var inputBody: String = "Enter a value."
+    var inputTitle: String = NSLocalizedString("Enter Value", comment:"")
+    var inputBody: String = NSLocalizedString("Enter a value.", comment:"")
     
     var body: some View {
         HStack {

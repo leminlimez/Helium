@@ -6,7 +6,7 @@
 #ifndef CAFILTER_H
 #define CAFILTER_H
 
-#include <QuartzCore/CABase.h>
+#import <QuartzCore/CABase.h>
 
 NS_ASSUME_NONNULL_BEGIN
 CA_EXTERN_C_BEGIN

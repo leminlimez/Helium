@@ -1,0 +1,179 @@
+/* Alert++.swift */
+"Error" = "出错了";
+"OK" = "确定";
+"Cancel" = "取消";
+"Text" = "文字段";
+
+/* ViewExtensions.swift */
+"Enter Value" = "请输入值";
+"Enter a value." = "请输入一个值";
+
+/* HomePageView.swift */
+"You can quit the app now.\nThe HUD will persist on your screen." = "您现在可以退出应用。\nHUD 将持续显示在屏幕上。";
+"Stopped." = "已停止";
+"Disable HUD" = "关闭 HUD";
+"Enable HUD" = "启用 HUD";
+"Helium" = "氦气";
+"Closing HUD" = "正在关闭 HUD";
+"Opening HUD" = "正在打开 HUD";
+
+/* SettingsView.swift */
+"Save" = "保存";
+"Version " = "版本 ";
+"UNKNOWN" = "未知";
+"Release" = "发布";
+"Date Locale" = "日期地区";
+"Weather Api key" = "和风天气ApiKey";
+"Show when Rotating" = "旋转屏幕时显示";
+"Hide Save Confirmation Popup" = "不显示保存确认弹窗";
+"Display Debug Border" = "显示调试边框";
+"Use Adaptive Colors" = "使用自适应颜色";
+"Helium Data" = "氦气数据";
+"Successfully deleted user data!" = "已成功删除用户数据！";
+"Please restart the app to continue." = "请重启应用以继续";
+"Failed to delete user data!" = "删除用户数据失败！";
+"Reset Data" = "重置数据";
+"Preferences" = "偏好设置";
+"Side Widget Size" = "侧边小部件大小";
+"Side Size" = "侧边尺寸";
+"Center Widget Size" = "中心小部件大小";
+"Center Size" = "中心尺寸";
+"Debug Preferences" = "调试设置";
+"Main Developer" = "主开发者";
+"Modder" = "修改者";
+"TrollSpeed & Assistive Touch Logic" = "TrollSpeed & Assistive Touch Logic";
+"Credits" = "致谢";
+"Settings saved successfully" = "设置保存成功";
+
+/* WidgetCustomizationView.swift */
+"Delete " = "删除 ";
+"Are you sure you want to delete the widget set " = "确认要删除小部件集 ";
+"Enter Name" = "输入名称";
+"Choose a name for the widget set." = "为小部件集选择一个名称";
+"Confirm" = "确认";
+"Name" = "名称";
+"Choose Side" = "选择显示位置";
+"Choose a side for the widget set to anchor to. This can be changed later." = "选择小部件集的显示位置。稍后可以更改";
+"Left" = "左边";
+"Center" = "中间";
+"Right" = "右边";
+"Untitled" = "未命名";
+"Customize" = "自定义";
+
+/* WidgetPreferencesView.swift */
+"Date Format" = "日期格式";
+"E MMM dd" = "MM月dd E";
+"Network Type" = "网络类型";
+"Download" = "下载";
+"Upload" = "上传";
+"Speed Icon" = "网速图标";
+"Minimum Unit" = "最小单位";
+"Hide Speed When 0" = "网速为0时隐藏";
+"Temperature Unit" = "温度单位";
+"Celcius" = "摄氏度";
+"Fahrenheit" = "华氏度";
+"Battery Option" = "电池选项";
+"Watts" = "瓦特";
+"Charging Current" = "充电电流";
+"Amperage" = "使用电流";
+"Charge Cycles" = "充电周期";
+"Current Capacity" = "当前容量";
+"Time Format" = "时间格式";
+"Label Text" = "标签文本";
+"Example" = "示例";
+"Location" = "地区ID或者经纬度";
+"Input" = "输入";
+"Get" = "获取";
+"Input Location Name" = "输入地区名称";
+"Get Location ID" = "获取地区ID";
+"Show Percent (%) Symbol" = "显示电量%";
+"Fill Symbol" = "填充符号";
+"No Configurable Aspects" = "无可配置项";
+"Save Changes" = "保存更改";
+"Would you like to save changes to the widget?" = "是否保存对小部件的更改？";
+"Weather Format Now" = "实时天气格式说明:\n{i} 天气图标\t{n} 天气文字\n{t} 当前温度\t{h} 湿度\n{w} 风向\t\t{wp} 风力\n{bt} 体感温度\t{pc} 降水量\n{ps} 大气压力\t{v} 能见度\n{c} 云量";
+"Weather Format Today" = "今日天气格式说明：\n{di} 白天天气图标\t{dn} 白天天气文本\n{dt} 白天气温\t\t{dw} 白天风向\n{dwp} 白天风力\t{nwp} 夜间风力\n{ni} 夜间天气图标\t{nn} 夜间天气文本\n{nt} 夜间气温\t\t{nw} 夜间风向\n{tpc} 今日降水量\t{tuv} 今日紫外线指数\n{th} 今日湿度\t\t{tps} 今日气压\n{tv} 今日能见度\t{tc} 今日云量";
+"Format" = "格式";
+
+/* WidgetPreviewsView.swift */
+"ERROR" = "错误";
+"Unknown" = "未知";
+"Weather Preview" = "🌤晴 15°~20° (20°)💧54%";
+
+/* EditWidgetSetView.swift */
+"Enable" = "启用小部件集";
+"Orientation Mode" = "显示模式";
+"Portrait & Landscape" = "竖屏和横屏";
+"Portrait" = "竖屏";
+"Landscape" = "横屏";
+"Widget Set Title" = "小部件集标题";
+"Title" = "标题";
+"Update Interval (seconds)" = "更新间隔 (秒)";
+"Seconds" = "秒";
+"Widget Set Details" = "小部件集详情";
+"Horizontal Anchor Side" = "水平显示位置";
+"Vertical Anchor Side" = "垂直显示位置";
+"Top" = "顶部";
+"Bottom" = "底部";
+"Offset X" = "X偏移";
+"Offset Y" = "Y偏移";
+"Portrait Offset X" = "竖屏X偏移";
+"Portrait Offset Y" = "竖屏Y偏移";
+"Landscape Offset X" = "横屏X偏移";
+"Landscape Offset Y" = "横屏Y偏移";
+"Positioning" = "定位";
+"Auto Resize" = "自动调整大小";
+"Width" = "宽度";
+"Height" = "高度";
+"Size Constraints" = "尺寸限制";
+"Background Blur" = "背景模糊";
+"Blur Style" = "模糊样式";
+"Light" = "明亮";
+"Dark" = "黑暗";
+"Blur Corner Radius" = "模糊角半径";
+"Blur Alpha" = "模糊透明度";
+"Blur" = "模糊";
+"Custom Text Color" = "自定义文本颜色";
+"Text Color" = "文本颜色";
+"Set Text Color" = "设置文本颜色";
+"Adaptive Color" = "自适应颜色";
+"Text Font" = "文本字体";
+"Font Preview" = "预览Abc123";
+"Bold Text" = "粗体文本";
+"Italic Text" = "斜体文本";
+"Text Alignment" = "文本对齐";
+"Font Size" = "字体大小";
+"Text Alpha" = "文字透明度";
+"Text Properties" = "文本属性";
+"Add Widget" = "添加小部件";
+"Delete Widget" = "删除小部件";
+"Are you sure you want to delete this widget?" = "确认删除此小部件？";
+"Widgets" = "小部件";
+"Edit Widget" = "编辑小部件";
+"Save Changes" = "保存更改";
+"Would you like to save the changes to your current widget set?" = "是否保存当前小部件集的更改？";
+
+/* UIApplicationViews.swift */
+"Home" = "首页";
+"Settings" = "设置";
+"Info" = "信息";
+"Make sure you enable developer mode before using! This will not work otherwise." = "使用前，请确保已启用开发者模式！否则无法正常工作";
+"Not Supported" = "不支持";
+"This app must be installed with TrollStore." = "此应用必须通过 TrollStore 安装";
+
+/* WidgetManager.swift */
+"Untitled" = "未命名";
+"Date" = "日期";
+"Mon Oct 16" = "10月16 周一";
+"Network" = "网速";
+"Device Temperature" = "设备温度";
+"Battery Details" = "电池详情";
+"Time" = "时间";
+"Text Label" = "文本标签";
+"Example" = "示例";
+"Battery Capacity" = "电池容量";
+"Charging Symbol" = "充电符号";
+"Weather" = "天气";
+
+/* WeatherUtils.mm */
+"error" = "出错啦";

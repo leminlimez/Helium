@@ -40,3 +40,14 @@ double getDoubleFromDictKey(NSDictionary *dict, NSString *key)
 {
     return getDoubleFromDictKey(dict, key, 0.0);
 }
+
+// String
+NSString* getStringFromDictKey(NSDictionary *dict, NSString *key, NSString *defaultValue)
+{
+    return [dict valueForKey:key] ? [dict valueForKey:key] : defaultValue;
+}
+
+NSString* getStringFromDictKey(NSDictionary *dict, NSString *key)
+{
+    return getStringFromDictKey(dict, key, @"");
+}

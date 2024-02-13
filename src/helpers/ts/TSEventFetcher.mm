@@ -1,11 +1,17 @@
+//
+//  TSEventFetcher.mm
+//  TrollSpeed
+//
+//  Created by Lessica on 2024/1/24.
+//
+
 #import <dlfcn.h>
 #import <string.h>
+#import <CoreFoundation/CoreFoundation.h>
 #import "TSEventFetcher.h"
-#import "CoreFoundation/CFRunLoop.h"
-#import "../private_headers/UIApplication+Private.h"
 #import "../private_headers/UIEvent+Private.h"
 #import "../private_headers/UITouch-KIFAdditions.h"
-
+#import "../private_headers/UIApplication+Private.h"
 
 static NSArray *_safeTouchAry = nil;
 static NSMutableArray *_touchAry = nil;
@@ -105,7 +111,7 @@ static void __TSEventFetcherCallback(void *info)
   BOOL newState = !oldState;
   if (newState)
   {
-    if (phase == UITouchPhaseEnded)
+    if (phase == UITouchPhaseEnded || phase == UITouchPhaseCancelled)
       return deleted;
     touch = [[UITouch alloc] initAtPoint:coordinate inWindow:window onView:view];
     [_livingTouchAry addObject:touch];

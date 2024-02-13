@@ -6,9 +6,20 @@
     #if __has_include(<TargetConditionals.h>)
         #import <TargetConditionals.h>
     #endif
-    
+
     #import <Foundation/Foundation.h>
-    #import <Foundation/NSUserDefaults+Private.h>
+    #import "src/helpers/private_headers/NSUserDefaults+Private.h"
     #import <UIKit/UIKit.h>
     #import <os/log.h>
 #endif
+
+#define USER_DEFAULTS_PATH @"/var/mobile/Library/Preferences/com.leemin.helium.plist"
+
+// HUD -> APP: Notify APP that the HUD's view is appeared.
+#define NOTIFY_LAUNCHED_HUD "com.leemin.notification.hud.launched"
+
+// APP -> HUD: Notify HUD to dismiss itself.
+#define NOTIFY_DISMISSAL_HUD "com.leemin.notification.hud.dismissal"
+
+// APP -> HUD: Notify HUD that the user defaults has been changed by APP.
+#define NOTIFY_RELOAD_HUD "com.leemin.notification.hud.reload"

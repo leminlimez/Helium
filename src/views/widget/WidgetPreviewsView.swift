@@ -11,6 +11,7 @@ import SwiftUI
 struct WidgetPreviewsView: View {
     @Binding var widget: WidgetIDStruct
     @State var text: String = ""
+    @State var image: Image?
     @State var previewColor: Color = .primary
     
     var body: some View {
@@ -24,10 +25,17 @@ struct WidgetPreviewsView: View {
                     .cornerRadius(12)
                     .clipped()
                 ZStack {
-                    Text(text)
-                        .padding(.vertical, 5)
-                        .foregroundColor(previewColor)
-                        .minimumScaleFactor(0.01)
+                    if image == nil {
+                        Text(text)
+                            .padding(.vertical, 5)
+                            .foregroundColor(previewColor)
+                            .minimumScaleFactor(0.01)
+                    } else {
+                        Text(image!)
+                            .padding(.vertical, 5)
+                            .foregroundColor(previewColor)
+                            .minimumScaleFactor(0.01)
+                    }
                 }
                 .frame(width: 125, height: 50)
             }
@@ -46,14 +54,16 @@ struct WidgetPreviewsView: View {
     func updatePreview() {
         switch (widget.module) {
         case .dateWidget, .timeWidget:
-            let dateFormat: String = widget.config["dateFormat"] as? String ?? (widget.module == .dateWidget ? "E MMM dd" : "hh:mm")
+            let dateFormat: String = widget.config["dateFormat"] as? String ?? (widget.module == .dateWidget ? NSLocalizedString("E MMM dd", comment:"") : "hh:mm")
             let dateFormatter = DateFormatter()
-            dateFormatter.locale = Locale.current
-            dateFormatter.dateFormat = dateFormat
+            let newDateFormat = LunarDate.getChineseCalendar(with: Date(), format: dateFormat)
+            dateFormatter.dateFormat = newDateFormat
+            let locale = UserDefaults.standard.string(forKey: "dateLocale", forPath: USER_DEFAULTS_PATH) ?? "en_US"
+            dateFormatter.locale = Locale(identifier: locale)
             text = dateFormatter.string(from: Date())
             // SAFEGUARD
             if (text == "") {
-                text = "ERROR"
+                text = NSLocalizedString("ERROR", comment:"")
             }
         case .network:
             let isUp: Bool = widget.config["isUp"] as? Bool ?? false
@@ -76,11 +86,15 @@ struct WidgetPreviewsView: View {
                 text = "???"
             }
         case .textWidget:
-            text = widget.config["text"] as? String ?? "Unknown"
+            text = widget.config["text"] as? String ?? NSLocalizedString("Unknown", comment:"")
+            break;
+        case .weather:
+            text = NSLocalizedString("Weather Preview", comment:"")
+            break;
         case .currentCapacity:
             text = "50\(widget.config["showPercentage"] as? Bool ?? true ? "%" : "")"
         case .chargeSymbol:
-            text = "\(widget.config["filled"] as? Bool ?? true ? "􀋦" : "􀋥")"
+            image = widget.config["filled"] as? Bool ?? true ? Image(systemName: "bolt.fill") : Image(systemName: "bolt")
         }
         widget.modified = false
     }
