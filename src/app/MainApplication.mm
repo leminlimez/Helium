@@ -5,15 +5,7 @@
 //  Created by lemin on 10/4/23.
 //
 
-#import <notify.h>
-#import <UIKit/UIKit.h>
-#import "Helium-Swift.h"
-
-
-#pragma mark - MainApplication
-
-@interface MainApplication : UIApplication
-@end
+#import "MainApplication.h"
 
 @implementation MainApplication
 
@@ -36,33 +28,6 @@
 #endif
     }
     return self;
-}
-
-@end
-
-#pragma mark - MainApplicationDelegate
-
-@interface MainApplicationDelegate : UIResponder <UIApplicationDelegate>
-@property (nonatomic, strong) UIWindow *window;
-@end
-
-@implementation MainApplicationDelegate
-
-- (instancetype)init {
-    if (self = [super init]) {
-        os_log_debug(OS_LOG_DEFAULT, "- [MainApplicationDelegate init]");
-    }
-    return self;
-}
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary <UIApplicationLaunchOptionsKey, id> *)launchOptions {
-    os_log_debug(OS_LOG_DEFAULT, "- [MainApplicationDelegate application:%{public}@ didFinishLaunchingWithOptions:%{public}@]", application, launchOptions);
-
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [self.window setRootViewController:[[[ContentInterface alloc] init] createUI]];
-    [self.window makeKeyAndVisible];
-
-    return YES;
 }
 
 @end

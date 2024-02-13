@@ -20,17 +20,10 @@ struct SettingsView: View {
     @State var centerWidgetSize: Int = 100
     
     // Preference Variables
-    @State var updateInterval: Double = 1.0
-    @State var usesRotation: Bool = false
+    @State var apiKey: String = ""
+    @State var dateLocale: String = "en_US"
     @State var hideSaveConfirmation: Bool = false
-    @State var ignoreSafeZone: Bool = false
-    @State var adaptiveColors: Bool = false
-    
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
+    @State var debugBorder: Bool = false
     
     var body: some View {
         NavigationView {
@@ -39,162 +32,90 @@ struct SettingsView: View {
                 Section {
                     
                 } header: {
-                    Label("Version \(Bundle.main.releaseVersionNumber ?? "UNKNOWN") (\(buildNumber != 0 ? "\(buildNumber)" : "Release"))", systemImage: "info")
+                    Label(NSLocalizedString("Version ", comment:"") + "\(Bundle.main.releaseVersionNumber ?? NSLocalizedString("UNKNOWN", comment:"")) (\(buildNumber != 0 ? "\(buildNumber)" : NSLocalizedString("Release", comment:"")))", systemImage: "info")
                 }
                 
                 // Preferences List
                 Section {
                     HStack {
-                        Text("Update Interval (seconds)")
+                        Text(NSLocalizedString("Date Locale", comment:""))
                             .bold()
                         Spacer()
-                        if #available(iOS 15, *) {
-                            TextField("Seconds", value: $updateInterval, formatter: formatter)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                            //                            .keyboardType(.decimalPad)
-                                .submitLabel(.done)
-                                .onSubmit {
-                                    if updateInterval <= 0 {
-                                        updateInterval = 1
-                                    }
-                                    UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    updateInterval = UserDefaults.standard.double(forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                                    if updateInterval <= 0 {
-                                        updateInterval = 1
-                                    }
-                                }
-                        } else {
-                            TextField("Seconds", value: $updateInterval, formatter: formatter)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .onChange(of: updateInterval) { nv in
-                                    if updateInterval <= 0 {
-                                        updateInterval = 1
-                                    }
-                                    UserDefaults.standard.setValue(updateInterval, forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    updateInterval = UserDefaults.standard.double(forKey: "updateInterval", forPath: USER_DEFAULTS_PATH)
-                                    if updateInterval <= 0 {
-                                        updateInterval = 1
-                                    }
-                                }
+                        Picker("", selection: $dateLocale) {
+                            Text("en_US").tag("en_US")
+                            Text("zh_CN").tag("zh_CN")
                         }
+                        .pickerStyle(.menu)
                     }
-                    
+
                     HStack {
-                        Toggle(isOn: $usesRotation) {
-                            Text("Hide when Rotating")
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: usesRotation) { _ in
-                            UserDefaults.standard.setValue(usesRotation, forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
-                        }
-                        .onAppear {
-                            usesRotation = UserDefaults.standard.bool(forKey: "usesRotation", forPath: USER_DEFAULTS_PATH)
-                        }
+                        Text(NSLocalizedString("Weather Api key", comment:""))
+                            .bold()
+                        Spacer()
+                        TextField("", text: $apiKey)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
                     
                     HStack {
                         Toggle(isOn: $hideSaveConfirmation) {
-                            Text("Hide Save Confirmation Popup")
+                            Text(NSLocalizedString("Hide Save Confirmation Popup", comment:""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: hideSaveConfirmation) { _ in
-                            UserDefaults.standard.setValue(hideSaveConfirmation, forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
-                        }
-                        .onAppear {
-                            hideSaveConfirmation = UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
                         }
                     }
                     
                     HStack {
-                        Toggle(isOn: $ignoreSafeZone) {
-                            Text("Ignore Safe Zone Changes")
+                        Toggle(isOn: $debugBorder) {
+                            Text(NSLocalizedString("Display Debug Border", comment:""))
                                 .bold()
                                 .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: ignoreSafeZone) { _ in
-                            UserDefaults.standard.setValue(ignoreSafeZone, forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
-                        }
-                        .onAppear {
-                            ignoreSafeZone = UserDefaults.standard.bool(forKey: "ignoreSafeZone", forPath: USER_DEFAULTS_PATH)
                         }
                     }
                     
                     HStack {
-                        Toggle(isOn: $adaptiveColors) {
-                            Text("Use Adaptive Colors")
-                                .bold()
-                                .minimumScaleFactor(0.5)
-                        }
-                        .onChange(of: adaptiveColors) { _ in
-                            UserDefaults.standard.setValue(adaptiveColors, forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
-                        }
-                        .onAppear {
-                            adaptiveColors = UserDefaults.standard.bool(forKey: "adaptiveColors", forPath: USER_DEFAULTS_PATH)
-                        }
-                    }
-                    
-                    HStack {
-                        Text("Helium Data")
+                        Text(NSLocalizedString("Helium Data", comment:""))
                             .bold()
                         Spacer()
                         Button(action: {
                             do {
                                 try UserDefaults.standard.deleteUserDefaults(forPath: USER_DEFAULTS_PATH)
-                                UIApplication.shared.alert(title: "Successfully deleted user data!", body: "Please restart the app to continue.")
+                                UIApplication.shared.alert(title: NSLocalizedString("Successfully deleted user data!", comment:""), body: NSLocalizedString("Please restart the app to continue.", comment:""))
                             } catch {
-                                UIApplication.shared.alert(title: "Failed to delete user data!", body: error.localizedDescription)
+                                UIApplication.shared.alert(title: NSLocalizedString("Failed to delete user data!", comment:""), body: error.localizedDescription)
                             }
                         }) {
-                            Text("Reset Data")
+                            Text(NSLocalizedString("Reset Data", comment:""))
                                 .foregroundColor(.red)
                         }
                     }
                 } header: {
-                    Label("Preferences", systemImage: "gear")
+                    Label(NSLocalizedString("Preferences", comment:""), systemImage: "gear")
                 }
                 
                 // Debug Settings
                 if #available(iOS 15, *), DEBUG_MODE_ENABLED {
                     Section {
                         HStack {
-                            Text("Side Widget Size")
+                            Text(NSLocalizedString("Side Widget Size", comment:""))
                                 .bold()
                             Spacer()
-                            TextField("Side Size", value: $sideWidgetSize, format: .number)
+                            TextField(NSLocalizedString("Side Size", comment:""), value: $sideWidgetSize, format: .number)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .keyboardType(.decimalPad)
                                 .submitLabel(.done)
-                                .onSubmit {
-                                    UserDefaults.standard.setValue(sideWidgetSize, forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    sideWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_sideWidgetSize", forPath: USER_DEFAULTS_PATH)
-                                }
                         }
                         
                         HStack {
-                            Text("Center Widget Size")
+                            Text(NSLocalizedString("Center Widget Size", comment:""))
                                 .bold()
                             Spacer()
-                            TextField("Center Size", value: $centerWidgetSize, format: .number)
+                            TextField(NSLocalizedString("Center Size", comment:""), value: $centerWidgetSize, format: .number)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .keyboardType(.decimalPad)
                                 .submitLabel(.done)
-                                .onSubmit {
-                                    UserDefaults.standard.setValue(centerWidgetSize, forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
-                                }
-                                .onAppear {
-                                    centerWidgetSize = UserDefaults.standard.integer(forKey: "DEBUG_centerWidgetSize", forPath: USER_DEFAULTS_PATH)
-                                }
                         }
                     } header: {
-                        Label("Debug Preferences", systemImage: "ladybug")
+                        Label(NSLocalizedString("Debug Preferences", comment:""), systemImage: "ladybug")
                     }
                 }
                 
@@ -202,13 +123,42 @@ struct SettingsView: View {
                 Section {
                     LinkCell(imageName: "leminlimez", url: "https://github.com/leminlimez", title: "LeminLimez", contribution: NSLocalizedString("Main Developer", comment: "leminlimez's contribution"), circle: true)
                     LinkCell(imageName: "lessica", url: "https://github.com/Lessica/TrollSpeed", title: "Lessica", contribution: NSLocalizedString("TrollSpeed & Assistive Touch Logic", comment: "lessica's contribution"), circle: true)
+                    LinkCell(imageName: "Fuuko", url: "https://github.com/AsakuraFuuko", title: "Fuuko", contribution: NSLocalizedString("Modder", comment: "Fuuko's contribution"), circle: true)
                 } header: {
-                    Label("Credits", systemImage: "wrench.and.screwdriver")
+                    Label(NSLocalizedString("Credits", comment:""), systemImage: "wrench.and.screwdriver")
                 }
             }
-            .navigationTitle("Settings")
-            .navigationViewStyle(.stack)
+            .toolbar {
+                HStack {
+                    Button(action: {
+                        saveChanges()
+                    }) {
+                        Text(NSLocalizedString("Save", comment:""))
+                    }
+                }
+            }
+            .onAppear {
+                loadSettings()
+            }
+            .navigationTitle(Text(NSLocalizedString("Settings", comment:"")))
         }
+        .navigationViewStyle(StackNavigationViewStyle())
+    }
+
+    func loadSettings() {
+        dateLocale = UserDefaults.standard.string(forKey: "dateLocale", forPath: USER_DEFAULTS_PATH) ?? "en_US"
+        apiKey = UserDefaults.standard.string(forKey: "apiKey", forPath: USER_DEFAULTS_PATH) ?? ""
+        hideSaveConfirmation = UserDefaults.standard.bool(forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
+        debugBorder = UserDefaults.standard.bool(forKey: "debugBorder", forPath: USER_DEFAULTS_PATH)
+    }
+
+    func saveChanges() {
+        UserDefaults.standard.setValue(apiKey, forKey: "apiKey", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(dateLocale, forKey: "dateLocale", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(hideSaveConfirmation, forKey: "hideSaveConfirmation", forPath: USER_DEFAULTS_PATH)
+        UserDefaults.standard.setValue(debugBorder, forKey: "debugBorder", forPath: USER_DEFAULTS_PATH)
+        UIApplication.shared.alert(title: NSLocalizedString("Save Changes", comment:""), body: NSLocalizedString("Settings saved successfully", comment:""))
+        DarwinNotificationCenter.default.post(name: NOTIFY_RELOAD_HUD)
     }
     
     // Link Cell code from Cowabunga

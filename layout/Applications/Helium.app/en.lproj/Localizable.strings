@@ -1,0 +1,175 @@
+/* Alert++.swift */
+"Error" = "Error";
+"OK" = "OK";
+"Cancel" = "Cancel";
+"Text" = "Text";
+
+/* ViewExtensions.swift */
+"Enter Value" = "Enter Value";
+"Enter a value." = "Enter a value.";
+
+/* HomePageView.swift */
+"You can quit the app now.\nThe HUD will persist on your screen." = "You can quit the app now.\nThe HUD will persist on your screen.";
+"Stopped." = "Stopped.";
+"Disable HUD" = "Disable HUD";
+"Enable HUD" = "Enable HUD";
+"Helium" = "Helium";
+"Closing HUD" = "Closing HUD";
+"Opening HUD" = "Opening HUD";
+
+/* SettingsView.swift */
+"Save" = "Save";
+"Version " = "Version ";
+"UNKNOWN" = "UNKNOWN";
+"Release" = "Release";
+"Date Locale" = "Date Locale";
+"Weather Api key" = "QWeather Api key";
+"Hide Save Confirmation Popup" = "Hide Save Confirmation Popup";
+"Display Debug Border" = "Display Debug Border";
+"Use Adaptive Colors" = "Use Adaptive Colors";
+"Helium Data" = "Helium Data";
+"Successfully deleted user data!" = "Successfully deleted user data!";
+"Please restart the app to continue." = "Please restart the app to continue.";
+"Failed to delete user data!" = "Failed to delete user data!";
+"Reset Data" = "Reset Data";
+"Preferences" = "Preferences";
+"Side Widget Size" = "Side Widget Size";
+"Side Size" = "Side Size";
+"Center Widget Size" = "Center Widget Size";
+"Center Size" = "Center Size";
+"Debug Preferences" = "Debug Preferences";
+"Main Developer" = "Main Developer";
+"Modder" = "Modder";
+"TrollSpeed & Assistive Touch Logic" = "TrollSpeed & Assistive Touch Logic";
+"Credits" = "Credits";
+"Settings saved successfully" = "Settings saved successfully";
+
+/* WidgetCustomizationView.swift */
+"Delete " = "Delete ";
+"Are you sure you want to delete the widget set " = "Are you sure you want to delete the widget set ";
+"Enter Name" = "Enter Name";
+"Choose a name for the widget set." = "Choose a name for the widget set.";
+"Confirm" = "Confirm";
+"Name" = "Name";
+"Choose Side" = "Choose Side";
+"Choose a side for the widget set to anchor to. This can be changed later." = "Choose a side for the widget set to anchor to. This can be changed later.";
+"Left" = "Left";
+"Center" = "Center";
+"Right" = "Right";
+"Untitled" = "Untitled";
+"Customize" = "Customize";
+
+/* WidgetPreferencesView.swift */
+"Date Format" = "Date Format";
+"E MMM dd" = "E MMM dd";
+"Network Type" = "Network Type";
+"Download" = "Download";
+"Upload" = "Upload";
+"Speed Icon" = "Speed Icon";
+"Minimum Unit" = "Minimum Unit";
+"Hide Speed When 0" = "Hide Speed When 0";
+"Temperature Unit" = "Temperature Unit";
+"Celcius" = "Celcius";
+"Fahrenheit" = "Fahrenheit";
+"Battery Option" = "Battery Option";
+"Watts" = "Watts";
+"Charging Current" = "Charging Current";
+"Amperage" = "Amperage";
+"Charge Cycles" = "Charge Cycles";
+"Current Capacity" = "Current Capacity";
+"Time Format" = "Time Format";
+"Label Text" = "Label Text";
+"Example" = "Example";
+"Location" = "LocationID or Latitude,Longitude";
+"Input" = "Input";
+"Get" = "Get";
+"Input Location Name" = "Input Location Name";
+"Get Location ID" = "Get Location ID";
+"Show Percent (%) Symbol" = "Show Percent (%) Symbol";
+"Fill Symbol" = "Fill Symbol";
+"No Configurable Aspects" = "No Configurable Aspects";
+"Save Changes" = "Save Changes";
+"Would you like to save changes to the widget?" = "Would you like to save changes to the widget?";
+"Weather Format Now" = "Now Weather Format Explanation:\n{i} Weather Icon\t\t\t{n} Weather Text\n{t} Current Temperature\t{h} Humidity\n{w} Wind Direction\t\t{wp} Wind Power\n{bt} Body Temperature\t{pc} Precipitation\n{ps} Pressure\t\t\t\t{v} Visibility\n{c} Cloud Cover";
+"Weather Format Today" = "Today Weather Format Explanation:\n{di} Daytime Weather Icon\n{dn} Daytime Weather Text\n{dt} Daytime Temperature\n{dw} Daytime Wind Direction\n{dwp} Daytime Wind Power\n{ni} Nighttime Weather Icon\n{nn} Nighttime Weather Text\n{nt} Nighttime Temperature\n{nw} Nighttime Wind Direction\n{nwp} Nighttime Wind Power\n{tpc} Today Precipitation\n{tuv} Today UV Index\n{th} Today Humidity\n{tps} Today Pressure\n{tv} Today Visibility\n{tc} Today Cloud Cover";
+"Format" = "Format";
+
+/* WidgetPreviewsView.swift */
+"ERROR" = "ERROR";
+"Unknown" = "Unknown";
+"Weather Preview" = "🌤Sun 15°~20° (20°)💧54%";
+
+/* EditWidgetSetView.swift */
+"Enable" = "Enable Widget Set";
+"Orientation Mode" = "Orientation Mode";
+"Portrait & Landscape" = "Portrait & Landscape";
+"Portrait" = "Portrait";
+"Landscape" = "Landscape";
+"Widget Set Title" = "Widget Set Title";
+"Title" = "Title";
+"Update Interval (seconds)" = "Update Interval (seconds)";
+"Seconds" = "Seconds";
+"Widget Set Details" = "Widget Set Details";
+"Horizontal Anchor Side" = "Horizontal Anchor Side";
+"Vertical Anchor Side" = "Vertical Anchor Side";
+"Top" = "Top";
+"Bottom" = "Bottom";
+"Portrait Offset X" = "Portrait Offset X";
+"Portrait Offset Y" = "Portrait Offset Y";
+"Landscape Offset X" = "Offset X";
+"Landscape Offset Y" = "Offset Y";
+"Positioning" = "Positioning";
+"Auto Resize" = "Auto Resize";
+"Width" = "Width";
+"Height" = "Height";
+"Size Constraints" = "Size Constraints";
+"Background Blur" = "Background Blur";
+"Blur Style" = "Blur Style";
+"Light" = "Light";
+"Dark" = "Dark";
+"Blur Corner Radius" = "Blur Corner Radius";
+"Blur Alpha" = "Blur Alpha";
+"Blur" = "Blur";
+"Custom Text Color" = "Custom Text Color";
+"Text Color" = "Text Color";
+"Set Text Color" = "Set Text Color";
+"Adaptive Color" = "Adaptive Color";
+"Text Font" = "Text Font";
+"Font Preview" = "Preview Abc123";
+"Bold Text" = "Bold Text";
+"Italic Text" = "Italic Text";
+"Text Alignment" = "Text Alignment";
+"Font Size" = "Font Size";
+"Text Alpha" = "Text Alpha";
+"Text Properties" = "Text Properties";
+"Add Widget" = "Add Widget";
+"Delete Widget" = "Delete Widget";
+"Are you sure you want to delete this widget?" = "Are you sure you want to delete this widget?";
+"Widgets" = "Widgets";
+"Edit Widget" = "Edit Widget";
+"Would you like to save the changes to your current widget set?" = "Would you like to save the changes to your current widget set?";
+
+/* UIApplicationViews.swift */
+"Home" = "Home";
+"Settings" = "Settings";
+"Info" = "Info";
+"Make sure you enable developer mode before using! This will not work otherwise." = "Make sure you enable developer mode before using! This will not work otherwise.";
+"Not Supported" = "Not Supported";
+"This app must be installed with TrollStore." = "This app must be installed with TrollStore.";
+
+/* WidgetManager.swift */
+"Untitled" = "Untitled";
+"Date" = "Date";
+"Mon Oct 16" = "Mon Oct 16";
+"Network" = "Network";
+"Device Temperature" = "Device Temperature";
+"Battery Details" = "Battery Details";
+"Time" = "Time";
+"Text Label" = "Text Label";
+"Example" = "Example";
+"Battery Capacity" = "Battery Capacity";
+"Charging Symbol" = "Charging Symbol";
+"Weather" = "Weather";
+
+/* WeatherUtils.mm */
+"error" = "error";

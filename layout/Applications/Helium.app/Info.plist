@@ -11,7 +11,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Helium</string>
 	<key>CFBundleVersion</key>
-	<string>2.2.1</string>
+	<string>3.2.5</string>
 	<key>CFBundleExecutable</key>
 	<string>Helium</string>
 	<key>NSPrincipalClass</key>
@@ -26,12 +26,10 @@
 	<false/>
 	<key>UIApplicationSystemWindowsSecureKey</key>
 	<true/>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
@@ -56,11 +54,18 @@
 	</array>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.developer-tools</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>zh</string>
+		<string>en</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
+	<string>en</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2009 Apple Inc. All Rights Reserved.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.2.1</string>
+	<string>3.2.5</string>
 </dict>
 </plist>

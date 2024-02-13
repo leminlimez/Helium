@@ -20,6 +20,7 @@ enum WidgetModule: Int, CaseIterable {
     case temperature = 3
     
     case textWidget = 6
+    case weather = 9
 }
 
 struct WidgetIDStruct: Identifiable, Equatable {
@@ -56,7 +57,6 @@ struct ColorDetailsStruct: Identifiable, Equatable {
     
     var usesCustomColor: Bool = false
     var color: UIColor = .white
-    var dynamicColor: Bool = true
 }
 
 struct WidgetSetStruct: Identifiable, Equatable {
@@ -66,12 +66,17 @@ struct WidgetSetStruct: Identifiable, Equatable {
     
     var id = UUID()
     
+    var isEnabled: Bool
+    var orientationMode: Int
     var title: String
+    var updateInterval: Double
     
     var anchor: Int
     var anchorY: Int
-    var offsetX: Double
-    var offsetY: Double
+    var offsetPX: Double
+    var offsetPY: Double
+    var offsetLX: Double
+    var offsetLY: Double
     
     var autoResizes: Bool
     var scale: Double
@@ -81,9 +86,12 @@ struct WidgetSetStruct: Identifiable, Equatable {
     
     var blurDetails: BlurDetailsStruct
     
+    var dynamicColor: Bool
     var colorDetails: ColorDetailsStruct = .init()
     
+    var fontName: String
     var textBold: Bool
+    var textItalic: Bool
     var textAlignment: Int
     var fontSize: Double
     var textAlpha: Double
@@ -145,17 +153,20 @@ class WidgetManager: ObservableObject {
                 let selectedColor: UIColor = UIColor.getColorFromData(data: colorDetails["color"] as? Data) ?? UIColor.white
                 let colorDetailsStruct: ColorDetailsStruct = .init(
                     usesCustomColor: colorDetails["usesCustomColor"] as? Bool ?? false,
-                    color: selectedColor,
-                    dynamicColor: colorDetails["dynamicColor"] as? Bool ?? true
+                    color: selectedColor
                 )
                 // create the object
                 var widgetSet: WidgetSetStruct = .init(
-                    title: s["title"] as? String ?? "Untitled",
-                    
+                    isEnabled: s["isEnabled"] as? Bool ?? true,
+                    orientationMode: s["orientationMode"] as? Int ?? 0,
+                    title: s["title"] as? String ?? NSLocalizedString("Untitled", comment: ""),
+                    updateInterval: s["updateInterval"] as? Double ?? 1.0,
                     anchor: s["anchor"] as? Int ?? 0,
                     anchorY: s["anchorY"] as? Int ?? 0,
-                    offsetX: s["offsetX"] as? Double ?? 10.0,
-                    offsetY: s["offsetY"] as? Double ?? 0.0,
+                    offsetPX: s["offsetPX"] as? Double ?? 0.0,
+                    offsetPY: s["offsetPY"] as? Double ?? 0.0,
+                    offsetLX: s["offsetLX"] as? Double ?? 0.0,
+                    offsetLY: s["offsetLY"] as? Double ?? 0.0,
                     
                     autoResizes: s["autoResizes"] as? Bool ?? false,
                     scale: s["scale"] as? Double ?? 100.0,
@@ -165,7 +176,10 @@ class WidgetManager: ObservableObject {
                     
                     blurDetails: blurDetailsStruct,
                     
+                    dynamicColor: s["dynamicColor"] as? Bool ?? true,
+                    fontName: s["fontName"] as? String ?? "System Font",
                     textBold: s["textBold"] as? Bool ?? false,
+                    textItalic: s["textItalic"] as? Bool ?? false,
                     textAlignment: s["textAlignment"] as? Int ?? 1,
                     fontSize: s["fontSize"] as? Double ?? 10.0,
                     textAlpha: s["textAlpha"] as? Double ?? 1.0
@@ -185,12 +199,17 @@ class WidgetManager: ObservableObject {
         
         for s in widgetSets {
             var wSet: [String: Any] = [:]
+            wSet["isEnabled"] = s.isEnabled
+            wSet["orientationMode"] = s.orientationMode
             wSet["title"] = s.title
+            wSet["updateInterval"] = s.updateInterval
             
             wSet["anchor"] = s.anchor
             wSet["anchorY"] = s.anchorY
-            wSet["offsetX"] = s.offsetX
-            wSet["offsetY"] = s.offsetY
+            wSet["offsetPX"] = s.offsetPX
+            wSet["offsetPY"] = s.offsetPY
+            wSet["offsetLX"] = s.offsetLX
+            wSet["offsetLY"] = s.offsetLY
             
             wSet["autoResizes"] = s.autoResizes
             wSet["scale"] = s.scale
@@ -215,14 +234,16 @@ class WidgetManager: ObservableObject {
             ]
             wSet["blurDetails"] = blurDetails
             
+            wSet["dynamicColor"] = s.dynamicColor
             let colorDetails: [String: Any] = [
                 "usesCustomColor": s.colorDetails.usesCustomColor,
-                "color": s.colorDetails.color.data as Any,
-                "dynamicColor": s.colorDetails.dynamicColor
+                "color": s.colorDetails.color.data as Any
             ]
             wSet["colorDetails"] = colorDetails
             
+            wSet["fontName"] = s.fontName
             wSet["textBold"] = s.textBold
+            wSet["textItalic"] = s.textItalic
             wSet["textAlignment"] = s.textAlignment
             wSet["fontSize"] = s.fontSize
             wSet["textAlpha"] = s.textAlpha
@@ -237,6 +258,8 @@ class WidgetManager: ObservableObject {
             // remove from the defaults
             defaults.removeObject(forKey: "widgetProperties", forPath: USER_DEFAULTS_PATH)
         }
+
+        DarwinNotificationCenter.default.post(name: NOTIFY_RELOAD_HUD)
     }
     
     // MARK: Widget Modification Management
@@ -266,6 +289,16 @@ class WidgetManager: ObservableObject {
             }
         }
         if save { saveWidgetSets(); }
+    }
+
+    // move widgets
+    // move at index in list
+    public func moveWidget(widgetSet: WidgetSetStruct, source: IndexSet, destination: Int) {
+        for (i, wSet) in widgetSets.enumerated() {
+            if wSet == widgetSet {
+                widgetSets[i].widgetIDs.move(fromOffsets: source, toOffset: destination)
+            }
+        }
     }
     
     // remove based on object
@@ -315,12 +348,17 @@ class WidgetManager: ObservableObject {
     public func createWidgetSet(title: String, anchor: Int = 0, save: Bool = true) {
         // create a widget set with the default values
         addWidgetSet(widgetSet: .init(
+            isEnabled: true,
+            orientationMode: 0,
             title: title,
+            updateInterval: 1.0,
             
             anchor: anchor,
             anchorY: 0,
-            offsetX: anchor == 1 ? 0.0 : 10.0,
-            offsetY: 0.0,
+            offsetPX: anchor == 1 ? 0.0 : 10.0,
+            offsetPY: 0.0,
+            offsetLX: anchor == 1 ? 0.0 : 10.0,
+            offsetLY: 0.0,
             
             autoResizes: true,
             scale: 100.0,
@@ -335,23 +373,36 @@ class WidgetManager: ObservableObject {
                 alpha: 1.0
             ),
             
+            dynamicColor: true,
+            fontName: "System Font",
             textBold: false,
+            textItalic: false,
             textAlignment: 1,
             fontSize: 10.0,
             textAlpha: 1.0
         ), save: save)
+
+        if IsHUDEnabledBridger() {
+            SetHUDEnabledBridger(false)
+            SetHUDEnabledBridger(true)
+        }
     }
     
     // editing an existing widget set
     public func editWidgetSet(widgetSet: WidgetSetStruct, newSetDetails ns: WidgetSetStruct, save: Bool = true) {
         for (i, wSet) in widgetSets.enumerated() {
             if wSet == widgetSet {
+                widgetSets[i].isEnabled = ns.isEnabled
+                widgetSets[i].orientationMode = ns.orientationMode
                 widgetSets[i].title = ns.title
+                widgetSets[i].updateInterval = ns.updateInterval
                 
                 widgetSets[i].anchor = ns.anchor
                 widgetSets[i].anchorY = ns.anchorY
-                widgetSets[i].offsetX = ns.offsetX
-                widgetSets[i].offsetY = ns.offsetY
+                widgetSets[i].offsetPX = ns.offsetPX
+                widgetSets[i].offsetPY = ns.offsetPY
+                widgetSets[i].offsetLX = ns.offsetLX
+                widgetSets[i].offsetLY = ns.offsetLY
                 
                 widgetSets[i].autoResizes = ns.autoResizes
                 widgetSets[i].scale = ns.scale
@@ -359,9 +410,12 @@ class WidgetManager: ObservableObject {
                 
                 widgetSets[i].blurDetails = ns.blurDetails
                 
+                widgetSets[i].dynamicColor = ns.dynamicColor
                 widgetSets[i].colorDetails = ns.colorDetails
                 
+                widgetSets[i].fontName = ns.fontName
                 widgetSets[i].textBold = ns.textBold
+                widgetSets[i].textItalic = ns.textItalic
                 widgetSets[i].textAlignment = ns.textAlignment
                 widgetSets[i].fontSize = ns.fontSize
                 widgetSets[i].textAlpha = ns.textAlpha
@@ -387,21 +441,23 @@ class WidgetDetails {
     static func getDetails(_ module: WidgetModule) -> (String, String) {
         switch (module) {
         case .dateWidget:
-            return ("Date", "Mon Oct 16")
+            return (NSLocalizedString("Date", comment: ""), NSLocalizedString("Mon Oct 16", comment: ""))
         case .network:
-            return ("Network", "▲ 0 KB/s")
+            return (NSLocalizedString("Network", comment: ""), "▲ 0 KB/s")
         case .temperature:
-            return ("Device Temperature", "29.34ºC")
+            return (NSLocalizedString("Device Temperature", comment: ""), "29.34ºC")
         case .battery:
-            return ("Battery Details", "25 W")
+            return (NSLocalizedString("Battery Details", comment: ""), "25 W")
         case .timeWidget:
-            return ("Time", "14:57:05")
+            return (NSLocalizedString("Time", comment: ""), "14:57:05")
         case .textWidget:
-            return ("Text Label", "Example")
+            return (NSLocalizedString("Text Label", comment: ""), NSLocalizedString("Example", comment: ""))
         case .currentCapacity:
-            return ("Battery Capacity", "50%")
+            return (NSLocalizedString("Battery Capacity", comment: ""), "50%")
         case .chargeSymbol:
-            return ("Charging Symbol", "􀋦")
+            return (NSLocalizedString("Charging Symbol", comment: ""), "􀋦")
+        case .weather:
+            return (NSLocalizedString("Weather", comment: ""), "🌤 20℃")
         }
     }
     

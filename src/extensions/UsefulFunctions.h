@@ -13,3 +13,6 @@ NSInteger getIntFromDictKey(NSDictionary *dict, NSString *key);
 
 double getDoubleFromDictKey(NSDictionary *dict, NSString *key, double defaultValue);
 double getDoubleFromDictKey(NSDictionary *dict, NSString *key);
+
+NSString* getStringFromDictKey(NSDictionary *dict, NSString *key, NSString *defaultValue);
+NSString* getStringFromDictKey(NSDictionary *dict, NSString *key);

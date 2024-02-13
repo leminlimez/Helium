@@ -14,6 +14,9 @@
 #import <objc/runtime.h>
 #import "WidgetManager.h"
 #import <IOKit/IOKitLib.h>
+#import "../extensions/LunarDate.h"
+#import "../extensions/FontUtils.h"
+#import "../extensions/WeatherUtils.h"
 
 // Thanks to: https://github.com/lwlsw/NetworkSpeed13
 
@@ -24,13 +27,13 @@
 #define MEGABYTES (1 << 20)
 #define GIGABYTES (1 << 30)
 #define SHOW_ALWAYS 1
-#define INLINE_SEPARATOR "\t"
+// #define INLINE_SEPARATOR "\t"
 
-#pragma mark - Formatting Methods
-static unsigned char getSeparator(NSMutableAttributedString *currentAttributed)
-{
-    return [[currentAttributed string] isEqualToString:@""] ? *"" : *"\t";
-}
+// #pragma mark - Formatting Methods
+// static unsigned char getSeparator(NSMutableAttributedString *currentAttributed)
+// {
+//     return [[currentAttributed string] isEqualToString:@""] ? *"" : *"\t";
+// }
 
 #pragma mark - Widget-specific Variables
 // MARK: 0 - Date Widget
@@ -51,14 +54,15 @@ static NSAttributedString *attributedUploadPrefix2 = nil;
 static NSAttributedString *attributedDownloadPrefix2 = nil;
 
 #pragma mark - Date Widget
-static NSString* formattedDate(NSString *dateFormat)
+static NSString* formattedDate(NSString *dateFormat, NSString *dateLocale)
 {
     if (!formatter) {
         formatter = [[NSDateFormatter alloc] init];
-        formatter.locale = [NSLocale currentLocale];
+        formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:dateLocale];
     }
     NSDate *currentDate = [NSDate date];
-    [formatter setDateFormat:dateFormat];
+    NSString *newDateFormat = [LunarDate getChineseCalendarWithDate:currentDate format:dateFormat];
+    [formatter setDateFormat:newDateFormat];
     return [formatter stringFromDate:currentDate];
 }
 
@@ -104,9 +108,9 @@ static NSString* formattedSpeed(uint64_t bytes, NSInteger minUnit)
 {
     if (0 == DATAUNIT) {
         // Get min units first
-        if (minUnit == 1 && bytes < KILOBYTES) return @"0 KB/s";
-        else if (minUnit == 2 && bytes < MEGABYTES) return @"0 MB/s";
-        else if (minUnit == 3 && bytes < GIGABYTES) return @"0 GB/s";
+        if (minUnit == 1 && bytes < KILOBYTES) return @"0 KB/s";
+        else if (minUnit == 2 && bytes < MEGABYTES) return @"0 MB/s";
+        else if (minUnit == 3 && bytes < GIGABYTES) return @"0 GB/s";
 
         if (bytes < KILOBYTES) return [NSString stringWithFormat:@"%.0f B/s", (double)bytes];
         else if (bytes < MEGABYTES) return [NSString stringWithFormat:@"%.0f KB/s", (double)bytes / KILOBYTES];
@@ -114,9 +118,9 @@ static NSString* formattedSpeed(uint64_t bytes, NSInteger minUnit)
         else return [NSString stringWithFormat:@"%.2f GB/s", (double)bytes / GIGABYTES];
     } else {
         // Get min units first
-        if (minUnit == 1 && bytes < KILOBITS) return @"0 Kb/s";
-        else if (minUnit == 2 && bytes < MEGABITS) return @"0 Mb/s";
-        else if (minUnit == 3 && bytes < GIGABITS) return @"0 Gb/s";
+        if (minUnit == 1 && bytes < KILOBITS) return @"0 Kb/s";
+        else if (minUnit == 2 && bytes < MEGABITS) return @"0 Mb/s";
+        else if (minUnit == 3 && bytes < GIGABITS) return @"0 Gb/s";
 
         if (bytes < KILOBITS) return [NSString stringWithFormat:@"%.0f b/s", (double)bytes];
         else if (bytes < MEGABITS) return [NSString stringWithFormat:@"%.0f Kb/s", (double)bytes / KILOBITS];
@@ -166,7 +170,7 @@ static NSAttributedString* formattedAttributedSpeedString(BOOL isUp, NSInteger s
                 [mutableString appendAttributedString:(speedIcon == 0 ? attributedUploadPrefix : attributedUploadPrefix2)];
             else
                 [mutableString appendAttributedString:(speedIcon == 0 ? attributedDownloadPrefix : attributedDownloadPrefix2)];
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:speedString attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
+            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:speedString]];
         }
         
         return [mutableString copy];
@@ -219,25 +223,25 @@ static NSString* formattedBattery(NSInteger valueType)
             // Watts
             int watts = [batteryInfo[@"AdapterDetails"][@"Watts"] longLongValue];
             if (watts) {
-                return [NSString stringWithFormat: @"%d W", watts];
+                return [NSString stringWithFormat: @"%d W", watts];
             } else {
-                return @"0 W";
+                return @"0 W";
             }
         } else if (valueType == 1) {
             // Charging Current
             double current = [batteryInfo[@"AdapterDetails"][@"Current"] doubleValue];
             if (current) {
-                return [NSString stringWithFormat: @"%.0f mA", current];
+                return [NSString stringWithFormat: @"%.0f mA", current];
             } else {
-                return @"0 mA";
+                return @"0 mA";
             }
         } else if (valueType == 2) {
             // Regular Amperage
             double amps = [batteryInfo[@"Amperage"] doubleValue];
             if (amps) {
-                return [NSString stringWithFormat: @"%.0f mA", amps];
+                return [NSString stringWithFormat: @"%.0f mA", amps];
             } else {
-                return @"0 mA";
+                return @"0 mA";
             }
         } else if (valueType == 3) {
             // Charge Cycles
@@ -290,12 +294,12 @@ static NSString* formattedChargingSymbol(BOOL filled)
  6 = Text
  7 = Battery Percentage
  8 = Charging Symbol
+ 9 = Weather
 
  TODO:
- - Weather
  - Music Visualizer
  */
-void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, bool textBold, UIColor *textColor)
+void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAttributedString *mutableString, double fontSize, UIColor *textColor, NSString *apiKey, NSString *dateLocale)
 {
     NSString *widgetString;
     NSString *sfSymbolName;
@@ -305,16 +309,11 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
         case 5:
             // Date/Time
             widgetString = formattedDate(
-                [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? @"E MMM dd" : @"hh:mm")
+                [parsedInfo valueForKey:@"dateFormat"] ? [parsedInfo valueForKey:@"dateFormat"] : (parsedID == 1 ? NSLocalizedString(@"E MMM dd", comment: @"") : @"hh:mm"), dateLocale
             );
             break;
         case 2:
             // Network Speed
-            [
-                mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: [
-                    NSString stringWithFormat: @"%c", getSeparator(mutableString)
-                ] attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]
-            ];
             [
                 mutableString appendAttributedString: formattedAttributedSpeedString(
                     [parsedInfo valueForKey:@"isUp"] ? [[parsedInfo valueForKey:@"isUp"] boolValue] : NO,
@@ -364,22 +363,31 @@ void formatParsedInfo(NSDictionary *parsedInfo, NSInteger parsedID, NSMutableAtt
                 [mutableString appendAttributedString:[NSAttributedString attributedStringWithAttachment:imageAttachment]];
             }
             break;
+        case 9:
+            {
+                // Weather
+                NSString *location = [parsedInfo valueForKey:@"location"];
+                NSString *format = [parsedInfo valueForKey:@"format"];
+                NSDictionary *now = [WeatherUtils fetchNowWeatherForLocation: location apiKey:apiKey dateLocale:dateLocale];
+                NSDictionary *today = [WeatherUtils fetchTodayWeatherForLocation: location apiKey:apiKey dateLocale:dateLocale];
+                widgetString = [WeatherUtils formatNowResult:now format:format];
+                widgetString = [WeatherUtils formatTodayResult:today format:widgetString];
+            }
+            break;
         default:
             // do not add anything
             break;
     }
     if (widgetString) {
+        widgetString = [widgetString stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+        widgetString = [widgetString stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
         [
-            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:[
-                NSString stringWithFormat: @"%c%@",
-                getSeparator(mutableString),
-                widgetString
-            ] attributes:@{NSFontAttributeName: textBold ? [UIFont boldSystemFontOfSize:fontSize] : [UIFont systemFontOfSize:fontSize]}]
+            mutableString appendAttributedString:[[NSAttributedString alloc] initWithString: widgetString]
         ];
     }
 }
 
-NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, bool textBold, UIColor *textColor)
+NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontSize, UIColor *textColor, NSString *apiKey, NSString *dateLocale)
 {
     @autoreleasepool {
         NSMutableAttributedString* mutableString = [[NSMutableAttributedString alloc] init];
@@ -388,10 +396,10 @@ NSAttributedString* formattedAttributedString(NSArray *identifiers, double fontS
             for (id idInfo in identifiers) {
                 NSDictionary *parsedInfo = idInfo;
                 NSInteger parsedID = [parsedInfo valueForKey:@"widgetID"] ? [[parsedInfo valueForKey:@"widgetID"] integerValue] : 0;
-                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textBold, textColor);
+                formatParsedInfo(parsedInfo, parsedID, mutableString, fontSize, textColor, apiKey, dateLocale);
             }
         } else {
-            [mutableString appendAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]}]];
+            return nil;
         }
         
         return [mutableString copy];
