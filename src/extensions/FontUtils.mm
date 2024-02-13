@@ -20,7 +20,7 @@ static NSMutableArray *_allFontNames = [NSMutableArray array];
             if (!CTFontManagerRegisterGraphicsFont(font, &error)) {
                 CFStringRef errorDescription = CFErrorCopyDescription(error);
                 NSLog(@"Failed to load font: %@", errorDescription);
-                CFRelease(errorDescription);
+                CFSafeRelease(errorDescription);
             }
             // CFStringRef fontNameRef = CGFontCopyPostScriptName(font);
             // NSString *fontName = (__bridge NSString*)fontNameRef;
@@ -28,8 +28,8 @@ static NSMutableArray *_allFontNames = [NSMutableArray array];
             // [_allFontNames addObject:fontName];
             // NSLog(@"fontName: %@",fontName);
         
-            CFRelease(font);
-            CFRelease(provider);
+            CFSafeRelease(font);
+            CFSafeRelease(provider);
         }
     }
 }
@@ -70,5 +70,11 @@ static NSMutableArray *_allFontNames = [NSMutableArray array];
     }
     UIFont *specialFont = [UIFont fontWithDescriptor:[[font fontDescriptor] fontDescriptorWithSymbolicTraits:symbolicTraits] size:size];
     return specialFont;
+}
+
+void CFSafeRelease(CFTypeRef cf) {
+    if (cf != NULL) {
+        CFRelease(cf);
+    }
 }
 @end
