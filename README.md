@@ -15,11 +15,12 @@ Run `./ipabuild.sh` to build the ipa. The resulting tipa should be in a folder c
 
 ## Tested Devices
 - iPhone 13 Pro (iOS 15.3.1, Jailed & Jailbroken)
-- iPhone X (iOS 16.1.1, Jailbroken)
-
-## Known Issues
-- It currently does not adapt to the color of the status bar (it will always be white).
+- iPhone X (iOS 16.1.1, Jailed & Jailbroken)
+- iPhone X (iOS 16.6.1, Jailed)
+- iPad 7th Generation (iOS 14.8.1, Jailed & Jailbroken)
+- iPad 7th Generation (iOS 16.7.2, Jailbroken)
 
 ## Credits
 - [TrollSpeed](https://github.com/Lessica/TrollSpeed) for the AssistiveTouch logic allowing this to work.
 - [Cowabunga](https://github.com/leminlimez/Cowabunga) for part of the code.
+- [AsakuraFuuko](https://github.com/AsakuraFuuko) for forking and updating.
