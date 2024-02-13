@@ -103,7 +103,7 @@ struct EditWidgetSetView: View {
                                 .bold()
                             Spacer()
                         }
-                        BetterSlider(value: $updateInterval, bounds: 1...86400)
+                        BetterSlider(value: $updateInterval, bounds: 0.01...86400)
                             .onChange(of: updateInterval) { _ in
                                 changesMade = true
                             }
@@ -337,12 +337,18 @@ struct EditWidgetSetView: View {
                 
                 Section {
                     // MARK: Text Font
-                    HStack {
-                        Text(NSLocalizedString("Text Font", comment: "")).foregroundColor(.primary).font(Font.custom(fontName, size: UIFont.labelFontSize)).bold()
-                        Spacer()
+                    VStack {
+                        HStack {
+                            Text(NSLocalizedString("Text Font", comment: "")).foregroundColor(.primary).bold()
+                            Spacer()
+                            Text(NSLocalizedString("Font Preview", comment: "")).foregroundColor(.primary)
+                            .font((fontName == "System Font" ? Font.system(size: UIFont.labelFontSize) 
+                                : Font.custom(fontName, size: UIFont.labelFontSize)
+                            ).weight((textBold ? Font.Weight.bold : Font.Weight.light)))
+                        }
                         Picker(selection: $fontName) {
                             ForEach(fonts, id: \.self) { _fontName in
-                                Text(_fontName).font(Font.custom(_fontName, size: UIFont.systemFontSize))
+                                Text(_fontName)//.font(Font.custom(_fontName, size: UIFont.systemFontSize))
                             }
                         } label: {}
                         .pickerStyle(.wheel)
