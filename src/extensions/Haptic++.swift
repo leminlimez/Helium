@@ -1,23 +1,30 @@
- //
- //  Haptic++.swift
- //  PsychicPaper
- //
- //  Created by Hariz Shirazi on 2023-02-04.
- //
+//
+//  Haptic++.swift
+//  PsychicPaper
+//
+//  Created by Hariz Shirazi on 2023-02-04.
+//
 
- import Foundation
- import UIKit
+import Foundation
+import UIKit
 
- class Haptic {
-     static let shared = Haptic()
+/// Wrapper around UIKit haptics
+class Haptic {
+  /// Shared instance
+  static let shared = Haptic()
+  private init() {}
+  /// Play haptic feedback
+  func play(_ feedbackStyle: UIImpactFeedbackGenerator.FeedbackStyle) {
+    UIImpactFeedbackGenerator(style: feedbackStyle).impactOccurred()
+  }
 
-     private init() { }
+  /// Provide haptic user feedback for an action
+  func notify(_ feedbackType: UINotificationFeedbackGenerator.FeedbackType) {
+    UINotificationFeedbackGenerator().notificationOccurred(feedbackType)
+  }
 
-     func play(_ feedbackStyle: UIImpactFeedbackGenerator.FeedbackStyle) {
-         UIImpactFeedbackGenerator(style: feedbackStyle).impactOccurred()
-     }
-
-     func notify(_ feedbackType: UINotificationFeedbackGenerator.FeedbackType) {
-         UINotificationFeedbackGenerator().notificationOccurred(feedbackType)
-     }
- }
+  /// Play feedback for a selection
+  func selection() {
+    UISelectionFeedbackGenerator().selectionChanged()
+  }
+}
