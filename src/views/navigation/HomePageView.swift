@@ -12,6 +12,7 @@ import SwiftUI
 struct HomePageView: View {
   @State private var isNowEnabled: Bool = false
   @State private var buttonDisabled: Bool = false
+  @State private var inProgress = false
 
   var body: some View {
     NavigationView {
@@ -20,16 +21,31 @@ struct HomePageView: View {
 
         // Activate HUD Button
         Button(
-          isNowEnabled
-            ? NSLocalizedString("Disable HUD", comment: "")
-            : NSLocalizedString("Enable HUD", comment: "")
-        ) {
-          #if targetEnvironment(simulator)
-            isNowEnabled.toggle()
-          #else
-            toggleHUD(!isNowEnabled)
-          #endif
-        }
+          action: {
+            #if targetEnvironment(simulator)
+              isNowEnabled.toggle()
+            #else
+              toggleHUD(!isNowEnabled)
+            #endif
+          },
+          label: {
+            HStack(spacing: 10) {
+              if inProgress {
+                if #available(iOS 16.0, *) {
+                  ProgressView()
+                    .tint(isNowEnabled ? .red : .blue)
+                } else {
+                  ProgressView()
+                    .foregroundColor(isNowEnabled ? .red : .blue)
+                }
+              }
+              Text(
+                isNowEnabled
+                  ? NSLocalizedString("Disable HUD", comment: "")
+                  : NSLocalizedString("Enable HUD", comment: ""))
+            }
+          }
+        )
         .buttonStyle(TintedButton(color: isNowEnabled ? .red : .blue))
         .padding(5)
         .offset(y: isNowEnabled ? -10 : 0)
@@ -51,7 +67,7 @@ struct HomePageView: View {
         )
         .font(.caption)
         .foregroundColor(isNowEnabled ? .blue : .red)
-        .padding(5)
+        .padding(.bottom, 10)
         .multilineTextAlignment(.center)
       }
       .disabled(buttonDisabled)
@@ -81,9 +97,11 @@ struct HomePageView: View {
     }
     .navigationViewStyle(StackNavigationViewStyle())
     .animation(.timingCurve(0.25, 0.1, 0.35, 1.75).speed(1.2), value: isNowEnabled)
+    .animation(.timingCurve(0.25, 0.1, 0.35, 1.75).speed(1.2), value: inProgress)
   }
 
   func toggleHUD(_ isActive: Bool) {
+    inProgress.toggle()
     Haptic.shared.play(.medium)
     if isNowEnabled == isActive { return }
     print(
@@ -97,6 +115,7 @@ struct HomePageView: View {
       {
         isNowEnabled = isActive
         buttonDisabled = false
+        inProgress.toggle()
       }, !isNowEnabled)
   }
 }
