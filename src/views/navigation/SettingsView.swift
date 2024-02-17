@@ -124,6 +124,7 @@ struct SettingsView: View {
                     LinkCell(imageName: "leminlimez", url: "https://github.com/leminlimez", title: "LeminLimez", contribution: NSLocalizedString("Main Developer", comment: "leminlimez's contribution"), circle: true)
                     LinkCell(imageName: "lessica", url: "https://github.com/Lessica/TrollSpeed", title: "Lessica", contribution: NSLocalizedString("TrollSpeed & Assistive Touch Logic", comment: "lessica's contribution"), circle: true)
                     LinkCell(imageName: "Fuuko", url: "https://github.com/AsakuraFuuko", title: "Fuuko", contribution: NSLocalizedString("Modder", comment: "Fuuko's contribution"), circle: true)
+                    LinkCell(imageName: "bomberfish", url: "https://github.com/BomberFish", title: "BomberFish", contribution: NSLocalizedString("UI improvements", comment: "BomberFish's contribution"), imageInBundle: true, circle: true)
                 } header: {
                     Label(NSLocalizedString("Credits", comment:""), systemImage: "wrench.and.screwdriver")
                 }
@@ -168,6 +169,7 @@ struct SettingsView: View {
         var title: String
         var contribution: String
         var systemImage: Bool = false
+        var imageInBundle: Bool = false
         var circle: Bool = false
         
         var body: some View {
@@ -177,6 +179,13 @@ struct SettingsView: View {
                         Image(systemName: imageName)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
+                    } else if imageInBundle {
+                        let url = Bundle.main.url(forResource: imageName, withExtension: "png")
+                        if url != nil {
+                            Image(uiImage: UIImage(contentsOfFile: url!.path)!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
                     } else {
                         if imageName != "" {
                             Image(imageName)
