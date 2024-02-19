@@ -1,16 +1,14 @@
-name: Build Helium
+name: Build Helium Release
 
 on:
   push:
     tags:
-      - "v*.*.*"
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+      - "v*.*.**"
 
 env:
   THEOS: ''
   XCODE_VERSION: '15.1'
+  logT: ''
 
 jobs:
   build:
@@ -66,8 +64,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: AsakuraFuuko/Helium
-          ref: main
           path: Helium
           submodules: recursive
   
