@@ -53,6 +53,7 @@ if [ -d $BUILD_LOCATION ]; then
     cp -r "$APP_BUILD_FILES/en.lproj" "$BUILD_LOCATION/"
     cp -r "$APP_BUILD_FILES/zh-Hans.lproj" "$BUILD_LOCATION/"
     cp -r "$APP_BUILD_FILES/fonts" "$BUILD_LOCATION/"
+    cp -r "$APP_BUILD_FILES/credits" "$BUILD_LOCATION/"
 
     # Create payload
     echo "Creating payload"

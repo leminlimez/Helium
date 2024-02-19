@@ -16,6 +16,8 @@
 "Helium" = "氦气";
 "Closing HUD" = "正在关闭 HUD";
 "Opening HUD" = "正在打开 HUD";
+"Status: Running" = "状态: 运行中";
+"Status: Stopped" = "状态: 已停止";
 
 /* SettingsView.swift */
 "Save" = "保存";
@@ -41,7 +43,8 @@
 "Debug Preferences" = "调试设置";
 "Main Developer" = "主开发者";
 "Modder" = "修改者";
-"TrollSpeed & Assistive Touch Logic" = "TrollSpeed & Assistive Touch Logic";
+"TrollSpeed & Assistive Touch Logic" = "TrollSpeed & Assistive Touch 逻辑";
+"UI improvements" = "UI优化";
 "Credits" = "致谢";
 "Settings saved successfully" = "设置保存成功";
 
