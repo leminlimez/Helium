@@ -16,6 +16,8 @@
 "Helium" = "Helium";
 "Closing HUD" = "Closing HUD";
 "Opening HUD" = "Opening HUD";
+"Status: Running" = "Status: Running";
+"Status: Stopped" = "Status: Stopped";
 
 /* SettingsView.swift */
 "Save" = "Save";
@@ -41,6 +43,7 @@
 "Main Developer" = "Main Developer";
 "Modder" = "Modder";
 "TrollSpeed & Assistive Touch Logic" = "TrollSpeed & Assistive Touch Logic";
+"UI improvements" = "UI improvements";
 "Credits" = "Credits";
 "Settings saved successfully" = "Settings saved successfully";
 
